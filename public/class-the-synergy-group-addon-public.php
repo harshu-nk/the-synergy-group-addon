@@ -60,21 +60,14 @@ class The_Synergy_Group_Addon_Public {
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in The_Synergy_Group_Addon_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The The_Synergy_Group_Addon_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/the-synergy-group-addon-public.css', array(), $this->version, 'all' );
-
+	
+		if(is_account_page() && current_user_can( 'manage_options' )){ //Only for Admins
+			wp_enqueue_style( 'tsg-select2-css', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', array(), '4.1.0-rc.0');
+			wp_enqueue_script( 'tsg-select2-js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', 'jquery', '4.1.0-rc.0');
+			wp_enqueue_script( 'tsg-account-admin-js', plugin_dir_url( __FILE__ ) . 'js/the-syndergy-admin.js', array('jquery', 'tsg-select2-js'), '1.0', true);
+			wp_localize_script( 'tsg-account-admin-js', 'tsg_ajax', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+		}
 	}
 
 	/**

@@ -122,6 +122,7 @@ class The_Synergy_Group_Addon {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-the-synergy-group-addon-public.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/customizations/woo-account-customization.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/notification/notifications.php';
 
 		$this->loader = new The_Synergy_Group_Addon_Loader();
 
@@ -178,7 +179,15 @@ class The_Synergy_Group_Addon {
 		$this->loader->add_action('woocommerce_account_menu_items', $woo_customizations, 'my_account_tabs_customize' );
 		$this->loader->add_action('woocommerce_before_edit_account_form', $woo_customizations, 'bp_avatar_on_wc_edit_account', 20 );
 		$this->loader->add_action('woocommerce_save_account_details', $woo_customizations, 'bp_handle_avatar_upload_in_wc_account' );
+		$this->loader->add_action('init', $woo_customizations, 'tsg_add_my_account_notifications_endpoint');
+		$this->loader->add_action('query_vars', $woo_customizations, 'tsg_notifications_query_vars');
+		$this->loader->add_action('woocommerce_account_notifications_endpoint', $woo_customizations, 'tsg_notifications_tab_content');
 
+		$notifications = new Notifier;
+		$this->loader->add_action('woo_account_admin_notifications_tab_content', $notifications, 'my_account_admin_notifications' );
+		$this->loader->add_action('woo_account_user_activities_tab_content', $notifications, 'my_account_user_notifications' );
+		$this->loader->add_action( 'wp_ajax_search_users', $notifications, 'ajax_search_users' );
+		$this->loader->add_action( 'wp_ajax_nopriv_search_users', $notifications, 'ajax_search_users' );
 	}
 
 	/**
