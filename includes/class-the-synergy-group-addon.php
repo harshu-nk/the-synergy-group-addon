@@ -188,6 +188,7 @@ class The_Synergy_Group_Addon {
 		$this->loader->add_action('woo_account_user_activities_tab_content', $notifications, 'my_account_user_notifications' );
 		$this->loader->add_action( 'wp_ajax_search_users', $notifications, 'ajax_search_users' );
 		$this->loader->add_action( 'wp_ajax_nopriv_search_users', $notifications, 'ajax_search_users' );
+		$this->loader->add_action( 'wp_ajax_admin_send_notification', $notifications, 'admin_send_notification' );
 	}
 
 	/**

@@ -24,22 +24,33 @@ jQuery(document).ready(function ($) {
    });
 
    $("#communications-form").submit(function (event) {
+      event.preventDefault();
+
+      let selectedUsers = $("#select-members").select2("data");
+      selectedIds = [];
+      selectedUsers.forEach(function (val, i) {
+         selectedIds.push(val.id);
+      });
       var formData = {
-         name: $("#name").val(),
-         email: $("#email").val(),
-         superheroAlias: $("#superheroAlias").val(),
+         members: selectedIds,
+         notificationType: $("input[name='notification-type']").val(),
+         greeting: $("#greeting").val(),
+         subject: $("#subject").val(),
+         body: $("#body").val(),
+         attachment: $("#attachment").val(),
+         action: "admin_send_notification",
       };
 
-      // $.ajax({
-      //    type: "POST",
-      //    url: tsg_ajax.ajax_url,
-      //    data: formData,
-      //    dataType: "json",
-      //    encode: true,
-      // }).done(function (data) {
-      //    console.log(data);
-      // });
-
-      event.preventDefault();
+      $.ajax({
+         type: "POST",
+         url: tsg_ajax.ajax_url,
+         data: formData,
+         success: function (data) {
+            console.log(data);
+         },
+         error: function (jqXHR, textStatus, errorThrown) {
+            console.log(textStatus, errorThrown);
+         },
+      });
    });
 });
