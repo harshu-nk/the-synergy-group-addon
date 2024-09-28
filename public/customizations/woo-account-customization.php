@@ -1,8 +1,7 @@
 <?php
 class WooAccountCustomizations{
     
-    function __construct()
-    {
+    function __construct(){
     }
 
     function tsg_add_my_account_notifications_endpoint() {
@@ -60,5 +59,4 @@ class WooAccountCustomizations{
             }
         }
     }
-
 }
