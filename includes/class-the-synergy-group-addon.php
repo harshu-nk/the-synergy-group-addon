@@ -182,6 +182,17 @@ class The_Synergy_Group_Addon {
 		$this->loader->add_action('init', $woo_customizations, 'tsg_add_my_account_notifications_endpoint');
 		$this->loader->add_action('query_vars', $woo_customizations, 'tsg_notifications_query_vars');
 		$this->loader->add_action('woocommerce_account_notifications_endpoint', $woo_customizations, 'tsg_notifications_tab_content');
+		
+		// Activity Log on Messages / Activities Tab
+		// $this->loader->add_action('admin_head', $woo_customizations, 'tsg_simple_history_output');
+		// Force History Fetching for the Frontend
+		// $simpleHistory = new \Simple_History\Simple_History;
+		// $this->loader->add_action('simple_history/after_init', $simpleHistory, function() use ($simpleHistory){
+		// 	$simpleHistory->add_admin_actions();
+		// });
+
+		// add_action('simple_history/after_init', array(new \Simple_History\Simple_History, 'add_admin_actions'));
+		$this->loader->add_action('wc_account_after_system_notifications', $woo_customizations, 'tsg_simple_history_output');
 
 		$notifications = new Notifier;
 		$this->loader->add_action('woo_account_admin_notifications_tab_content', $notifications, 'my_account_admin_notifications' );

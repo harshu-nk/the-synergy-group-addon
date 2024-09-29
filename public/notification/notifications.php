@@ -120,9 +120,17 @@ class Notifier
     // View for User's Messages Tab
     function my_account_user_notifications(): void
     {
+		set_current_screen('dashboard');
+
+        do_action('wc_account_before_recent_messages');
+
         $this->show_user_recent_messages();
 
+        do_action('wc_account_after_recent_messages');
+
         $this->show_user_system_notifications();
+
+        do_action('wc_account_after_system_notifications');
     }
 
     function show_user_recent_messages(): void
@@ -143,8 +151,7 @@ class Notifier
 
         // Execute the query
         $prepared_query = $wpdb->prepare($query, $current_user_id, $recent_time);
-        $messages = $wpdb->get_results($prepared_query);
-    ?>
+        $messages = $wpdb->get_results($prepared_query); ?>
         <div class="account-text-block">
             <div class="account-title-block borderb spb">
                 <div class="title-content va">
@@ -185,7 +192,7 @@ class Notifier
                 <?php } ?>
             </div>
         </div>
-<?php
+    <?php
     }
 
     function show_user_system_notifications(): void
