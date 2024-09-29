@@ -36,6 +36,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Rename this for your plugin and update it as you release new versions.
  */
 define( 'THE_SYNERGY_GROUP_ADDON_VERSION', '1.0.0' );
+define( 'THE_SYNERGY_GROUP_URL', plugin_dir_url( __FILE__ ) );
 
 /**
  * The code that runs during plugin activation.

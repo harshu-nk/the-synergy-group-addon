@@ -67,6 +67,8 @@ class The_Synergy_Group_Addon_Public {
 			wp_enqueue_script( 'tsg-select2-js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', 'jquery', '4.1.0-rc.0');
 			wp_enqueue_script( 'tsg-account-admin-js', plugin_dir_url( __FILE__ ) . 'js/the-syndergy-admin.js', array('jquery', 'tsg-select2-js'), '1.0', true);
 			wp_localize_script( 'tsg-account-admin-js', 'tsg_ajax', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+		}elseif(is_account_page()){
+			wp_enqueue_style( $this->plugin_name . '-my-account', plugin_dir_url( __FILE__ ) . 'css/myaccount.css', array(), $this->version, 'all' );
 		}
 	}
 
@@ -77,7 +79,6 @@ class The_Synergy_Group_Addon_Public {
 	 */
 	public function enqueue_scripts() {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/the-synergy-group-addon-public.js', array( 'jquery' ), $this->version, false );
-
 	}
 
 }
