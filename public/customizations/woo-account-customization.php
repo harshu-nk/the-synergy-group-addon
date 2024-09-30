@@ -4,6 +4,31 @@ class WooAccountCustomizations
 
     function __construct() {}
 
+    function woo_adon_plugin_template($template, $template_name, $template_path)
+    {
+        global $woocommerce;
+        $_template = $template;
+        if (! $template_path)
+            $template_path = $woocommerce->template_url;
+
+        $plugin_path  = untrailingslashit(THE_SYNERGY_GROUP_PATH)  . '/template/woocommerce/';
+        // Look within passed path within the theme - this is priority
+        $template = locate_template(
+            array(
+                $template_path . $template_name,
+                $template_name
+            )
+        );
+        
+        if (! $template && file_exists($plugin_path . $template_name))
+            $template = $plugin_path . $template_name;
+
+        if (! $template)
+            $template = $_template;
+
+        return $template;
+    }
+
     function tsg_add_my_account_notifications_endpoint()
     {
         add_rewrite_endpoint('notifications', EP_ROOT | EP_PAGES);
@@ -47,7 +72,8 @@ class WooAccountCustomizations
      */
     function bp_avatar_on_wc_edit_account(): void
     {
-        bp_get_template_part('members/single/profile/change-avatar');
+
+        // bp_get_template_part('members/single/profile/change-avatar');
     }
 
     /**
@@ -106,8 +132,7 @@ class WooAccountCustomizations
                             <div class="line-icon2">
                                 <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/arrow_right.svg" alt="arrow right icon" />
                             </div>
-                            <p><?php echo $loginData->date; ?>. IP <?php echo $loginData->server_remote_addr; ?></p>
-                            <?php echo $loginData->message; ?>
+                            <p><?php echo date('Y/m/d H:i', strtotime($loginData->date)); ?>. IP <?php echo $loginData->server_remote_addr; ?></p>
                         </div>
                     </div>
                 <?php } ?>

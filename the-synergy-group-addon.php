@@ -37,6 +37,7 @@ if ( ! defined( 'WPINC' ) ) {
  */
 define( 'THE_SYNERGY_GROUP_ADDON_VERSION', '1.0.0' );
 define( 'THE_SYNERGY_GROUP_URL', plugin_dir_url( __FILE__ ) );
+define( 'THE_SYNERGY_GROUP_PATH', plugin_dir_path( __FILE__ ) );
 
 /**
  * The code that runs during plugin activation.

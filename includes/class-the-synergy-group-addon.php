@@ -176,6 +176,9 @@ class The_Synergy_Group_Addon {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
 		$woo_customizations = new WooAccountCustomizations;
+		// Let Woo Templates override within the plugin
+		$this->loader->add_filter( 'woocommerce_locate_template', $woo_customizations, 'woo_adon_plugin_template', 1, 3 );
+
 		$this->loader->add_action('woocommerce_account_menu_items', $woo_customizations, 'my_account_tabs_customize' );
 		$this->loader->add_action('woocommerce_before_edit_account_form', $woo_customizations, 'bp_avatar_on_wc_edit_account', 20 );
 		$this->loader->add_action('woocommerce_save_account_details', $woo_customizations, 'bp_handle_avatar_upload_in_wc_account' );
