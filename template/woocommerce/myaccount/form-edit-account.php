@@ -19,6 +19,16 @@
 defined('ABSPATH') || exit;
 
 $user_info = wp_get_current_user();
+$amend_user = new WP_User($user_info);
+$user_data_set = array('Mobile', 'Whatsapp', 'Other Tel', 'Linkedin', 'Twitter', 'Facebook', 'Instagram');
+
+foreach($user_data_set as $field_name){
+	$field_value = wp_strip_all_tags(xprofile_get_field_data($field_name, $user_info->ID));
+	$field_name = sanitize_title($field_name);
+	if($field_value){
+		$amend_user->__set($field_name, $field_value);
+	}
+}
 
 do_action('woocommerce_before_edit_account_form'); ?>
 
@@ -44,7 +54,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 						<div class="line-right line-row icon-right va">
 							<p class="name-block form-curr-value"><?php echo $user_info->first_name; ?></p>
 							<p class="form-row">
-								<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="account_first_name" id="account_first_name" autocomplete="given-name" value="<?php echo esc_attr($user->first_name); ?>" />
+								<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="account_first_name" id="account_first_name" autocomplete="given-name" value="<?php echo esc_attr($amend_user->first_name); ?>" />
 							</p>
 							<a href="#" class="icon-a edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
 						</div>
@@ -57,7 +67,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 						<div class="line-right line-row icon-right va">
 							<p class="name-block form-curr-value"><?php echo $user_info->last_name; ?></p>
 							<p class="form-row">
-								<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="account_last_name" id="account_last_name" autocomplete="family-name" value="<?php echo esc_attr($user->last_name); ?>" />
+								<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="account_last_name" id="account_last_name" autocomplete="family-name" value="<?php echo esc_attr($amend_user->last_name); ?>" />
 							</p>
 							<a href="#" class="icon-a edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
 						</div>
@@ -71,7 +81,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 							<a href="#" class="icon-a bio-edit-pencil edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
 						</div>
 					</div>
-					<input type="hidden" class="woocommerce-Input woocommerce-Input--text input-text" name="account_display_name" id="account_display_name" value="<?php echo esc_attr($user->display_name); ?>" />
+					<input type="hidden" class="woocommerce-Input woocommerce-Input--text input-text" name="account_display_name" id="account_display_name" value="<?php echo esc_attr($amend_user->display_name); ?>" />
 				</div>
 
 				<div class="bio mt25">
@@ -93,6 +103,15 @@ do_action('woocommerce_before_edit_account_form'); ?>
 		</div>
 	</div>
 
+	<?php
+	/**
+	 * Hook where additional fields should be rendered.
+	 *
+	 * @since 8.7.0
+	 */
+	do_action('woocommerce_edit_account_form_fields');
+	?>
+
 	<div class="account-text-block">
 		<div class="account-title-block spb">
 			<div class="title-content va">
@@ -110,7 +129,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 				<div class="line-right line-row icon-right va">
 					<p class="form-curr-value"><a href="mailto:<?php echo esc_attr($user_info->user_email); ?>"><?php echo esc_attr($user_info->user_email); ?></a></p>
 					<p class="form-row">
-						<input type="email" class="woocommerce-Input woocommerce-Input--email input-text" name="account_email" id="account_email" autocomplete="email" value="<?php echo esc_attr($user->user_email); ?>" />
+						<input type="email" class="woocommerce-Input woocommerce-Input--email input-text" name="account_email" id="account_email" autocomplete="email" value="<?php echo esc_attr($amend_user->user_email); ?>" />
 					</p>
 					<a href="#" class="icon-a edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
 				</div>
@@ -121,9 +140,9 @@ do_action('woocommerce_before_edit_account_form'); ?>
 					<p><strong><?php esc_html_e('Mobile', ''); ?></strong></p>
 				</div>
 				<div class="line-right line-row icon-right va">
-					<p class="form-curr-value"><a href="tel:<?php echo esc_attr($user->mobile); ?>"><?php echo esc_attr($user->mobile); ?></a></p>
+					<p class="form-curr-value"><a href="tel:<?php echo esc_attr($amend_user->mobile); ?>"><?php echo esc_attr($amend_user->mobile); ?></a></p>
 					<p class="form-row">
-						<input type="tel" class="woocommerce-Input woocommerce-Input--text input-text" name="mobile" id="mobile" autocomplete="mobile" value="<?php echo esc_attr($user->mobile); ?>" />
+						<input type="tel" class="woocommerce-Input woocommerce-Input--text input-text" name="mobile" id="mobile" autocomplete="mobile" value="<?php echo esc_attr($amend_user->mobile); ?>" />
 					</p>
 					<a href="#" class="icon-a edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
 				</div>
@@ -134,9 +153,9 @@ do_action('woocommerce_before_edit_account_form'); ?>
 					<p><strong><?php esc_html_e('WhatsApp', ''); ?></strong></p>
 				</div>
 				<div class="line-right line-row icon-right va">
-					<p class="form-curr-value"><a href="https://api.whatsapp.com/send?phone=<?php echo esc_attr($user->whatsapp); ?>"><?php echo esc_attr($user->whatsapp); ?></a></p>
+					<p class="form-curr-value"><a href="https://api.whatsapp.com/send?phone=<?php echo esc_attr($amend_user->whatsapp); ?>"><?php echo esc_attr($amend_user->whatsapp); ?></a></p>
 					<p class="form-row">
-						<input type="tel" class="woocommerce-Input woocommerce-Input--text input-text" name="whatsapp" id="whatsapp" autocomplete="whatsapp" value="<?php echo esc_attr($user->whatsapp); ?>" />
+						<input type="tel" class="woocommerce-Input woocommerce-Input--text input-text" name="whatsapp" id="whatsapp" autocomplete="whatsapp" value="<?php echo esc_attr($amend_user->whatsapp); ?>" />
 					</p>
 					<a href="#" class="icon-a edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
 				</div>
@@ -147,9 +166,9 @@ do_action('woocommerce_before_edit_account_form'); ?>
 					<p><strong><?php esc_html_e('Other', '') ?></strong></p>
 				</div>
 				<div class="line-right line-row icon-right va">
-					<p class="form-curr-value"><a href="<?php echo esc_attr($user->other_tel); ?>"><?php echo esc_attr($user->other_tel); ?></a></p>
+					<p class="form-curr-value"><a href="<?php echo esc_attr($amend_user->other_tel); ?>"><?php echo esc_attr($amend_user->other_tel); ?></a></p>
 					<p class="form-row">
-						<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="other_tel" id="other_tel" autocomplete="other_tel" value="<?php echo esc_attr($user->other_tel); ?>" />
+						<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="other_tel" id="other_tel" autocomplete="other_tel" value="<?php echo esc_attr($amend_user->other_tel); ?>" />
 					</p>
 					<a href="#" class="icon-a edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
 				</div>
@@ -173,9 +192,9 @@ do_action('woocommerce_before_edit_account_form'); ?>
 					<p><strong><?php esc_html_e('LinkedIn', ''); ?></strong></p>
 				</div>
 				<div class="line-right line-row icon-right va">
-					<p class="form-curr-value"><a href="<?php echo esc_attr($user->linkedin); ?>"><?php echo esc_attr($user->linkedin); ?></a></p>
+					<p class="form-curr-value"><a href="<?php echo esc_attr($amend_user->linkedin); ?>"><?php echo esc_attr($amend_user->linkedin); ?></a></p>
 					<p class="form-row">
-						<input type="url" class="woocommerce-Input woocommerce-Input--text input-text" name="linkedin" id="linkedin" autocomplete="linkedin" value="<?php echo esc_attr($user->linkedin); ?>" />
+						<input type="url" class="woocommerce-Input woocommerce-Input--text input-text" name="linkedin" id="linkedin" autocomplete="linkedin" value="<?php echo esc_attr($amend_user->linkedin); ?>" />
 					</p>
 					<a href="#" class="icon-a edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
 				</div>
@@ -186,9 +205,9 @@ do_action('woocommerce_before_edit_account_form'); ?>
 					<p><strong><?php esc_html_e('Twitter', ''); ?></strong></p>
 				</div>
 				<div class="line-right line-row icon-right va">
-					<p class="form-curr-value"><a href="<?php echo esc_attr($user->twitter); ?>"><?php echo esc_attr($user->twitter); ?></a></p>
+					<p class="form-curr-value"><a href="<?php echo esc_attr($amend_user->twitter); ?>"><?php echo esc_attr($amend_user->twitter); ?></a></p>
 					<p class="form-row">
-						<input type="url" class="woocommerce-Input woocommerce-Input--text input-text" name="twitter" id="twitter" autocomplete="twitter" value="<?php echo esc_attr($user->twitter); ?>" />
+						<input type="url" class="woocommerce-Input woocommerce-Input--text input-text" name="twitter" id="twitter" autocomplete="twitter" value="<?php echo esc_attr($amend_user->twitter); ?>" />
 					</p>
 					<a href="#" class="icon-a edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
 				</div>
@@ -199,9 +218,9 @@ do_action('woocommerce_before_edit_account_form'); ?>
 					<p><strong><?php esc_html_e('Facebook', ''); ?></strong></p>
 				</div>
 				<div class="line-right line-row icon-right va">
-					<p class="form-curr-value"><a href="<?php echo esc_attr($user->facebook); ?>"><?php echo esc_attr($user->facebook); ?></a></p>
+					<p class="form-curr-value"><a href="<?php echo esc_attr($amend_user->facebook); ?>"><?php echo esc_attr($amend_user->facebook); ?></a></p>
 					<p class="form-row">
-						<input type="url" class="woocommerce-Input woocommerce-Input--text input-text" name="facebook" id="facebook" autocomplete="facebook" value="<?php echo esc_attr($user->facebook); ?>" />
+						<input type="url" class="woocommerce-Input woocommerce-Input--text input-text" name="facebook" id="facebook" autocomplete="facebook" value="<?php echo esc_attr($amend_user->facebook); ?>" />
 					</p>
 					<a href="#" class="icon-a edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
 				</div>
@@ -212,9 +231,9 @@ do_action('woocommerce_before_edit_account_form'); ?>
 					<p><strong><?php esc_html_e('Instagram', ''); ?></strong></p>
 				</div>
 				<div class="line-right line-row icon-right va">
-					<p class="form-curr-value"><a href="<?php echo esc_attr($user->instagram); ?>"><?php echo esc_attr($user->instagram); ?></a></p>
+					<p class="form-curr-value"><a href="<?php echo esc_attr($amend_user->instagram); ?>"><?php echo esc_attr($amend_user->instagram); ?></a></p>
 					<p class="form-row">
-						<input type="url" class="woocommerce-Input woocommerce-Input--text input-text" name="instagram" id="instagram" autocomplete="instagram" value="<?php echo esc_attr($user->instagram); ?>" />
+						<input type="url" class="woocommerce-Input woocommerce-Input--text input-text" name="instagram" id="instagram" autocomplete="instagram" value="<?php echo esc_attr($amend_user->instagram); ?>" />
 					</p>
 					<a href="#" class="icon-a edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
 				</div>
@@ -349,73 +368,23 @@ do_action('woocommerce_before_edit_account_form'); ?>
 		</div>
 	</div>
 
-	<div class="btn-block fl-end mt25">
-		<a href="#" class="btn btn-small minw"><?php esc_html_e('SAVE', ''); ?></a>
-	</div>
-
-
-	<!-- <p class="woocommerce-form-row woocommerce-form-row--first form-row form-row-first">
-	<label for="account_first_name"><?php esc_html_e('First name', 'woocommerce'); ?>&nbsp;<span class="required">*</span></label>
-	<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="account_first_name" id="account_first_name" autocomplete="given-name" value="<?php echo esc_attr($user->first_name); ?>" />
-</p>
-<p class="woocommerce-form-row woocommerce-form-row--last form-row form-row-last">
-	<label for="account_last_name"><?php esc_html_e('Last name', 'woocommerce'); ?>&nbsp;<span class="required">*</span></label>
-	<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="account_last_name" id="account_last_name" autocomplete="family-name" value="<?php echo esc_attr($user->last_name); ?>" />
-</p>
-<div class="clear"></div>
-
-<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
-	<label for="account_display_name"><?php esc_html_e('Display name', 'woocommerce'); ?>&nbsp;<span class="required">*</span></label>
-	<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="account_display_name" id="account_display_name" value="<?php echo esc_attr($user->display_name); ?>" /> <span><em><?php esc_html_e('This will be how your name will be displayed in the account section and in reviews', 'woocommerce'); ?></em></span>
-</p>
-<div class="clear"></div>
-
-<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
-	<label for="account_email"><?php esc_html_e('Email address', 'woocommerce'); ?>&nbsp;<span class="required">*</span></label>
-	<input type="email" class="woocommerce-Input woocommerce-Input--email input-text" name="account_email" id="account_email" autocomplete="email" value="<?php echo esc_attr($user->user_email); ?>" />
-</p> -->
-
-	<?php
-	/**
-	 * Hook where additional fields should be rendered.
-	 *
-	 * @since 8.7.0
-	 */
-	//do_action( 'woocommerce_edit_account_form_fields' );
-	?>
-
-	<!-- <fieldset>
-		<legend><?php esc_html_e('Password change', 'woocommerce'); ?></legend>
-
-		<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
-			<label for="password_current"><?php esc_html_e('Current password (leave blank to leave unchanged)', 'woocommerce'); ?></label>
-			<input type="password" class="woocommerce-Input woocommerce-Input--password input-text" name="password_current" id="password_current" autocomplete="off" />
-		</p>
-		<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
-			<label for="password_1"><?php esc_html_e('New password (leave blank to leave unchanged)', 'woocommerce'); ?></label>
-			<input type="password" class="woocommerce-Input woocommerce-Input--password input-text" name="password_1" id="password_1" autocomplete="off" />
-		</p>
-		<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
-			<label for="password_2"><?php esc_html_e('Confirm new password', 'woocommerce'); ?></label>
-			<input type="password" class="woocommerce-Input woocommerce-Input--password input-text" name="password_2" id="password_2" autocomplete="off" />
-		</p>
-	</fieldset>
-	<div class="clear"></div> -->
-
 	<?php
 	/**
 	 * My Account edit account form.
 	 *
 	 * @since 2.6.0
 	 */
-	//do_action( 'woocommerce_edit_account_form' );
+	do_action('woocommerce_edit_account_form');
 	?>
 
-	<p>
-		<?php wp_nonce_field('save_account_details', 'save-account-details-nonce'); ?>
-		<button type="submit" class="woocommerce-Button button<?php echo esc_attr(wc_wp_theme_get_element_class_name('button') ? ' ' . wc_wp_theme_get_element_class_name('button') : ''); ?>" name="save_account_details" value="<?php esc_attr_e('Save changes', 'woocommerce'); ?>"><?php esc_html_e('Save changes', 'woocommerce'); ?></button>
-		<input type="hidden" name="action" value="save_account_details" />
-	</p>
+	<div class="btn-block fl-end mt25">
+
+		<p>
+			<?php wp_nonce_field('save_account_details', 'save-account-details-nonce'); ?>
+			<button type="submit" class="btn btn-small minw <?php echo esc_attr(wc_wp_theme_get_element_class_name('button') ? ' ' . wc_wp_theme_get_element_class_name('button') : ''); ?>" name="save_account_details" value="<?php esc_attr_e('Save changes', ''); ?>"><?php esc_html_e('Save', ''); ?></button>
+			<input type="hidden" name="action" value="save_account_details" />
+		</p>
+	</div>
 
 	<?php do_action('woocommerce_edit_account_form_end'); ?>
 </form>

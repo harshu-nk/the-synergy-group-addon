@@ -19,7 +19,7 @@ class WooAccountCustomizations
                 $template_name
             )
         );
-        
+
         if (! $template && file_exists($plugin_path . $template_name))
             $template = $plugin_path . $template_name;
 
@@ -76,47 +76,69 @@ class WooAccountCustomizations
         // bp_get_template_part('members/single/profile/change-avatar');
     }
 
-    function tsg_save_custom_fields_my_account( $user_id ) {
-        $account_bio = ! empty( $_POST['account_bio'] ) ? wc_clean( wp_unslash( $_POST['account_bio'] ) ) : '';
-        if ( $account_bio ) {
-            update_user_meta( $user_id, 'description', $account_bio );
+    function tsg_save_custom_fields_my_account($user_id)
+    {
+        $account_bio = ! empty($_POST['account_bio']) ? wc_clean(wp_unslash($_POST['account_bio'])) : '';
+        if ($account_bio) {
+            update_user_meta($user_id, 'description', $account_bio);
         }
 
-        $mobile = ! empty( $_POST['mobile'] ) ? wc_clean( wp_unslash( $_POST['mobile'] ) ) : '';
-        if ( $mobile ) {
-            update_user_meta( $user_id, 'mobile', $mobile );
+        $mobile = ! empty($_POST['mobile']) ? wc_clean(wp_unslash($_POST['mobile'])) : '';
+        if ($mobile) {
+            $bpFieldUpdated = xprofile_set_field_data('mobile', $user_id, $mobile);
+            if (!$bpFieldUpdated) {
+                update_user_meta($user_id, 'mobile', $mobile);
+            }
         }
 
-        $whatsapp = ! empty( $_POST['whatsapp'] ) ? wc_clean( wp_unslash( $_POST['whatsapp'] ) ) : '';
-        if ( $whatsapp ) {
-            update_user_meta( $user_id, 'whatsapp', $whatsapp );
+        $whatsapp = ! empty($_POST['whatsapp']) ? wc_clean(wp_unslash($_POST['whatsapp'])) : '';
+        if ($whatsapp) {
+            $bpFieldUpdated = xprofile_set_field_data('whatsapp', $user_id, $mobile);
+            if (!$bpFieldUpdated) {
+                update_user_meta($user_id, 'whatsapp', $whatsapp);
+            }
         }
 
-        $other_tel = ! empty( $_POST['other_tel'] ) ? wc_clean( wp_unslash( $_POST['other_tel'] ) ) : '';
-        if ( $other_tel ) {
-            update_user_meta( $user_id, 'other_tel', $other_tel );
+        $other_tel = ! empty($_POST['other_tel']) ? wc_clean(wp_unslash($_POST['other_tel'])) : '';
+        if ($other_tel) {
+            $bpFieldUpdated = xprofile_set_field_data('other_tel', $user_id, $mobile);
+            if (!$bpFieldUpdated) {
+                update_user_meta($user_id, 'other_tel', $other_tel);
+            }
         }
 
-        $linkedin = ! empty( $_POST['linkedin'] ) ? wc_clean( wp_unslash( $_POST['linkedin'] ) ) : '';
-        if ( $linkedin ) {
-            update_user_meta( $user_id, 'linkedin', $linkedin );
+        $linkedin = ! empty($_POST['linkedin']) ? wc_clean(wp_unslash($_POST['linkedin'])) : '';
+        if ($linkedin) {
+            $bpFieldUpdated = xprofile_set_field_data('linkedin', $user_id, $mobile);
+            if (!$bpFieldUpdated) {
+                update_user_meta($user_id, 'linkedin', $linkedin);
+            }
         }
 
-        $twitter = ! empty( $_POST['twitter'] ) ? wc_clean( wp_unslash( $_POST['twitter'] ) ) : '';
-        if ( $twitter ) {
-            update_user_meta( $user_id, 'twitter', $twitter );
+        $twitter = ! empty($_POST['twitter']) ? wc_clean(wp_unslash($_POST['twitter'])) : '';
+        if ($twitter) {
+            $bpFieldUpdated = xprofile_set_field_data('twitter', $user_id, $mobile);
+            if (!$bpFieldUpdated) {
+                update_user_meta($user_id, 'twitter', $twitter);
+            }
         }
 
-        $facebook = ! empty( $_POST['facebook'] ) ? wc_clean( wp_unslash( $_POST['facebook'] ) ) : '';
-        if ( $facebook ) {
-            update_user_meta( $user_id, 'facebook', $facebook );
+        $facebook = ! empty($_POST['facebook']) ? wc_clean(wp_unslash($_POST['facebook'])) : '';
+        if ($facebook) {
+            $bpFieldUpdated = xprofile_set_field_data('facebook', $user_id, $mobile);
+            if (!$bpFieldUpdated) {
+                update_user_meta($user_id, 'facebook', $facebook);
+            }
         }
 
-        $instagram = ! empty( $_POST['instagram'] ) ? wc_clean( wp_unslash( $_POST['instagram'] ) ) : '';
-        if ( $instagram ) {
-            update_user_meta( $user_id, 'instagram', $instagram );
+        $instagram = ! empty($_POST['instagram']) ? wc_clean(wp_unslash($_POST['instagram'])) : '';
+        if ($instagram) {
+            $bpFieldUpdated = xprofile_set_field_data('twitter', $user_id, $mobile);
+            if (!$bpFieldUpdated) {
+                update_user_meta($user_id, 'twitter', $instagram);
+            }
         }
-     }
+    }
 
     /**
      * Handle BuddyPress avatar upload on WooCommerce Edit Account form submission.
