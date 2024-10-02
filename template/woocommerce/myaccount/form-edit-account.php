@@ -36,7 +36,6 @@ do_action('woocommerce_before_edit_account_form'); ?>
 
 	<?php do_action('woocommerce_edit_account_form_start'); ?>
 
-
 	<div class="account-text-block">
 		<div class="account-title-block va">
 			<img width="45" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/avatar_profile.svg" class="mr2" alt="avatar icon" />

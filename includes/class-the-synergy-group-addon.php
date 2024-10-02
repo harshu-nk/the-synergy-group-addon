@@ -123,8 +123,11 @@ class The_Synergy_Group_Addon {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-the-synergy-group-addon-public.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/customizations/woo-account-customization.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/notification/notifications.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/services/services.php';
 
 		$this->loader = new The_Synergy_Group_Addon_Loader();
+		
+		new Services();
 
 	}
 
@@ -182,9 +185,10 @@ class The_Synergy_Group_Addon {
 		$this->loader->add_action('woocommerce_account_menu_items', $woo_customizations, 'my_account_tabs_customize' );
 		$this->loader->add_action('woocommerce_before_edit_account_form', $woo_customizations, 'bp_avatar_on_wc_edit_account', 20 );
 		$this->loader->add_action('woocommerce_save_account_details', $woo_customizations, 'bp_handle_avatar_upload_in_wc_account' );
-		$this->loader->add_action('init', $woo_customizations, 'tsg_add_my_account_notifications_endpoint');
-		$this->loader->add_action('query_vars', $woo_customizations, 'tsg_notifications_query_vars');
+		$this->loader->add_action('init', $woo_customizations, 'tsg_add_my_account_tab_endpoints');
+		$this->loader->add_action('query_vars', $woo_customizations, 'tsg_my_acc_tabs_query_vars');
 		$this->loader->add_action('woocommerce_account_notifications_endpoint', $woo_customizations, 'tsg_notifications_tab_content');
+		$this->loader->add_action('woocommerce_account_service-offering_endpoint', $woo_customizations, 'tsg_service_offering_tab_content');
 		$this->loader->add_action( 'woocommerce_save_account_details', $woo_customizations, 'tsg_save_custom_fields_my_account' );
 
 		// Activity Log on Messages / Activities Tab

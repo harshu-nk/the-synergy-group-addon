@@ -70,6 +70,7 @@ class The_Synergy_Group_Addon_Public {
 		}
 		if(is_account_page()){
 			wp_enqueue_style( $this->plugin_name . '-my-account', plugin_dir_url( __FILE__ ) . 'css/myaccount.css', array(), $this->version, 'all' );
+			wp_enqueue_style( $this->plugin_name . '-my-account-select', plugin_dir_url( __FILE__ ) . 'css/select.css', array(), $this->version, 'all' );
 		}
 	}
 

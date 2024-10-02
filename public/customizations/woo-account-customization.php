@@ -29,14 +29,16 @@ class WooAccountCustomizations
         return $template;
     }
 
-    function tsg_add_my_account_notifications_endpoint()
+    function tsg_add_my_account_tab_endpoints()
     {
         add_rewrite_endpoint('notifications', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('service-offering', EP_ROOT | EP_PAGES);
     }
 
-    function tsg_notifications_query_vars($vars)
+    function tsg_my_acc_tabs_query_vars($vars)
     {
         $vars[] = 'notifications';
+        $vars[] = 'service-offering';
         return $vars;
     }
 
@@ -55,6 +57,7 @@ class WooAccountCustomizations
             $notifications_tab_title = __('Activity / Messages', 'the-synergy-group-addon');
         }
         $items['notifications'] = $notifications_tab_title;
+        $items['service-offering'] = __('Service Offering', 'the-synergy-group-addon');
         return $items;
     }
 
@@ -65,6 +68,10 @@ class WooAccountCustomizations
         } else {
             do_action('woo_account_user_activities_tab_content'); // For User
         }
+    }
+
+    function tsg_service_offering_tab_content() : void {
+        wc_get_template( 'myaccount/service-offering.php', array() );
     }
 
     /**
