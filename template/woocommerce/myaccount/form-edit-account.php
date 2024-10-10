@@ -22,13 +22,17 @@ $user_info = wp_get_current_user();
 $amend_user = new WP_User($user_info);
 $user_data_set = array('Mobile', 'Whatsapp', 'Other Tel', 'Linkedin', 'Twitter', 'Facebook', 'Instagram');
 
-foreach($user_data_set as $field_name){
+foreach ($user_data_set as $field_name) {
 	$field_value = wp_strip_all_tags(xprofile_get_field_data($field_name, $user_info->ID));
 	$field_name = sanitize_title($field_name);
-	if($field_value){
+	if ($field_value) {
 		$amend_user->__set($field_name, $field_value);
 	}
 }
+
+$referral_code = (new Referrals)->generateRefCode($user_info->ID);
+$referral_url = site_url('/register') . '?ref=' . $referral_code;
+$referred_users = get_user_meta($user_info->ID, 'referred_users', true);
 
 do_action('woocommerce_before_edit_account_form'); ?>
 
@@ -39,7 +43,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 	<div class="account-text-block">
 		<div class="account-title-block va">
 			<img width="45" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/avatar_profile.svg" class="mr2" alt="avatar icon" />
-			<h5><?php esc_html_e('Main', ''); ?></h5>
+			<h5><?php esc_html_e('Main', 'the-synergy-group-addon'); ?></h5>
 		</div>
 
 		<div class="fl mt25">
@@ -48,7 +52,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 
 					<div class="block-line spb">
 						<div class="line-left">
-							<p><strong><?php esc_html_e('First Name', '') ?></strong></p>
+							<p><strong><?php esc_html_e('First Name', 'the-synergy-group-addon') ?></strong></p>
 						</div>
 						<div class="line-right line-row icon-right va">
 							<p class="name-block form-curr-value"><?php echo $user_info->first_name; ?></p>
@@ -61,7 +65,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 
 					<div class="block-line spb">
 						<div class="line-left">
-							<p><strong><?php esc_html_e('Surname', ''); ?></strong></p>
+							<p><strong><?php esc_html_e('Surname', 'the-synergy-group-addon'); ?></strong></p>
 						</div>
 						<div class="line-right line-row icon-right va">
 							<p class="name-block form-curr-value"><?php echo $user_info->last_name; ?></p>
@@ -74,7 +78,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 
 					<div class="block-line spb">
 						<div class="line-left">
-							<p><strong><?php esc_html_e('Bio', '') ?></strong></p>
+							<p><strong><?php esc_html_e('Bio', 'the-synergy-group-addon') ?></strong></p>
 						</div>
 						<div class="line-right line-row icon-right va">
 							<a href="#" class="icon-a bio-edit-pencil edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
@@ -93,10 +97,9 @@ do_action('woocommerce_before_edit_account_form'); ?>
 			<div class="profile-photo-block">
 				<div class="profile-photo">
 					<img src="<?php echo esc_url(bp_core_fetch_avatar(array('item_id' => get_current_user_id(), 'type' => 'full', 'width' => '150', 'html' => false))); ?>" class="mr2" alt="">
-					<!-- <img width="80" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/empty_pic.svg" class="mr2" alt="empty photo icon" /> -->
 				</div>
 				<div class="btn-block jc mt20">
-					<a href="#" class="btn style2 btn-small w100"><?php esc_html_e('ADD PIC', ''); ?></a>
+					<a href="#" class="btn style2 btn-small w100"><?php esc_html_e('ADD PIC', 'the-synergy-group-addon'); ?></a>
 				</div>
 			</div>
 		</div>
@@ -115,7 +118,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 		<div class="account-title-block spb">
 			<div class="title-content va">
 				<img width="42" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/message2.svg" alt="recent messages icon" />
-				<h5><?php esc_html_e('Contact Information', '') ?></h5>
+				<h5><?php esc_html_e('Contact Information', 'the-synergy-group-addon') ?></h5>
 			</div>
 		</div>
 
@@ -123,7 +126,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 
 			<div class="block-line spb">
 				<div class="line-left">
-					<p><strong>Email</strong></p>
+					<p><strong><?php _e('Email', 'the-synergy-group-addon'); ?></strong></p>
 				</div>
 				<div class="line-right line-row icon-right va">
 					<p class="form-curr-value"><a href="mailto:<?php echo esc_attr($user_info->user_email); ?>"><?php echo esc_attr($user_info->user_email); ?></a></p>
@@ -136,7 +139,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 
 			<div class="block-line spb">
 				<div class="line-left">
-					<p><strong><?php esc_html_e('Mobile', ''); ?></strong></p>
+					<p><strong><?php esc_html_e('Mobile', 'the-synergy-group-addon'); ?></strong></p>
 				</div>
 				<div class="line-right line-row icon-right va">
 					<p class="form-curr-value"><a href="tel:<?php echo esc_attr($amend_user->mobile); ?>"><?php echo esc_attr($amend_user->mobile); ?></a></p>
@@ -149,7 +152,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 
 			<div class="block-line spb">
 				<div class="line-left">
-					<p><strong><?php esc_html_e('WhatsApp', ''); ?></strong></p>
+					<p><strong><?php esc_html_e('WhatsApp', 'the-synergy-group-addon'); ?></strong></p>
 				</div>
 				<div class="line-right line-row icon-right va">
 					<p class="form-curr-value"><a href="https://api.whatsapp.com/send?phone=<?php echo esc_attr($amend_user->whatsapp); ?>"><?php echo esc_attr($amend_user->whatsapp); ?></a></p>
@@ -162,7 +165,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 
 			<div class="block-line spb">
 				<div class="line-left">
-					<p><strong><?php esc_html_e('Other', '') ?></strong></p>
+					<p><strong><?php esc_html_e('Other', 'the-synergy-group-addon') ?></strong></p>
 				</div>
 				<div class="line-right line-row icon-right va">
 					<p class="form-curr-value"><a href="<?php echo esc_attr($amend_user->other_tel); ?>"><?php echo esc_attr($amend_user->other_tel); ?></a></p>
@@ -180,7 +183,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 		<div class="account-title-block spb">
 			<div class="title-content va">
 				<img width="47" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/social_media.svg" alt="social media icon" />
-				<h5><?php esc_html_e('Social Media', ''); ?></h5>
+				<h5><?php esc_html_e('Social Media', 'the-synergy-group-addon'); ?></h5>
 			</div>
 		</div>
 
@@ -188,7 +191,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 
 			<div class="block-line spb">
 				<div class="line-left">
-					<p><strong><?php esc_html_e('LinkedIn', ''); ?></strong></p>
+					<p><strong><?php esc_html_e('LinkedIn', 'the-synergy-group-addon'); ?></strong></p>
 				</div>
 				<div class="line-right line-row icon-right va">
 					<p class="form-curr-value"><a href="<?php echo esc_attr($amend_user->linkedin); ?>"><?php echo esc_attr($amend_user->linkedin); ?></a></p>
@@ -201,7 +204,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 
 			<div class="block-line spb">
 				<div class="line-left">
-					<p><strong><?php esc_html_e('Twitter', ''); ?></strong></p>
+					<p><strong><?php esc_html_e('Twitter', 'the-synergy-group-addon'); ?></strong></p>
 				</div>
 				<div class="line-right line-row icon-right va">
 					<p class="form-curr-value"><a href="<?php echo esc_attr($amend_user->twitter); ?>"><?php echo esc_attr($amend_user->twitter); ?></a></p>
@@ -214,7 +217,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 
 			<div class="block-line spb">
 				<div class="line-left">
-					<p><strong><?php esc_html_e('Facebook', ''); ?></strong></p>
+					<p><strong><?php esc_html_e('Facebook', 'the-synergy-group-addon'); ?></strong></p>
 				</div>
 				<div class="line-right line-row icon-right va">
 					<p class="form-curr-value"><a href="<?php echo esc_attr($amend_user->facebook); ?>"><?php echo esc_attr($amend_user->facebook); ?></a></p>
@@ -227,7 +230,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 
 			<div class="block-line spb">
 				<div class="line-left">
-					<p><strong><?php esc_html_e('Instagram', ''); ?></strong></p>
+					<p><strong><?php esc_html_e('Instagram', 'the-synergy-group-addon'); ?></strong></p>
 				</div>
 				<div class="line-right line-row icon-right va">
 					<p class="form-curr-value"><a href="<?php echo esc_attr($amend_user->instagram); ?>"><?php echo esc_attr($amend_user->instagram); ?></a></p>
@@ -245,7 +248,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 		<div class="account-title-block borderb spb">
 			<div class="title-content va">
 				<img width="55" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/certifications.svg" alt="certifications icon" />
-				<h5><?php esc_html_e('Certifications and Awards', ''); ?></h5>
+				<h5><?php esc_html_e('Certifications and Awards', 'the-synergy-group-addon'); ?></h5>
 			</div>
 		</div>
 
@@ -258,7 +261,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 						<div class="award-icon">
 							<img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/award.svg" alt="award icon" />
 						</div>
-						<p class="fs-20 mt18"><?php esc_html_e('Microsoft Senior Professional Certificate', ''); ?></p>
+						<p class="fs-20 mt18"><?php esc_html_e('Microsoft Senior Professional Certificate', 'the-synergy-group-addon'); ?></p>
 					</div>
 				</div>
 			</div>
@@ -274,7 +277,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 									}
 								</style>
 							</defs>
-							<title>plus</title>
+							<title><?php _e('plus', 'the-synergy-group-addon'); ?></title>
 							<path class="cls-1" d="M30.84,48.9H36.7V37.45H48.07V31.53H36.7V20.08H30.84V31.53H19.47v5.92H30.84ZM33.77,68a32.07,32.07,0,0,1-13-2.64A33.5,33.5,0,0,1,3.13,47.57,32.72,32.72,0,0,1,.51,34.49,32.67,32.67,0,0,1,3.13,21.42,33.59,33.59,0,0,1,20.79,3.61,32.12,32.12,0,0,1,33.77,1a32.07,32.07,0,0,1,13,2.64A33.56,33.56,0,0,1,64.41,21.42,32.67,32.67,0,0,1,67,34.49a32.75,32.75,0,0,1-2.62,13.08,33.5,33.5,0,0,1-17.67,17.8A32,32,0,0,1,33.77,68Zm0-5.91a26.33,26.33,0,0,0,19.42-8,26.76,26.76,0,0,0,8-19.57,26.76,26.76,0,0,0-8-19.57,26.36,26.36,0,0,0-19.42-8,26.36,26.36,0,0,0-19.42,8,26.76,26.76,0,0,0-8,19.57,26.76,26.76,0,0,0,8,19.57A26.33,26.33,0,0,0,33.77,62.1Z" transform="translate(-0.51 -0.97)" />
 						</svg>
 					</a>
@@ -288,7 +291,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 		<div class="account-title-block spb">
 			<div class="title-content va">
 				<img width="61" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/affiliate_status.svg" alt="affiliate status icon" />
-				<h5><?php esc_html_e('Affiliate Status', ''); ?></h5>
+				<h5><?php esc_html_e('Affiliate Status', 'the-synergy-group-addon'); ?></h5>
 			</div>
 		</div>
 
@@ -296,7 +299,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 
 			<div class="block-line spb">
 				<div class="line-left">
-					<p><strong><?php esc_html_e('Affiliate Status', ''); ?></strong></p>
+					<p><strong><?php esc_html_e('Affiliate Status', 'the-synergy-group-addon'); ?></strong></p>
 				</div>
 				<div class="line-right icon-right va">
 					<p><?php esc_html_e('Active', ''); ?></p>
@@ -306,20 +309,20 @@ do_action('woocommerce_before_edit_account_form'); ?>
 
 			<div class="block-line spb">
 				<div class="line-left">
-					<p><strong><?php esc_html_e('Affiliate code', ''); ?></strong></p>
+					<p><strong><?php esc_html_e('Affiliate code', 'the-synergy-group-addon'); ?></strong></p>
 				</div>
 				<div class="line-right icon-right va">
-					<p>879871230094444</p>
+					<p><?php echo esc_attr($referral_code); ?></p>
 					<a href="#" class="icon-a edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/check_small.svg" alt="small check icon" /></a>
 				</div>
 			</div>
 
 			<div class="block-line spb">
 				<div class="line-left">
-					<p><strong><?php esc_html_e('Affiliate link', ''); ?> </strong></p>
+					<p><strong><?php esc_html_e('Affiliate link', 'the-synergy-group-addon'); ?> </strong></p>
 				</div>
 				<div class="line-right icon-right va">
-					<p><a href="thesynergygroup.ch/230094444">thesynergygroup.ch/230094444</a></p>
+					<p><a href="<?php echo esc_attr($referral_url); ?>" target="_blank"><?php echo esc_attr($referral_url); ?></a></p>
 					<a href="#" class="icon-a edit-pencil"><img width="23" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/copy.svg" alt="copy icon" /></a>
 				</div>
 			</div>
@@ -331,39 +334,34 @@ do_action('woocommerce_before_edit_account_form'); ?>
 		<div class="account-title-block spb">
 			<div class="title-content va">
 				<img width="55" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/members.svg" alt="referred members icon" />
-				<h5><?php esc_html_e('Referred Members', ''); ?></h5>
+				<h5><?php esc_html_e('Referred Members', 'the-synergy-group-addon'); ?></h5>
 			</div>
 		</div>
 
 		<div class="block-lines media-full big-p mt2">
 
-			<div class="block-line spb">
+			<?php if (!empty($referred_users)) {
+				foreach ($referred_users as $referred_user_id) {
+					$ref_user_info = get_userdata($referred_user_id); ?>
+					<div class="block-line spb">
+						<div class="line-left va">
+							<div class="line-icon wauto">
+								<img width="37" src="<?php echo esc_url(bp_core_fetch_avatar(array('item_id' => $referred_user_id, 'type' => 'full', 'width' => '150', 'html' => false))); ?>" alt="member icon" />
+							</div>
+							<p><?php echo esc_html($user_info->display_name); ?></p>
+						</div>
+					</div>
+				<?php } ?>
+			<?php }else{ ?>
+				<div class="block-line spb">
 				<div class="line-left va">
 					<div class="line-icon wauto">
 						<img width="37" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/member.svg" alt="member icon" />
 					</div>
-					<p>John Berdenson</p>
+					<p><?php _e('No Users yet registered as your referrals', 'the-synergy-group-addon'); ?></p>
 				</div>
 			</div>
-
-			<div class="block-line spb">
-				<div class="line-left va">
-					<div class="line-icon wauto">
-						<img width="37" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/member.svg" alt="member icon" />
-					</div>
-					<p>Sarah Parker</p>
-				</div>
-			</div>
-
-			<div class="block-line spb">
-				<div class="line-left va">
-					<div class="line-icon wauto">
-						<img width="37" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/member.svg" alt="member icon" />
-					</div>
-					<p>Anna Terro</p>
-				</div>
-			</div>
-
+			<?php } ?>
 		</div>
 	</div>
 
@@ -380,7 +378,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 
 		<p>
 			<?php wp_nonce_field('save_account_details', 'save-account-details-nonce'); ?>
-			<button type="submit" class="btn btn-small minw <?php echo esc_attr(wc_wp_theme_get_element_class_name('button') ? ' ' . wc_wp_theme_get_element_class_name('button') : ''); ?>" name="save_account_details" value="<?php esc_attr_e('Save changes', ''); ?>"><?php esc_html_e('Save', ''); ?></button>
+			<button type="submit" class="btn btn-small minw <?php echo esc_attr(wc_wp_theme_get_element_class_name('button') ? ' ' . wc_wp_theme_get_element_class_name('button') : ''); ?>" name="save_account_details" value="<?php esc_attr_e('Save changes', 'the-synergy-group-addon'); ?>"><?php esc_html_e('Save', 'the-synergy-group-addon'); ?></button>
 			<input type="hidden" name="action" value="save_account_details" />
 		</p>
 	</div>

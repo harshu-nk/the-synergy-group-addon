@@ -5,49 +5,224 @@ class Notifier
     function my_account_admin_notifications(): void
     {
 ?>
-        <form id="communications-form" method="post" enctype="multipart/form-data">
-            <h3><?php _e('Communications', 'textdomain'); ?></h3>
 
-            <!-- Select Members Field -->
-            <div>
-                <label for="select-members"><?php _e('Select Members', 'textdomain'); ?></label>
-                <select id="select-members" name="members[]" multiple="multiple"></select>
+
+        <form id="communications-form" class="light-style" method="post" enctype="multipart/form-data">
+
+
+            <div class="account-text-block">
+                <div class="account-title-block spb">
+                    <div class="title-content va">
+                        <img width="48" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/bell.svg" alt="bell icon" />
+                        <h5><?php _e('Manage Alerts', 'the-synergy-group-addon'); ?></h5>
+                    </div>
+                </div>
+
+                <div class="block-lines small-lines mt2">
+                    <div class="block-line spb">
+                        <div class="line-left">
+                            <p><?php _e('Transaction volumes', 'the-synergy-group-addon'); ?></p>
+                        </div>
+                        <div class="line-right va btns-part">
+                            <div class="btn-block">
+                                <a href="#" class="btn style2 minw2"><?php _e('Setup alert', 'the-synergy-group-addon'); ?></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="block-line spb">
+                        <div class="line-left">
+                            <p><?php _e('Member activities', 'the-synergy-group-addon'); ?></p>
+                        </div>
+                        <div class="line-right va btns-part">
+                            <div class="btn-block">
+                                <a href="#" class="btn style2 minw2"><?php _e('Setup alert', 'the-synergy-group-addon'); ?></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h6><strong><?php _e('Affliate Activity Alerts', 'the-synergy-group-addon'); ?>:</strong></h6>
+                <div class="block-lines small-lines">
+                    <div class="block-line spb">
+                        <div class="line-left">
+                            <p><?php _e('Affiliates earn fees', 'the-synergy-group-addon'); ?></p>
+                        </div>
+                        <div class="line-right va btns-part">
+                            <div class="btn-block">
+                                <a href="#" class="btn style2 minw2"><?php _e('Setup alert', 'the-synergy-group-addon'); ?></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="block-line spb">
+                        <div class="line-left">
+                            <p><?php _e('Referred members join or upgrade their plans', 'the-synergy-group-addon'); ?></p>
+                        </div>
+                        <div class="line-right va btns-part">
+                            <div class="btn-block">
+                                <a href="#" class="btn style2 minw2"><?php _e('Setup alert', 'the-synergy-group-addon'); ?></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="block-line spb">
+                        <div class="line-left">
+                            <p><?php _e('Aaffiliate-specific milestones alerts', 'the-synergy-group-addon'); ?></p>
+                        </div>
+                        <div class="line-right va btns-part">
+                            <div class="btn-block">
+                                <a href="#" class="btn style2 minw2"><?php _e('Setup alert', 'the-synergy-group-addon'); ?></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Checkboxes for options -->
+            <!-- Form Code -->
+
+            <div class="account-text-block">
+                <div class="account-title-block spb">
+                    <div class="title-content va">
+                        <img width="45" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/communications.svg" alt="communications icon" />
+                        <h5><?php _e('Communications', 'the-synergy-group-addon'); ?></h5>
+                    </div>
+                </div>
+
+                <!-- <div class="block-lines small-lines mt2">
+                  <div class="block-line spb">
+                    <div class="line-left">
+                      <p>Select Members</p>
+                    </div>
+                    <div class="line-right input-field">
+                      <div class="select multi-select">
+                        <p class="select-name"><span>Select</span></p>
+                        <input type="hidden" id="number-members" name="number-members" value="" />
+                        <ul class="select-list">
+                          <li>John</li>
+                          <li>Mike</li>
+                          <li>Lisa</li>
+                          <li>Jessy</li>
+                          <li>Robert</li>
+                          <li>Michael</li>
+                          <li>Richard</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div> -->
+
+
+                <div class="block-lines small-lines mt2">
+                    <div class="block-line spb">
+                        <div class="line-left">
+                            <p><?php _e('Select Members', 'the-synergy-group-addon'); ?></p>
+                        </div>
+                        <div class="line-right input-field">
+                            <select id="select-members" name="members[]" multiple="multiple" required></select>
+                            <!-- <div class="select">
+                        <p class="select-name"><span>Select</span></p>
+                        <input type="hidden" id="number-members" name="number-members" value="" />
+                        <ul class="select-list">
+                          <li>1</li>
+                          <li>2</li>
+                          <li>3</li>
+                          <li>4</li>
+                          <li>5</li>
+                          <li>6</li>
+                          <li>7</li>
+                          <li>8</li>
+                          <li>9</li>
+                          <li>10</li>
+                          <li>More</li>
+                        </ul>
+                      </div> -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checkbox-block checks-first">
+                    <input type="hidden" id="updates" name="updates" class="hidfield req" value="updates on exchange rates" />
+                    <div class="checks multi">
+                        <label for="updates1" class="check-container"><span class="span-text"><?php _e('Updates on exchange rates', 'the-synergy-group-addon'); ?></span>
+                            <input type="radio" id="updates1" value="exchange-rate-updates" name="notification-type" checked required /> <span class="checkmark"></span>
+                        </label>
+                        <label for="updates2" class="check-container"><span class="span-text"><?php _e('Policies updates', 'the-synergy-group-addon'); ?></span>
+                            <input type="radio" id="updates2" name="notification-type" value="policies-update" required /> <span class="checkmark"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="spb mt30">
+                    <h6><strong>Greeting:</strong></h6>
+                    <div class="btns-part va">
+                        <div class="btn-block">
+                            <a href="#" class="btn btn-small style2"><?php _e('Plain text', 'the-synergy-group-addon'); ?></a>
+                        </div>
+                        <div class="btn-block">
+                            <a href="#" class="btn btn-small style4"><?php _e('HTML', 'the-synergy-group-addon'); ?></a>
+                        </div>
+                    </div>
+                </div>
+                <textarea id="greeting" name="greeting" class="small-textarea mt20" placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod "></textarea>
+
+                <h6><strong><?php _e('Subject', 'the-synergy-group-addon'); ?>:</strong></h6>
+                <textarea id="greeting" name="subject" class="small-textarea mt20" placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do " required></textarea>
+
+                <h6><strong><?php _e('Body', 'the-synergy-group-addon'); ?>:</strong></h6>
+                <textarea id="greeting" name="body" class="mt20" placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt  consectetur adipiscing elit," required></textarea>
+
+                <h6><strong><?php _e('Attachment', 'the-synergy-group-addon'); ?>:</strong></h6>
+                <div class="block-lines">
+                    <div class="block-line two-btns spb">
+                        <div class="btn-block">
+                            <a href="#" class="btn style2 minw"><?php _e('Browse', 'the-synergy-group-addon'); ?></a>
+                        </div>
+                        <div class="btn-block">
+                            <!-- <a href="#" class="btn minw">Send Now</a> -->
+                            <button type="submit" class="btn minw" id="send-now"><?php _e('Send Now', 'the-synergy-group-addon'); ?></button>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="btn-block fl-end mt25">
+                <a href="#" class="btn btn-small minw"><?php _e('SAVE', 'the-synergy-group-addon'); ?></a>
+            </div>
+            <!-- End - Form Code -->
+
+            <!-- <div>
+                <label for="select-members"><?php _e('Select Members', 'the-synergy-group-addon'); ?></label>
+                <select id="select-members" name="members[]" multiple="multiple"></select>
+            </div>
             <div>
                 <input type="radio" id="exchange-rate-updates" value="exchange-rate-updates" name="notification-type">
-                <label for="exchange-rate-updates"><?php _e('Updates on exchange rates', 'textdomain'); ?></label>
+                <label for="exchange-rate-updates"><?php _e('Updates on exchange rates', 'the-synergy-group-addon'); ?></label>
             </div>
             <div>
                 <input type="radio" id="policies-updates" value="policies-update" name="notification-type">
-                <label for="policies-updates"><?php _e('Policies updates', 'textdomain'); ?></label>
+                <label for="policies-updates"><?php _e('Policies updates', 'the-synergy-group-addon'); ?></label>
             </div>
-
-            <!-- Greeting -->
             <div>
-                <label for="greeting"><?php _e('Greeting:', 'textdomain'); ?></label>
+                <label for="greeting"><?php _e('Greeting:', 'the-synergy-group-addon'); ?></label>
                 <textarea id="greeting" name="greeting"></textarea>
             </div>
-            <!-- Subject -->
             <div>
-                <label for="subject"><?php _e('Subject:', 'textdomain'); ?></label>
+                <label for="subject"><?php _e('Subject:', 'the-synergy-group-addon'); ?></label>
                 <input type="text" id="subject" name="subject">
             </div>
-            <!-- Body -->
             <div>
-                <label for="body"><?php _e('Body:', 'textdomain'); ?></label>
+                <label for="body"><?php _e('Body:', 'the-synergy-group-addon'); ?></label>
                 <textarea id="body" name="body"></textarea>
             </div>
-            <!-- Attachment -->
             <div>
-                <label for="attachment"><?php _e('Attachment:', 'textdomain'); ?></label>
+                <label for="attachment"><?php _e('Attachment:', 'the-synergy-group-addon'); ?></label>
                 <input type="file" id="attachment" name="attachment">
             </div>
-            <!-- Submit Button -->
             <div>
-                <button type="submit" id="send-now"><?php _e('Send Now', 'textdomain'); ?></button>
-            </div>
+                <button type="submit" id="send-now"><?php _e('Send Now', 'the-synergy-group-addon'); ?></button>
+            </div> -->
         </form>
     <?php
     }
@@ -120,7 +295,7 @@ class Notifier
     // View for User's Messages Tab
     function my_account_user_notifications(): void
     {
-		set_current_screen('dashboard');
+        // set_current_screen('dashboard');
 
         do_action('wc_account_before_recent_messages');
 

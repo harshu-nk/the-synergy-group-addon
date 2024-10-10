@@ -1,8 +1,15 @@
 <?php
+// namespace TSG\Customizations;
+
+use Simple_History\Log_Initiators;
+
 class WooAccountCustomizations
 {
 
-    function __construct() {}
+    function __construct()
+    {
+        add_action('template_redirect', array($this, 'save_custom_forms'));
+    }
 
     function woo_adon_plugin_template($template, $template_name, $template_path)
     {
@@ -33,12 +40,14 @@ class WooAccountCustomizations
     {
         add_rewrite_endpoint('notifications', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('service-offering', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('synergy-network-exchange-settings', EP_ROOT | EP_PAGES);
     }
 
     function tsg_my_acc_tabs_query_vars($vars)
     {
         $vars[] = 'notifications';
         $vars[] = 'service-offering';
+        $vars[] = 'synergy-network-exchange-settings';
         return $vars;
     }
 
@@ -53,11 +62,19 @@ class WooAccountCustomizations
         // New Tabs
         if (current_user_can('manage_options')) {
             $notifications_tab_title = __('Notifications', 'the-synergy-group-addon');
+            $sf_overview_tab_title = __('SF Exchange Settings', 'the-synergy-group-addon');
         } else {
             $notifications_tab_title = __('Activity / Messages', 'the-synergy-group-addon');
+            $sf_overview_tab_title = __('Synergy Francs', 'the-synergy-group-addon');
         }
         $items['notifications'] = $notifications_tab_title;
         $items['service-offering'] = __('Service Offering', 'the-synergy-group-addon');
+        $items['synergy-network-exchange-settings'] = $sf_overview_tab_title;
+        $items['subscriptions'] = __('Transactions', 'the-synergy-group-addon');
+
+        // echo '<pre>';
+        // print_r($items);
+        // echo '</pre>';
         return $items;
     }
 
@@ -70,8 +87,25 @@ class WooAccountCustomizations
         }
     }
 
-    function tsg_service_offering_tab_content() : void {
-        wc_get_template( 'myaccount/service-offering.php', array() );
+    function tsg_service_offering_tab_content(): void
+    {
+        wc_get_template('myaccount/service-offering.php', array());
+    }
+
+    function tsg_sf_settings_tab_content(): void
+    {
+        // $a = mycred_get_option( 'mycred_pref_core' );
+        // $setting = mycred_get_option('mycred_pref_core');
+        // echo 'test';
+        // echo '<pre>';
+        // print_r($setting);
+        // echo '</pre>';
+
+        if (current_user_can('manage_options')) {
+            wc_get_template('myaccount/admin-exchange-settings.php', array());
+        } else {
+            wc_get_template('myaccount/customer-sf-overview.php', array());
+        }
     }
 
     /**
@@ -261,4 +295,135 @@ class WooAccountCustomizations
             </div>
         </div>
 <?php }
+
+    function save_custom_forms(): void
+    {
+        // Admin SF Exchaneg Settings
+        if (current_user_can('manage_options') && isset($_POST['form-type']) && $_POST['form-type'] == 'admin-exchange-settings') {
+            // $core_settings = mycred_get_option( 'mycred_pref_core' );
+
+            $buying_sf_rate = $_POST['buying-sf'];
+            $mycred_pref_buycreds = mycred_get_option('mycred_pref_buycreds');
+
+            if (isset($mycred_pref_buycreds['gateway_prefs']) && isset($buying_sf_rate)) {
+                $old_rate = 0;
+                $buying_sf_rate = absint($buying_sf_rate);
+                foreach ($mycred_pref_buycreds['gateway_prefs'] as $key => $gateway) {
+                    $old_rate = $mycred_pref_buycreds['gateway_prefs'][$key]['exchange']['synergy_francs'];
+                    $mycred_pref_buycreds['gateway_prefs'][$key]['exchange']['synergy_francs'] = $buying_sf_rate;
+                }
+
+                $updated = mycred_update_option('mycred_pref_buycreds', $mycred_pref_buycreds);
+
+                if ($updated) {
+                    $message = 'SF Exchange buying rates - Updated from 1CHF = ' . $old_rate . 'SF to 1CHF = ' . $buying_sf_rate . 'SF.';
+                    SimpleLogger()->info(
+                        $message,
+                        array(
+                            '_initiator' => Log_Initiators::WP_USER,
+                            '_user_id' => get_current_user_id(),
+                            'log_type' => 'buying_sf'
+                        )
+                    );
+
+                    // $mycred = mycred();
+                    // $mycred->add_to_log(
+                    //     'buying_sf',
+                    //     get_current_user_id(),
+                    //     0,
+                    //     'Log entry',
+                    //     date('YmdHis'),
+                    //     $message,
+                    //     'cred_config'
+                    // );
+                }
+            }
+
+            $selling_sf_rate = $_POST['selling-sf'];
+            $mycred_pref_cashcreds = mycred_get_option('mycred_pref_cashcreds');
+            if (isset($mycred_pref_cashcreds['gateway_prefs']) && isset($selling_sf_rate)) {
+                $old_sell_rate = 0;
+                $selling_sf_rate = absint($selling_sf_rate);
+                foreach ($mycred_pref_cashcreds['gateway_prefs'] as $key => $gateway) {
+                    $old_sell_rate = $mycred_pref_cashcreds['gateway_prefs'][$key]['exchange']['synergy_francs'];
+                    $mycred_pref_cashcreds['gateway_prefs'][$key]['exchange']['synergy_francs'] = $selling_sf_rate;
+                }
+
+                $updated = mycred_update_option('mycred_pref_cashcreds', $mycred_pref_cashcreds);
+
+                if ($updated) {
+                    $message = 'SF Exchange cash (sell) rates - Updated from 1CHF = ' . $old_sell_rate . 'SF to 1CHF = ' . $selling_sf_rate . 'SF.';
+                    SimpleLogger()->info(
+                        $message,
+                        array(
+                            '_initiator' => Log_Initiators::WP_USER,
+                            '_user_id' => get_current_user_id(),
+                            'log_type' => 'selling_sf'
+                        )
+                    );
+                }
+            }
+        }
+
+        if (current_user_can('manage_options') && isset($_POST['form-type']) && $_POST['form-type'] == 'admin-exchange-thresholds') {
+            $min_sf_limit = $_POST['min-sf-limits'];
+            $max_sf_limit = $_POST['max-sf-limits'];
+            $notification_threshold = $_POST['notification-threshold'];
+            $alerts = $_POST['alerts'];
+
+            $configs = array(
+                'transaction_min_sf_limit' => $min_sf_limit,
+                'transaction_max_sf_limit' => $max_sf_limit,
+                'send_notifications_at_sf' => $notification_threshold,
+                'send_alert_at_sf' => $alerts
+            );
+            update_option('tsg_addon_configs', $configs);
+        }
+
+        if (isset($_POST['form-type']) && $_POST['form-type'] == 'withdraw-request') {
+            $current_user_id = get_current_user_id();
+            $req = array(
+                'post_type' => 'withdrawal_request',
+                'post_title'    => 'Withdrawal Request of SF ' . wp_strip_all_tags($_POST['withdraw_amount']),
+                'post_content'  => '',
+                'post_status'   => 'publish',
+                'post_author'   => $current_user_id,
+                'meta_input'   => array(
+                    'requested_by' => $current_user_id,
+                    'amount' =>  wp_strip_all_tags($_POST['withdraw_amount']),
+                    'status' => 'pending'
+                ),
+            );
+            wp_insert_post($req);
+        }
+    }
+
+    function get_history_by_context($key, $value)
+    {
+        global $wpdb;
+
+        $results = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT 
+                    h.*, 
+                    c.context_id, 
+                    c.key, 
+                    c.value 
+                FROM 
+                    {$wpdb->prefix}simple_history AS h
+                JOIN 
+                    {$wpdb->prefix}simple_history_contexts AS c 
+                ON 
+                    h.id = c.history_id 
+                WHERE 
+                    c.key = %s 
+                    AND c.value = %s",
+                $key,
+                $value
+            ),
+            ARRAY_A
+        );
+
+        return $results;
+    }
 }

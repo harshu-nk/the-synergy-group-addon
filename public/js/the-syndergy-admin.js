@@ -23,6 +23,7 @@ jQuery(document).ready(function ($) {
       multiple: true, // Allow multiple selections
    });
 
+   $("#communications-form").validate();
    $("#communications-form").submit(function (event) {
       event.preventDefault();
 
@@ -34,10 +35,10 @@ jQuery(document).ready(function ($) {
       var formData = {
          members: selectedIds,
          notificationType: $("input[name='notification-type']").val(),
-         greeting: $("#greeting").val(),
-         subject: $("#subject").val(),
-         body: $("#body").val(),
-         attachment: $("#attachment").val(),
+         greeting: $("textarea[name='greeting']").val(),
+         subject: $("textarea[name='subject']").val(),
+         body: $("textarea[name='body']").val(),
+         attachment: $("input[name='attachment']").val(),
          action: "admin_send_notification",
       };
 
