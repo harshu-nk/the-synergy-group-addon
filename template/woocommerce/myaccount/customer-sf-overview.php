@@ -1,3 +1,7 @@
+<?php
+$current_user_id = get_current_user_id();
+$sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
+?>
 <div class="light-style input-small">
 
     <div class="account-text-block">
@@ -17,7 +21,7 @@
                     <p><?php _e('My Subscription', 'the-synergy-group-addon'); ?></p>
                 </div>
                 <div class="line-right">
-                    <p class="main-val2">SF 350</p>
+                    <p class="main-val2"><?php echo do_shortcode('[mycred_total_points type="synergy_francs" ref="registration"]') ?></p>
                 </div>
             </div>
 
@@ -56,7 +60,7 @@
                     <p><?php _e('Total', 'the-synergy-group-addon'); ?></p>
                 </div>
                 <div class="line-right">
-                    <p class="main-val">SF 1,525</p>
+                    <p class="main-val"><?php echo do_shortcode('[mycred_total_points type="synergy_francs"]') ?></p>
                 </div>
             </div>
         </div>
@@ -170,22 +174,36 @@
 
             <div class="block-line spb">
                 <div class="line-left">
-                    <p><?php _e('Buy SF', 'the-synergy-group-addon'); ?></p>
+                    <p><?php _e('Sell SF', 'the-synergy-group-addon'); ?></p>
                 </div>
-                <div class="line-right width-field width2">
-                    <div class="btn-block">
-                        <a href="#" class="btn style2 w100"><?php _e('Sell' ,'the-synergy-group-addon'); ?></a>
-                    </div>
-                </div>
+
+
+                <div class="line-right input-field width2">
+					<div class="btn-block">
+						<a href="#" class="btn style2 w100 user-withdraw-btn">Sell</a>
+					</div>
+					<form class="user-withdraw-form" action="" method="POST">
+						<input type="hidden" name="form-type" value="selling-request" />
+						<p class="form-row">
+							<input type="number" class="woocommerce-Input woocommerce-Input--text input-text" name="selling_amount" id="selling_amount" value="0" max="<?php echo esc_attr($sf_balance); ?>" />
+						</p>
+						<div class="btn-block">
+							<button type="submit" class="btn style2 w100">Submit</button>
+						</div>
+					</form>
+				</div>
             </div>
 
             <div class="block-line spb">
                 <div class="line-left">
-                    <p><?php _e('Sell SF', 'the-synergy-group-addon'); ?></p>
+                    <p><?php _e('Buy SF', 'the-synergy-group-addon'); ?></p>
                 </div>
                 <div class="line-right width-field width2">
                     <div class="btn-block">
-                        <a href="#" class="btn style2 w100"><?php _e('Buy', 'the-synergy-group-addon'); ?></a>
+                        <a href="#" class="btn style2 w100 customer-buy-sf-btn"><?php _e('Buy', 'the-synergy-group-addon'); ?></a>
+                    </div>
+                    <div id="customer-buy-sf-form">
+                    <?php echo do_shortcode('[mycred_buy_form]') ?>
                     </div>
                 </div>
             </div>
@@ -196,9 +214,13 @@
                 </div>
                 <div class="line-right width-field width2">
                     <div class="btn-block">
-                        <a href="#" class="btn style2 w100"><?php _e('Show Details', 'the-synergy-group-addon'); ?></a>
+                        <a href="#" class="btn style2 w100 customer-sf-history-btn"><?php _e('Show Details', 'the-synergy-group-addon'); ?></a>
                     </div>
                 </div>
+            </div>
+
+            <div id="customer-sf-history">
+                <?php echo do_shortcode('[mycred_sales_history]'); ?>
             </div>
 
         </div>

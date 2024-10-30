@@ -124,6 +124,8 @@ class The_Synergy_Group_Addon {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/customizations/woo-account-customization.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/notification/notifications.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/referral/referral.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/services/services.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/transactions/transactions.php';
 
 		// Helper
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/functions.php';
@@ -132,7 +134,7 @@ class The_Synergy_Group_Addon {
 		
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/custom-post-types/cpts.php';
 		new CPTs();
-		
+
 		new Referrals();
 	}
 
@@ -195,6 +197,9 @@ class The_Synergy_Group_Addon {
 		$this->loader->add_action('woocommerce_account_notifications_endpoint', $woo_customizations, 'tsg_notifications_tab_content');
 		$this->loader->add_action('woocommerce_account_service-offering_endpoint', $woo_customizations, 'tsg_service_offering_tab_content');
 		$this->loader->add_action('woocommerce_account_synergy-network-exchange-settings_endpoint', $woo_customizations, 'tsg_sf_settings_tab_content');
+		$this->loader->add_action('woocommerce_account_customer-settings_endpoint', $woo_customizations, 'tsg_customer_settings_tab_content');
+		$this->loader->add_action('woocommerce_account_customer-support_endpoint', $woo_customizations, 'tsg_customer_support_tab_content');
+		$this->loader->add_action('woocommerce_account_my-affiliate_endpoint', $woo_customizations, 'tsg_customer_affiliate_tab_content');
 		$this->loader->add_action( 'woocommerce_save_account_details', $woo_customizations, 'tsg_save_custom_fields_my_account' );
 
 		// Activity Log on Messages / Activities Tab

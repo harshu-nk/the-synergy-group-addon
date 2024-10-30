@@ -123,35 +123,47 @@ $sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
 				<img width="48" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/purchases.svg" alt="purchases icon" />
 				<h5>Purchases</h5>
 			</div>
-			<div class="line-right input-field">
+			<div class="line-right input-field relative">
+
 				<div class="select">
-					<p class="select-name"><span>Apr 04 2024</span></p>
-					<input type="hidden" id="data-export" name="data-export" value="Apr 04 2024" />
-					<ul class="select-list hauto">
-						<li>Apr 04 2024</li>
-						<li>May 25 2024</li>
-					</ul>
+					<p class="select-name"><span id="selected-purchase-date"><?php echo date('F d Y'); ?></span></p>
+					<input type="hidden" id="data-export" name="data-export" value="<?php echo date('F d Y'); ?>" />
+					<div id="purchase-datepicker"></div>
+
+					<!-- <ul class="select-list hauto">
+						<?php
+						// $startTime = strtotime('2024-04-01'); 
+						// $endTime = strtotime(date('Y-m-d')); 
+	
+						// $i = 1;
+						// do {
+						// $newTime = strtotime('+'.$i++.' months',$startTime); 
+						// 	echo '<li>'.date('Y-m', $newTime).'</li>';
+						// } while ($newTime < $endTime);
+						?>
+					</ul> -->
 				</div>
 			</div>
 		</div>
 
-		<div class="block-lines">
+		<div class="block-lines purchased-products"></div>
+		<!-- <div class="block-lines purchased-products">
 
 			<div class="block-line spb">
 				<div class="line-left">
 					<p>Service Name</p>
 				</div>
 				<div class="line-right">
-					<p><strong>Super Service</strong></p>
+					<p><strong class="purchase-product-name"></strong></p>
 				</div>
 			</div>
 
 			<div class="block-line spb">
 				<div class="line-left">
-					<p>Service Provider</p>
+					<p >Service Provider</p>
 				</div>
 				<div class="line-right">
-					<p><strong>Synergy</strong></p>
+					<p><strong class="purchase-product-author">Synergy</strong></p>
 				</div>
 			</div>
 
@@ -160,7 +172,7 @@ $sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
 					<p>Purchase Date</p>
 				</div>
 				<div class="line-right">
-					<p><strong>2024/04/04</strong></p>
+					<p><strong class="purchase-product-date">2024/04/04</strong></p>
 				</div>
 			</div>
 
@@ -169,7 +181,7 @@ $sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
 					<p>Cost</p>
 				</div>
 				<div class="line-right">
-					<p><strong>1,450 (CHF 360 + SF 1,090)</strong></p>
+					<p><strong class="purchase-product-cost">1,450 (CHF 360 + SF 1,090)</strong></p>
 				</div>
 			</div>
 
@@ -178,7 +190,7 @@ $sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
 					<p>Transaction Fees</p>
 				</div>
 				<div class="line-right">
-					<p><strong>7.5%</strong></p>
+					<p><strong class="purchase-product-fee">7.5%</strong></p>
 				</div>
 			</div>
 
@@ -187,7 +199,7 @@ $sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
 					<p>Affiliate Beneficiary</p>
 				</div>
 				<div class="line-right">
-					<p><strong>John Clarckson</strong></p>
+					<p><strong class="purchase-product-ref">John Clarckson</strong></p>
 				</div>
 			</div>
 
@@ -214,7 +226,7 @@ $sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
 				</div>
 			</div>
 
-		</div>
+		</div> -->
 	</div>
 
 	<div class="account-text-block">
@@ -225,19 +237,21 @@ $sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
 			</div>
 			<div class="line-right input-field">
 				<div class="select">
-					<p class="select-name"><span>Apr 04 2024</span></p>
+					<p class="select-name"><span id="selected-sales-date">Apr 04 2024</span></p>
 					<input type="hidden" id="data-export" name="data-export" value="Apr 04 2024" />
-					<ul class="select-list hauto">
+					<div id="sales-datepicker"></div>
+
+					<!-- <ul class="select-list hauto">
 						<li>Apr 04 2024</li>
 						<li>May 25 2024</li>
-					</ul>
+					</ul> -->
 				</div>
 			</div>
 		</div>
 
-		<div class="block-lines">
+		<div class="block-lines sales-products">
 
-			<div class="block-line spb">
+			<!-- <div class="block-line spb">
 				<div class="line-left">
 					<p>Service Name</p>
 				</div>
@@ -312,7 +326,7 @@ $sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
 				<div class="line-right textarea-field">
 					<textarea id="review" placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt  consectetur adipiscing elit,"></textarea>
 				</div>
-			</div>
+			</div> -->
 
 		</div>
 	</div>
@@ -325,28 +339,31 @@ $sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
 			</div>
 			<div class="line-right input-field">
 				<div class="select">
-					<p class="select-name"><span>Apr 04 2024</span></p>
+					<p class="select-name"><span id="selected-aff-date">Apr 04 2024</span></p>
 					<input type="hidden" id="data-export" name="data-export" value="Apr 04 2024" />
-					<ul class="select-list hauto">
+					<div id="affiliate-datepicker"></div>
+					<!-- <ul class="select-list hauto">
 						<li>Apr 04 2024</li>
 						<li>May 25 2024</li>
-					</ul>
+					</ul> -->
 				</div>
 			</div>
 		</div>
+
+		<?php //fetch_mycred_history(); ?>
 
 		<div class="fl-end mt25">
 			<p class="main-val">CHF 3600 + SF 1,090</p>
 		</div>
 
-		<div class="block-lines media-full">
+		<div class="block-lines media-full affiliate-products">
 
 			<div class="block-line spb">
 				<div class="line-left">
 					<p>Date</p>
 				</div>
 				<div class="line-right">
-					<p><strong>2024/04/04</strong></p>
+					<p><strong class="date">2024/04/04</strong></p>
 				</div>
 			</div>
 
@@ -355,11 +372,11 @@ $sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
 					<p>Referred Member Name</p>
 				</div>
 				<div class="line-right">
-					<p><strong>John Clarckson</strong></p>
+					<p><strong class="ref-by">John Clarckson</strong></p>
 				</div>
 			</div>
 
-			<div class="block-line spb">
+			<!-- <div class="block-line spb">
 				<div class="line-left">
 					<p>Referred Member Subscription Plan</p>
 				</div>
@@ -375,14 +392,14 @@ $sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
 				<div class="line-right">
 					<p><strong>10%</strong></p>
 				</div>
-			</div>
+			</div> -->
 
 			<div class="block-line spb">
 				<div class="line-left">
 					<p>Service/Product Purchased</p>
 				</div>
 				<div class="line-right">
-					<p><strong>Super Service</strong></p>
+					<p><strong class="product-name">Super Service</strong></p>
 				</div>
 			</div>
 
@@ -391,7 +408,7 @@ $sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
 					<p>Transaction Amount (CHF)</p>
 				</div>
 				<div class="line-right">
-					<p><strong>CHF 360 + SF 1,090</strong></p>
+					<p><strong class="product-pricing">CHF 360 + SF 1,090</strong></p>
 				</div>
 			</div>
 
@@ -400,7 +417,7 @@ $sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
 					<p>Affiliate Fee Earned (CHF)</p>
 				</div>
 				<div class="line-right">
-					<p><strong>CHF 36</strong></p>
+					<p><strong class="aff_chf">CHF 36</strong></p>
 				</div>
 			</div>
 
@@ -409,7 +426,7 @@ $sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
 					<p>Affiliate Fee Earned (SF)</p>
 				</div>
 				<div class="line-right">
-					<p><strong>CHF 109</strong></p>
+					<p><strong class="aff_sf">SF 109</strong></p>
 				</div>
 			</div>
 
@@ -468,5 +485,4 @@ $sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
 
 		</div>
 	</div>
-
 </div>

@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function(){ //document.ready
 
     const selectSingle_labels = document.querySelectorAll('.select-name');
     const selectSingle_ul = document.querySelectorAll('.select');
+    var changeEvent = new Event('change');
 
     for (let i = 0; i < selectSingle_labels.length; i++) {
         selectSingle_labels[i].addEventListener('click', (evt) => {
@@ -30,13 +31,22 @@ document.addEventListener('DOMContentLoaded', function(){ //document.ready
                 for (let k = 0; k < list_sel_items.length; k++) {
                     res_arr.push(list_sel_items[k].textContent);
                 }
+                
                 parent.querySelector('input').setAttribute('value', res_arr.join(", "));
                 parent.querySelector('span').textContent = res_arr.join(", ");
             } else {
                 var sel = list_li[i].textContent;
+                var selTxt = sel;
+                if (list_li[i].hasAttribute("data-value")) {
+                    sel = list_li[i].getAttribute("data-value");
+                    parent.querySelector('span').textContent = selTxt;
+                }
+                else{
+                    parent.querySelector('span').textContent = sel;
+                }
                 parent.classList.remove("show");
                 parent.querySelector('input').setAttribute('value', sel);
-                parent.querySelector('span').textContent = sel;
+                parent.querySelector('input').dispatchEvent(changeEvent);
             }
         });
     }

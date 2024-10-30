@@ -12,3 +12,25 @@
  .user-withdraw-form .form-row{
    display: block;
  }
+ #customer-buy-sf-form{
+   display: none;
+ }
+
+
+.table-responsive.mycred-sell-this-history table {
+   width: 100%;
+}
+#customer-sf-history{
+   display: none;
+}
+.editable-input{
+   display: none;
+}
+.relative{
+   position: relative;
+}
+#purchase-datepicker {
+   position: absolute;
+   z-index: 999;
+   top: 50px;
+}

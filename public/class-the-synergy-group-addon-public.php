@@ -70,9 +70,13 @@ class The_Synergy_Group_Addon_Public {
 		}
 		if(is_account_page()){
 			wp_enqueue_style( $this->plugin_name . '-my-account', plugin_dir_url( __FILE__ ) . 'css/myaccount.css', array(), $this->version, 'all' );
+			wp_enqueue_style( $this->plugin_name . '-my-account-faq', plugin_dir_url( __FILE__ ) . 'css/faq.css', array(), $this->version, 'all' );
 			wp_enqueue_style( $this->plugin_name . '-checkboxes', plugin_dir_url( __FILE__ ) . 'css/checkboxes.css', array(), $this->version, 'all' );
 			wp_enqueue_style( $this->plugin_name . '-form', plugin_dir_url( __FILE__ ) . 'css/form.css', array(), $this->version, 'all' );
 			wp_enqueue_style( $this->plugin_name . '-my-account-select', plugin_dir_url( __FILE__ ) . 'css/select.css', array(), $this->version, 'all' );
+			wp_enqueue_style( $this->plugin_name . '-my-account-quantity', plugin_dir_url( __FILE__ ) . 'css/quantity.css', array(), $this->version, 'all' );
+			wp_enqueue_style( 'dropzone-css', 'https://unpkg.com/dropzone@5/dist/min/dropzone.min.css', array(), $this->version, 'all' );
+			wp_enqueue_style( 'jquery-ui-css', 'https://code.jquery.com/ui/1.13.3/themes/smoothness/jquery-ui.css', array(), $this->version, 'all' );
 		}
 	}
 
@@ -83,10 +87,11 @@ class The_Synergy_Group_Addon_Public {
 	 */
 	public function enqueue_scripts() {
 		wp_enqueue_script( 'jquery-validation', plugin_dir_url( __FILE__ ) . 'js/jquery.validate.min.js', array( 'jquery' ), '1.19.5', true );
-		wp_enqueue_script( $this->plugin_name . '-my-account-public', plugin_dir_url( __FILE__ ) . 'js/the-synergy-group-addon-public.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( 'my-account-faq', plugin_dir_url( __FILE__ ) . 'js/faq.js', array( 'jquery' ), '1.19.5', true );
+		wp_enqueue_script( $this->plugin_name . '-my-account-public', plugin_dir_url( __FILE__ ) . 'js/the-synergy-group-addon-public.js', array( 'jquery', 'dropzone-js' ), $this->version, false );
 		wp_localize_script( $this->plugin_name . '-my-account-public', 'tsg_public_ajax', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
 		wp_enqueue_script( $this->plugin_name . '-my-account-form', plugin_dir_url( __FILE__ ) . 'js/form.js', array( 'jquery' ), '1.19.5', true );
-
+		wp_enqueue_script( 'dropzone-js', 'https://unpkg.com/dropzone@5/dist/min/dropzone.min.js', array(), $this->version, true );
 	}
 
 }

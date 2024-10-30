@@ -9,6 +9,10 @@ class WooAccountCustomizations
     function __construct()
     {
         add_action('template_redirect', array($this, 'save_custom_forms'));
+        // add_action('wp_ajax_nopriv_get_taxonomy_terms', array($this, 'get_taxonomy_terms'));
+        add_action('wp_ajax_get_service_details', array($this, 'get_service_details'));
+        // add_action('wp_ajax_nopriv_get_service_details', array($this, 'get_service_details')); // If needed for non-logged-in users
+
     }
 
     function woo_adon_plugin_template($template, $template_name, $template_path)
@@ -41,6 +45,9 @@ class WooAccountCustomizations
         add_rewrite_endpoint('notifications', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('service-offering', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('synergy-network-exchange-settings', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('customer-support', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('my-affiliate', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('customer-settings', EP_ROOT | EP_PAGES);
     }
 
     function tsg_my_acc_tabs_query_vars($vars)
@@ -48,6 +55,9 @@ class WooAccountCustomizations
         $vars[] = 'notifications';
         $vars[] = 'service-offering';
         $vars[] = 'synergy-network-exchange-settings';
+        $vars[] = 'customer-settings';
+        $vars[] = 'customer-support';
+        $vars[] = 'my-affiliate';
         return $vars;
     }
 
@@ -57,6 +67,11 @@ class WooAccountCustomizations
             'edit-account' => __('Profile', 'the-synergy-group-addon')
         );
         unset($items['edit-account']); // REMOVE TAB
+        unset($items['downloads']); // REMOVE TAB
+        unset($items['edit-address']); // REMOVE TAB
+        unset($items['payment-methods']); // REMOVE TAB
+        unset($items['bp-messages']); // REMOVE TAB
+        unset($items['points']); // REMOVE TAB
         $items = array_merge(array_slice($items, 0, 1), $save_for_later, array_slice($items, 2)); // PLACE TAB AFTER POSITION 2
 
         // New Tabs
@@ -68,13 +83,34 @@ class WooAccountCustomizations
             $sf_overview_tab_title = __('Synergy Francs', 'the-synergy-group-addon');
         }
         $items['notifications'] = $notifications_tab_title;
+        $items['customer-settings'] = __('Settings', 'the-synergy-group-addon');
+        $items['customer-support'] = __('Support', 'the-synergy-group-addon');
+        $items['my-affiliate'] = __('Affiliate', 'the-synergy-group-addon');
         $items['service-offering'] = __('Service Offering', 'the-synergy-group-addon');
         $items['synergy-network-exchange-settings'] = $sf_overview_tab_title;
         $items['subscriptions'] = __('Transactions', 'the-synergy-group-addon');
 
+        $customOrder = [
+            'dashboard',
+            'edit-account',
+            'notifications',
+            'customer-settings',
+            'subscriptions',
+            'service-offering',
+            'synergy-network-exchange-settings',
+            'customer-support',
+            'my-affiliate',
+            'customer-logout',
+        ];
+
+        uksort($items, function ($a, $b) use ($customOrder) {
+            return array_search($a, $customOrder) - array_search($b, $customOrder);
+        });
+
         // echo '<pre>';
         // print_r($items);
         // echo '</pre>';
+
         return $items;
     }
 
@@ -87,20 +123,58 @@ class WooAccountCustomizations
         }
     }
 
+    function tsg_customer_settings_tab_content(): void
+    {
+        $user_id = get_current_user_id();
+        $settings = array(
+            '2fa' => get_user_meta($user_id, '2fa', true),
+            'profile_visibility' => get_user_meta($user_id, 'profile_visibility', true),
+            'payment_method' => get_user_meta($user_id, 'payment_method', true),
+            'default_currency' => get_user_meta($user_id, 'default_currency', true),
+            'notification_preferences' => get_user_meta($user_id, 'notification_preferences', true),
+            'affiliate_earnings' => get_user_meta($user_id, 'affiliate_earnings', true),
+            'data_export' => get_user_meta($user_id, 'data_export', true),
+        );
+        wc_get_template('myaccount/customer-settings.php', array('settings' => $settings));
+    }
+
+    function tsg_customer_support_tab_content(): void
+    {
+        wc_get_template('myaccount/customer-support.php', array());
+    }
+
+    function tsg_customer_affiliate_tab_content(): void
+    {
+        wc_get_template('myaccount/customer-affiliate.php', array());
+    }
+
     function tsg_service_offering_tab_content(): void
     {
-        wc_get_template('myaccount/service-offering.php', array());
+        $current_user_id = get_current_user_id();
+        $business = get_user_meta($current_user_id, 'business_data', true);
+        $available_products = array();
+        $args = array(
+            'author' => $current_user_id,
+            'post_type' => 'product',
+        );
+        $author_posts = new WP_Query($args);
+        if ($author_posts->have_posts()) {
+            while ($author_posts->have_posts()) {
+                $author_posts->the_post();
+                $available_products[] = array(
+                    'id' => get_the_ID(),
+                    'title' => get_the_title()
+                );
+            }
+            wp_reset_postdata();
+        }
+        wc_get_template('myaccount/service-offering.php', array('business' => $business, 'products' => $available_products));
     }
+
+
 
     function tsg_sf_settings_tab_content(): void
     {
-        // $a = mycred_get_option( 'mycred_pref_core' );
-        // $setting = mycred_get_option('mycred_pref_core');
-        // echo 'test';
-        // echo '<pre>';
-        // print_r($setting);
-        // echo '</pre>';
-
         if (current_user_can('manage_options')) {
             wc_get_template('myaccount/admin-exchange-settings.php', array());
         } else {
@@ -396,7 +470,148 @@ class WooAccountCustomizations
             );
             wp_insert_post($req);
         }
+
+        if (isset($_POST['form-type']) && $_POST['form-type'] == 'selling-request') {
+            $current_user_id = get_current_user_id();
+            $req = array(
+                'post_type' => 'sell_request',
+                'post_title'    => 'Selling Request of SF ' . wp_strip_all_tags($_POST['selling_amount']),
+                'post_content'  => '',
+                'post_status'   => 'publish',
+                'post_author'   => $current_user_id,
+                'meta_input'   => array(
+                    'requested_by' => $current_user_id,
+                    'amount' =>  wp_strip_all_tags($_POST['selling_amount']),
+                    'status' => 'pending'
+                ),
+            );
+            wp_insert_post($req);
+        }
+
+        if (isset($_POST['form-type']) && $_POST['form-type'] == 'business-profile') {
+            $current_user_id = get_current_user_id();
+            $business_name = sanitize_text_field($_POST['business-name']);
+            $industry = sanitize_text_field($_POST['industry']);
+            $experience_years = sanitize_text_field($_POST['years-experience']);
+            $company_description = sanitize_text_field($_POST['company-description']);
+            $business_website = sanitize_text_field($_POST['website']);
+
+            // Handle company logo upload
+            if (!empty($_FILES['company_logo']['name'])) {
+                $uploadedfile = $_FILES['company_logo'];
+                $upload_overrides = array('test_form' => false);
+                $movefile = wp_handle_upload($uploadedfile, $upload_overrides);
+
+                if ($movefile && !isset($movefile['error'])) {
+                    $company_logo_url = $movefile['url'];
+                } else {
+                    echo $movefile['error'];
+                }
+            }
+
+            // Store data in user meta
+            $current_business_meta = get_user_meta($current_user_id, 'business_data', true);
+            if (empty($current_business_meta)) {
+                $current_business_meta = [];
+            }
+            if (isset($_POST['business-name'])) {
+                $current_business_meta['business_name'] = $business_name;
+            }
+            if (isset($_POST['industry'])) {
+                $current_business_meta['industry'] = $industry;
+            }
+            if (isset($_POST['years-experience'])) {
+                $current_business_meta['exp_years'] = $experience_years;
+            }
+            if (!empty($_FILES['company_logo']['name']) && !empty($company_logo_url)) {
+                $current_business_meta['company_logo'] = $company_logo_url;
+            }
+            if (isset($_POST['company-description'])) {
+                $current_business_meta['company_description'] = $company_description;
+            }
+            if (isset($_POST['website'])) {
+                $current_business_meta['business_website'] = $business_website;
+            }
+
+            update_user_meta($current_user_id, 'business_data', $current_business_meta);
+        }
+
+        if (isset($_POST['form-type']) && $_POST['form-type'] == 'customer-settings') {
+            $current_user_id = get_current_user_id();
+
+            $password = sanitize_text_field($_POST['password']);
+            if($password !== ''){
+                wp_set_password( $password, $current_user_id );
+            }
+
+            $twofa = sanitize_text_field($_POST['two-factor']);
+            if($twofa !== ''){
+                update_user_meta($current_user_id, '2fa', sanitize_title($twofa));
+            }
+
+            $profile_visibility = sanitize_text_field($_POST['profile-visibility']);
+            if($profile_visibility !== ''){
+                update_user_meta($current_user_id, 'profile_visibility', sanitize_title($profile_visibility));
+            }
+
+            $payment_method = sanitize_text_field($_POST['payment-methods']);
+            if($payment_method !== ''){
+                update_user_meta($current_user_id, 'payment_method', sanitize_title($payment_method));
+            }
+
+            $default_currency = sanitize_text_field($_POST['default-currency']);
+            if($default_currency !== ''){
+                update_user_meta($current_user_id, 'default_currency', sanitize_title($default_currency));
+            }
+
+            $notification_pref = sanitize_text_field($_POST['preferences']);
+            if($notification_pref !== ''){
+                update_user_meta($current_user_id, 'notification_preferences', sanitize_title($notification_pref));
+            }
+
+            $aff_earnings = sanitize_text_field($_POST['affiliate-earnings']);
+            if($aff_earnings !== ''){
+                update_user_meta($current_user_id, 'affiliate_earnings', sanitize_title($aff_earnings));
+            }
+
+            $data_export = sanitize_text_field($_POST['data-export']);
+            if($data_export !== ''){
+                update_user_meta($current_user_id, 'data_export', sanitize_title($data_export));
+            }
+        }
     }
+
+    // function get_service_details() {
+    //     // Check if the service ID is set and valid
+    //     if (isset($_POST['service_id'])) {
+    //         $service_id = intval($_POST['service_id']);
+    
+    //         // Get the service post
+    //         $service = get_post($service_id);
+    //         if (!$service) {
+    //             wp_send_json_error('Service not found');
+    //         }
+    
+    //         // Get custom meta data for the service
+    //         // $service_meta = get_post_meta($service_id);
+    
+    //         // Construct the response data
+    //         $response_data = array(
+    //             'name' => $service->post_title,
+    //             'long_description' => $service->post_content,
+    //             'short_description' => get_post_meta($service_id, 'short_description', true),
+    //             'pricing_units' => get_post_meta($service_id, 'pricing_units', true),
+    //             'sf_percentage' => get_post_meta($service_id, 'sf_percentage', true),
+    //             'chf_percentage' => get_post_meta($service_id, 'chf_percentage', true),
+    //             'service_image' => wp_get_attachment_url(get_post_meta($service_id, 'service_image', true)),
+    //             'service_gallery' => get_post_meta($service_id, 'service_gallery', true), // Array of gallery images
+    //         );
+    
+    //         wp_send_json_success($response_data);
+    //     }
+    
+    //     wp_send_json_error('Invalid service ID');
+    // }    
 
     function get_history_by_context($key, $value)
     {

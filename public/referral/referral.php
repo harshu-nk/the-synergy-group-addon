@@ -59,6 +59,8 @@ class Referrals
             $referred_users = get_user_meta($referrer_id, 'referred_users', true) ?: [];
             $referred_users[] = $user_id;
             update_user_meta($referrer_id, 'referred_users', $referred_users);
+
+            mycred_add( 'referral_registered', $referrer_id, 10, 'Points for referral onboarding.' );
         }
     }
 
