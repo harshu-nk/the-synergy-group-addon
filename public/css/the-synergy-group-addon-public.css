@@ -4,31 +4,41 @@
  */
 
  .form-row{
-    display: none;
- }
+   display: none !important;
+}
+
+p.form-row.active {
+  display: block !important;
+}
+
  .user-withdraw-form{
    display: none;
  }
+
  .user-withdraw-form .form-row{
    display: block;
  }
+
  #customer-buy-sf-form{
    display: none;
  }
 
-
 .table-responsive.mycred-sell-this-history table {
    width: 100%;
 }
+
 #customer-sf-history{
    display: none;
 }
+
 .editable-input{
    display: none;
 }
+
 .relative{
    position: relative;
 }
+
 #purchase-datepicker {
    position: absolute;
    z-index: 999;
