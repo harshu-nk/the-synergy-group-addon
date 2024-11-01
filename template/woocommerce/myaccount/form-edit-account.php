@@ -81,7 +81,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 							<p><strong><?php esc_html_e('Bio', 'the-synergy-group-addon') ?></strong></p>
 						</div>
 						<div class="line-right line-row icon-right va">
-							<a href="#" class="icon-a bio-edit-pencil edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
+							<a href="#" class="icon-a bio-edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
 						</div>
 					</div>
 					<input type="hidden" class="woocommerce-Input woocommerce-Input--text input-text" name="account_display_name" id="account_display_name" value="<?php echo esc_attr($amend_user->display_name); ?>" />

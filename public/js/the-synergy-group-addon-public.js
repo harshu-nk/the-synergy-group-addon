@@ -2,9 +2,8 @@ jQuery(document).ready(function ($) {
    $(".edit-pencil:not(.bio-edit-pencil)").click(function (e) {
       e.preventDefault();
       $(this).toggleClass("active");
-      const parentRow = $(this).closest(".line-row"); // Use closest instead of parent to ensure correct selection
+      const parentRow = $(this).closest(".line-row"); 
 
-      // Toggle visibility and add 'active' class to .form-row
       if (parentRow.find(".form-curr-value").is(":visible")) {
          parentRow.find(".form-curr-value").hide();
          parentRow.find(".form-row").show().addClass("active");
@@ -14,11 +13,17 @@ jQuery(document).ready(function ($) {
       }
    });
 
-   // $(".bio-edit-pencil").click(function (e) {
-   //    e.preventDefault();
-   //    $(".bio").find(".form-curr-value").toggle();
-   //    $(".bio").find(".form-row").toggle();
-   // });
+   $(".bio-edit-pencil").click(function (e) {
+      e.preventDefault();
+      if ($(".bio").find(".form-curr-value").is(":visible")) {
+         $(".bio").find(".form-curr-value").hide();
+         
+         $(".bio").find(".form-row").show().addClass("active");
+      } else {
+         $(".bio").find(".form-curr-value").show();
+         $(".bio").find(".form-row").hide().removeClass("active");
+      }
+   });
 
    $(".user-withdraw-btn").on("click", function (e) {
       e.preventDefault();
