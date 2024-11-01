@@ -254,6 +254,15 @@ do_action('woocommerce_before_edit_account_form'); ?>
 
 		<div class="items equal pt25" id="tsg-certificate-container">
 
+			<div class="line-right line-row icon-right va tsg-certificate-wrapper tsg-entry-hidden">
+				<p class="">
+					<input type="url" class="woocommerce-Input woocommerce-Input--text input-text" name="certificate-input" id="certificate-input" autocomplete="" value="" placeholder="Enter certificate name"/>
+				</p>
+				<a href="#" class="icon-a edit-certificate" id="tsg-user-add-certificate-btn"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
+				
+			</div>
+			<p id="tsg-certificate-error-message" style="color: red; display: none;">Please enter a certificate name.</p>
+
 			<div class="item w2">
 				<div class="itemr">
 					<div class="award-block tc">
@@ -284,14 +293,6 @@ do_action('woocommerce_before_edit_account_form'); ?>
 				</div>
 			</div>
 
-			<div class="line-right line-row icon-right va tsg-certificate-wrapper tsg-entry-hidden">
-				<p class="">
-					<input type="url" class="woocommerce-Input woocommerce-Input--text input-text" name="certificate-input" id="certificate-input" autocomplete="" value="" placeholder="Enter certificate name"/>
-				</p>
-				<a href="#" class="icon-a edit-certificate" id="tsg-user-add-certificate-btn"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
-				
-			</div>
-			<p id="tsg-certificate-error-message" style="color: red; display: none;">Please enter a certificate name.</p>
 
 		</div>
 	</div>

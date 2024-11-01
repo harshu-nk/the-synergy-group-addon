@@ -4,13 +4,15 @@ jQuery(document).ready(function ($) {
       $(this).toggleClass("active");
       const parentRow = $(this).closest(".line-row"); 
 
-      if (parentRow.find(".form-curr-value").is(":visible")) {
-         parentRow.find(".form-curr-value").hide();
-         parentRow.find(".form-row").show().addClass("active");
-      } else {
-         parentRow.find(".form-curr-value").show();
-         parentRow.find(".form-row").hide().removeClass("active");
-      }
+      // if (parentRow.find(".form-curr-value").is(":visible")) {
+      //    parentRow.find(".form-curr-value").hide();
+      //    parentRow.find(".form-row").show().addClass("active");
+      // } else {
+      //    parentRow.find(".form-curr-value").show();
+      //    parentRow.find(".form-row").hide().removeClass("active");
+      // }
+      parentRow.find(".form-curr-value").toggleClass("tsg-entry-hidden");
+      parentRow.find(".form-row").toggleClass("tsg-entry-hidden");
    });
 
    $(".bio-edit-pencil").click(function (e) {
