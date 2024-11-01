@@ -11,6 +11,10 @@ p.form-row.active {
   display: block !important;
 }
 
+.tsg-entry-hidden {
+   display: none !important;
+ }
+
  .user-withdraw-form{
    display: none;
  }

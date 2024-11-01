@@ -25,6 +25,61 @@ jQuery(document).ready(function ($) {
       }
    });
 
+   $("#tsg-add-certificate").click(function(e){
+      e.preventDefault();
+      $(".tsg-certificate-wrapper").toggleClass("tsg-entry-hidden");
+   });
+
+   $('#tsg-user-add-certificate-btn').on('click', function() {
+      var certificates = [];
+
+      var certificateText = $('#certificate-input').val().trim();
+
+      if (certificateText === "") {
+          $('#tsg-certificate-error-message').show(); 
+          return; 
+      } else {
+          $('#tsg-certificate-error-message').hide(); 
+      }
+
+      certificates.push(certificateText);
+      var certificateId = 'certificate-' + certificates.length;
+
+      var newCertificate = `
+            <div class="item w2" id="${certificateId}">
+                <div class="itemr">
+                    <div class="award-block tc">
+                        <a href="#" class="block-edit delete-certificate-btn" data-id="${certificateId}"><img src="https://thesynergygroup.ch/wp-content/plugins/the-synergy-group-addon/public/img/account/edit.svg" alt="edit icon"></a>
+                        <div class="award-icon">
+                            <img src="https://thesynergygroup.ch/wp-content/plugins/the-synergy-group-addon/public/img/account/award.svg" alt="award icon">
+                        </div>
+                        <p class="fs-20 mt18 tsg-certificate-name">${certificateText}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+
+      $('#tsg-certificate-container').append(newCertificate);
+
+      $('#certificate-input').val('');
+      $(".tsg-certificate-wrapper").addClass("tsg-entry-hidden");
+   });
+
+   $('#tsg-certificate-container').on('click', '.delete-certificate-btn', function(e) {
+      e.preventDefault();
+      var certificateId = $(this).data('id');
+
+      $('#' + certificateId).remove();
+
+      // Find the certificate text in the array and remove it
+      var certificateText = $('#' + certificateId + ' .tsg-certificate-name').text();
+      certificates = certificates.filter(function(text) {
+          return text !== certificateText;
+      });
+
+      console.log(certificates); 
+   });
+
    $(".user-withdraw-btn").on("click", function (e) {
       e.preventDefault();
       $(this).parents(".input-field").find(".user-withdraw-form").toggle();
