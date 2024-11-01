@@ -32,9 +32,9 @@ jQuery(document).ready(function ($) {
       $(".tsg-certificate-wrapper").toggleClass("tsg-entry-hidden");
    });
 
+   //user certificate control
+   var certificates = [];
    $('#tsg-user-add-certificate-btn').on('click', function() {
-      var certificates = [];
-
       var certificateText = $('#certificate-input').val().trim();
 
       if (certificateText === "") {
@@ -51,7 +51,7 @@ jQuery(document).ready(function ($) {
             <div class="item w2" id="${certificateId}">
                 <div class="itemr">
                     <div class="award-block tc">
-                        <a href="#" class="block-edit delete-certificate-btn" data-id="${certificateId}"><img src="https://thesynergygroup.ch/wp-content/plugins/the-synergy-group-addon/public/img/account/edit.svg" alt="edit icon"></a>
+                        <a href="#" class="block-edit delete-certificate-btn" data-id="${certificateId}" data-text="${certificateText}"><img src="https://thesynergygroup.ch/wp-content/plugins/the-synergy-group-addon/public/img/account/edit.svg" alt="edit icon"></a>
                         <div class="award-icon">
                             <img src="https://thesynergygroup.ch/wp-content/plugins/the-synergy-group-addon/public/img/account/award.svg" alt="award icon">
                         </div>
@@ -70,13 +70,13 @@ jQuery(document).ready(function ($) {
    $('#tsg-certificate-container').on('click', '.delete-certificate-btn', function(e) {
       e.preventDefault();
       var certificateId = $(this).data('id');
+      var certificateText = $(this).data('text');
 
       $('#' + certificateId).remove();
 
       // Find the certificate text in the array and remove it
-      var certificateText = $('#' + certificateId + ' .tsg-certificate-name').text();
       certificates = certificates.filter(function(text) {
-          return text !== certificateText;
+         return text !== certificateText;
       });
 
       console.log(certificates); 
