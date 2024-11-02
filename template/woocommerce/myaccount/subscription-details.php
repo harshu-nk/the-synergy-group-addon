@@ -353,12 +353,12 @@ $sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
 		<?php //fetch_mycred_history(); ?>
 
 		<div class="fl-end mt25">
-			<p class="main-val">CHF 3600 + SF 1,090</p>
+			<p class="main-val"></p>
 		</div>
 
 		<div class="block-lines media-full affiliate-products">
 
-			<div class="block-line spb">
+			<!-- <div class="block-line spb">
 				<div class="line-left">
 					<p>Date</p>
 				</div>
@@ -374,7 +374,7 @@ $sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
 				<div class="line-right">
 					<p><strong class="ref-by">John Clarckson</strong></p>
 				</div>
-			</div>
+			</div> -->
 
 			<!-- <div class="block-line spb">
 				<div class="line-left">
@@ -394,7 +394,7 @@ $sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
 				</div>
 			</div> -->
 
-			<div class="block-line spb">
+			<!-- <div class="block-line spb">
 				<div class="line-left">
 					<p>Service/Product Purchased</p>
 				</div>
@@ -428,7 +428,7 @@ $sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
 				<div class="line-right">
 					<p><strong class="aff_sf">SF 109</strong></p>
 				</div>
-			</div>
+			</div> -->
 
 		</div>
 	</div>
