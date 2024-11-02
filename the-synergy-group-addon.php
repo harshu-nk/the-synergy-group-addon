@@ -16,7 +16,7 @@
  * Plugin Name:       The Synergy Group Addon
  * Plugin URI:        https://dayzsolutions.com
  * Description:       This is a dependant of many plugins which has to be responsible for the website customisations for My Account related solutions.
- * Version:           1.0.0
+ * Version:           1.0.2
  * Author:            Harshana Nishshanka
  * Author URI:        https://dayzsolutions.com/
  * License:           GPL-2.0+

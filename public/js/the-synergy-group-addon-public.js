@@ -2,14 +2,84 @@ jQuery(document).ready(function ($) {
    $(".edit-pencil:not(.bio-edit-pencil)").click(function (e) {
       e.preventDefault();
       $(this).toggleClass("active");
-      $(this).parent(".line-row").find(".form-row").toggle();
-      $(this).parent(".line-row").find(".form-curr-value").toggle();
+      const parentRow = $(this).closest(".line-row"); 
+
+      // if (parentRow.find(".form-curr-value").is(":visible")) {
+      //    parentRow.find(".form-curr-value").hide();
+      //    parentRow.find(".form-row").show().addClass("active");
+      // } else {
+      //    parentRow.find(".form-curr-value").show();
+      //    parentRow.find(".form-row").hide().removeClass("active");
+      // }
+      parentRow.find(".form-curr-value").toggleClass("tsg-entry-hidden");
+      parentRow.find(".form-row").toggleClass("tsg-entry-hidden");
    });
 
    $(".bio-edit-pencil").click(function (e) {
       e.preventDefault();
-      $(".bio").find(".form-curr-value").toggle();
-      $(".bio").find(".form-row").toggle();
+      if ($(".bio").find(".form-curr-value").is(":visible")) {
+         $(".bio").find(".form-curr-value").hide();
+         
+         $(".bio").find(".form-row").show().addClass("active");
+      } else {
+         $(".bio").find(".form-curr-value").show();
+         $(".bio").find(".form-row").hide().removeClass("active");
+      }
+   });
+
+   $("#tsg-add-certificate").click(function(e){
+      e.preventDefault();
+      $(".tsg-certificate-wrapper").toggleClass("tsg-entry-hidden");
+   });
+
+   //user certificate control
+   var certificates = [];
+   $('#tsg-user-add-certificate-btn').on('click', function() {
+      var certificateText = $('#certificate-input').val().trim();
+
+      if (certificateText === "") {
+          $('#tsg-certificate-error-message').show(); 
+          return; 
+      } else {
+          $('#tsg-certificate-error-message').hide(); 
+      }
+
+      certificates.push(certificateText);
+      var certificateId = 'certificate-' + certificates.length;
+
+      var newCertificate = `
+            <div class="item w2" id="${certificateId}">
+                <div class="itemr">
+                    <div class="award-block tc">
+                        <a href="#" class="block-edit delete-certificate-btn" data-id="${certificateId}" data-text="${certificateText}"><img src="https://thesynergygroup.ch/wp-content/plugins/the-synergy-group-addon/public/img/account/edit.svg" alt="edit icon"></a>
+                        <div class="award-icon">
+                            <img src="https://thesynergygroup.ch/wp-content/plugins/the-synergy-group-addon/public/img/account/award.svg" alt="award icon">
+                        </div>
+                        <p class="fs-20 mt18 tsg-certificate-name">${certificateText}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+
+      $('#tsg-certificate-container').append(newCertificate);
+
+      $('#certificate-input').val('');
+      $(".tsg-certificate-wrapper").addClass("tsg-entry-hidden");
+   });
+
+   $('#tsg-certificate-container').on('click', '.delete-certificate-btn', function(e) {
+      e.preventDefault();
+      var certificateId = $(this).data('id');
+      var certificateText = $(this).data('text');
+
+      $('#' + certificateId).remove();
+
+      // Find the certificate text in the array and remove it
+      certificates = certificates.filter(function(text) {
+         return text !== certificateText;
+      });
+
+      console.log(certificates); 
    });
 
    $(".user-withdraw-btn").on("click", function (e) {
