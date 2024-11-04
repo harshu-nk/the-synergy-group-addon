@@ -96,9 +96,10 @@ do_action('woocommerce_before_edit_account_form'); ?>
 			</div>
 			<div class="profile-photo-block">
 				<div class="profile-photo">
-					<img src="<?php echo esc_url(bp_core_fetch_avatar(array('item_id' => get_current_user_id(), 'type' => 'full', 'width' => '150', 'html' => false))); ?>" class="mr2" alt="">
+					<img src="<?php echo esc_url(bp_core_fetch_avatar(array('item_id' => get_current_user_id(), 'type' => 'full', 'width' => '150', 'html' => false))); ?>" class="mr2" alt="" id="tsg-profile-img-preview">
 				</div>
 				<div class="btn-block jc mt20">
+					<input type="file" name="bp-avatar-upload" accept="image/*" id="tsg-avatar-upload-input" style="display: none;">
 					<a href="#" class="btn style2 btn-small w100"><?php esc_html_e('ADD PIC', 'the-synergy-group-addon'); ?></a>
 				</div>
 			</div>

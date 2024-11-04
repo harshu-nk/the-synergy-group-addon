@@ -1,5 +1,5 @@
 <?php
-//print_r($business);
+// print_r($business);
 ?>
 <form class="light-style input-small" enctype="multipart/form-data" method="post">
   <input type="hidden" name="form-type" value="business-profile">

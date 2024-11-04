@@ -4,13 +4,6 @@ jQuery(document).ready(function ($) {
       $(this).toggleClass("active");
       const parentRow = $(this).closest(".line-row"); 
 
-      // if (parentRow.find(".form-curr-value").is(":visible")) {
-      //    parentRow.find(".form-curr-value").hide();
-      //    parentRow.find(".form-row").show().addClass("active");
-      // } else {
-      //    parentRow.find(".form-curr-value").show();
-      //    parentRow.find(".form-row").hide().removeClass("active");
-      // }
       parentRow.find(".form-curr-value").toggleClass("tsg-entry-hidden");
       parentRow.find(".form-row").toggleClass("tsg-entry-hidden");
    });
@@ -80,6 +73,20 @@ jQuery(document).ready(function ($) {
       });
 
       console.log(certificates); 
+   });
+
+   //user profile pic show
+   $('#tsg-avatar-upload-input').on('change', function(event) {
+      var imgPreview = $('#tsg-profile-img-preview');
+      var file = event.target.files[0];
+
+      if (file) {
+          var reader = new FileReader();
+          reader.onload = function(e) {
+              imgPreview.attr('src', e.target.result);
+          };
+          reader.readAsDataURL(file);
+      }
    });
 
    $(".user-withdraw-btn").on("click", function (e) {
