@@ -100,7 +100,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 				</div>
 				<div class="btn-block jc mt20">
 					<input type="file" name="bp-avatar-upload" accept="image/*" id="tsg-avatar-upload-input" style="display: none;">
-					<a href="#" class="btn style2 btn-small w100"><?php esc_html_e('ADD PIC', 'the-synergy-group-addon'); ?></a>
+					<a href="#" class="btn style2 btn-small w100 tsg-avatar-upload-btn"><?php esc_html_e('ADD PIC', 'the-synergy-group-addon'); ?></a>
 				</div>
 			</div>
 		</div>
@@ -255,27 +255,41 @@ do_action('woocommerce_before_edit_account_form'); ?>
 
 		<div class="items equal pt25" id="tsg-certificate-container">
 
+			<!-- Input Field for Adding Certificate -->
 			<div class="line-right line-row icon-right va tsg-certificate-wrapper tsg-entry-hidden">
 				<p class="">
-					<input type="url" class="woocommerce-Input woocommerce-Input--text input-text" name="certificate-input" id="certificate-input" autocomplete="" value="" placeholder="Enter certificate name"/>
+					<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" 
+						name="certificate-input" id="certificate-input" autocomplete="off" 
+						value="" placeholder="Enter certificate name" />
 				</p>
-				<a href="#" class="icon-a edit-certificate" id="tsg-user-add-certificate-btn"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
-				
+				<a href="#" class="icon-a edit-certificate" id="tsg-user-add-certificate-btn">
+					<img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" />
+				</a>
 			</div>
-			<p id="tsg-certificate-error-message" style="color: red; display: none;">Please enter a certificate name.</p>
 
+			<!-- Error Message for Empty Input -->
+			<p id="tsg-certificate-error-message" style="color: red; display: none;">
+				Please enter a certificate name.
+			</p>
+
+    		<!-- Sample Certificate Item -->
 			<div class="item w2">
 				<div class="itemr">
 					<div class="award-block tc">
-						<a href="#" class="block-edit delete-certificate-btn"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
+						<a href="#" class="block-edit delete-certificate-btn" data-id="sample-certificate">
+							<img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" />
+						</a>
 						<div class="award-icon">
 							<img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/award.svg" alt="award icon" />
 						</div>
-						<p class="fs-20 mt18 tsg-certificate-name"><?php esc_html_e('Microsoft Senior Professional Certificate', 'the-synergy-group-addon'); ?></p>
+						<p class="fs-20 mt18 tsg-certificate-name">
+							<?php esc_html_e('Microsoft Senior Professional Certificate', 'the-synergy-group-addon'); ?>
+						</p>
 					</div>
 				</div>
 			</div>
 
+    		<!-- Add New Certificate Button -->
 			<div class="item w2">
 				<div class="itemr">
 					<a href="#" class="award-block add-block va jc" id="tsg-add-certificate">
@@ -294,8 +308,8 @@ do_action('woocommerce_before_edit_account_form'); ?>
 				</div>
 			</div>
 
-
 		</div>
+
 	</div>
 
 	<div class="account-text-block">

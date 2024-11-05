@@ -197,3 +197,34 @@ function test_bench(){
     // echo $seller_id;
 }
 add_action('wp_head', 'test_bench');
+
+
+// Save Certificates Handler
+add_action('wp_ajax_save_certificates', 'save_certificates');
+function save_certificates() {
+    if (!empty($_POST['certificates']) && is_array($_POST['certificates'])) {
+        $user_id = get_current_user_id();
+        $certificates = array_map('wc_clean', $_POST['certificates']);
+
+        // Save certificates as a single string or JSON encoded array
+        $certificates_str = json_encode($certificates);
+        xprofile_set_field_data('certificate', $user_id, $certificates_str);
+    }
+    $user_id = get_current_user_id();
+    $certificates_str = xprofile_get_field_data('certificate', $user_id);
+
+    $certificates = !empty($certificates_str) ? json_decode($certificates_str) : [];
+    wp_send_json_success(['certificates' => $certificates]);
+    wp_die();
+}
+
+// Fetch Certificates Handler
+// add_action('wp_ajax_fetch_certificates', 'fetch_certificates');
+// function fetch_certificates() {
+//     $user_id = get_current_user_id();
+//     $certificates_str = xprofile_get_field_data('certificate', $user_id);
+
+//     $certificates = !empty($certificates_str) ? json_decode($certificates_str) : [];
+//     wp_send_json_success(['certificates' => $certificates]);
+//     wp_die();
+// }
