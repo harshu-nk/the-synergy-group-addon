@@ -200,6 +200,7 @@ class The_Synergy_Group_Addon {
 		$this->loader->add_action('woocommerce_account_customer-settings_endpoint', $woo_customizations, 'tsg_customer_settings_tab_content');
 		$this->loader->add_action('woocommerce_account_customer-support_endpoint', $woo_customizations, 'tsg_customer_support_tab_content');
 		$this->loader->add_action('woocommerce_account_my-affiliate_endpoint', $woo_customizations, 'tsg_customer_affiliate_tab_content');
+		$this->loader->add_action('woocommerce_account_sf-management_endpoint', $woo_customizations, 'tsg_sf_management_tab_content');
 		$this->loader->add_action( 'woocommerce_save_account_details', $woo_customizations, 'tsg_save_custom_fields_my_account' );
 
 		// Activity Log on Messages / Activities Tab

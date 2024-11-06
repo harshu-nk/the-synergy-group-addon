@@ -48,6 +48,7 @@ class WooAccountCustomizations
         add_rewrite_endpoint('customer-support', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('my-affiliate', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('customer-settings', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('sf-management', EP_ROOT | EP_PAGES);
     }
 
     function tsg_my_acc_tabs_query_vars($vars)
@@ -58,6 +59,7 @@ class WooAccountCustomizations
         $vars[] = 'customer-settings';
         $vars[] = 'customer-support';
         $vars[] = 'my-affiliate';
+        $vars[] = 'sf-management';
         return $vars;
     }
 
@@ -78,6 +80,7 @@ class WooAccountCustomizations
         if (current_user_can('manage_options')) {
             $notifications_tab_title = __('Notifications', 'the-synergy-group-addon');
             $sf_overview_tab_title = __('SF Exchange Settings', 'the-synergy-group-addon');
+            $items['sf-management'] = __('SF Management', 'the-synergy-group-addon');
         } else {
             $notifications_tab_title = __('Activity / Messages', 'the-synergy-group-addon');
             $sf_overview_tab_title = __('Synergy Francs', 'the-synergy-group-addon');
@@ -92,6 +95,7 @@ class WooAccountCustomizations
 
         $customOrder = [
             'dashboard',
+            'sf-management',
             'edit-account',
             'notifications',
             'customer-settings',
@@ -171,8 +175,6 @@ class WooAccountCustomizations
         wc_get_template('myaccount/service-offering.php', array('business' => $business, 'products' => $available_products));
     }
 
-
-
     function tsg_sf_settings_tab_content(): void
     {
         if (current_user_can('manage_options')) {
@@ -180,6 +182,34 @@ class WooAccountCustomizations
         } else {
             wc_get_template('myaccount/customer-sf-overview.php', array());
         }
+    }
+
+    function tsg_sf_management_tab_content() : void {
+
+        $args = array(
+            'post_type' => 'product',
+            'tax_query' => array(
+                 array(
+                     'taxonomy' => 'product_type',
+                     'field'    => 'slug',
+                     'terms'    => array('subscription', 'variable-subscription'), 
+                 ),
+             ),
+          );
+        $loop = new WP_Query( $args );
+        $subscriptions = [];
+        if ( $loop->have_posts() ) {
+            while ( $loop->have_posts() ) : $loop->the_post();
+                $subscriptions[] = get_the_ID();
+            endwhile;
+        }
+        
+        wp_reset_postdata();
+
+        $options = array(
+            'sf_bonus_allocation' => get_option('sf_bonus_allocation', 0)
+        );
+        wc_get_template('myaccount/admin-sf-management.php', array('plans' => $subscriptions, 'options' => $options)); 
     }
 
     /**
