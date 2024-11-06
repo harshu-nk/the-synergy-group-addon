@@ -23,12 +23,26 @@
             </div>
 
             <div class="block-line spb small-line plans-loop">
-                <pre>
-                    <?php //print_r($plans); ?>
-                </pre>
-                <?php foreach($plans as $plan_product_id){
-                    echo 'Plan ID: ' . $plan_product_id . '<br>';
-                } ?>
+                <?php if ($plans) { ?>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Plan</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($plans as $plan_product) { ?>
+                                <tr>
+                                    <td><?php echo $plan_product['title'] ?></td>
+                                    <td>
+                                        <input type="number" name="">
+                                    </td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                <?php } ?>
             </div>
 
             <div class="sf-block-parent">

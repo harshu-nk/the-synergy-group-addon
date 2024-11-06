@@ -139,17 +139,17 @@ class WooAccountCustomizations
             'affiliate_earnings' => get_user_meta($user_id, 'affiliate_earnings', true),
             'data_export' => get_user_meta($user_id, 'data_export', true),
         );
-        wc_get_template('myaccount/customer-settings.php', array('settings' => $settings));
+        wc_get_template('myaccount/customer/customer-settings.php', array('settings' => $settings));
     }
 
     function tsg_customer_support_tab_content(): void
     {
-        wc_get_template('myaccount/customer-support.php', array());
+        wc_get_template('myaccount/customer/customer-support.php', array());
     }
 
     function tsg_customer_affiliate_tab_content(): void
     {
-        wc_get_template('myaccount/customer-affiliate.php', array());
+        wc_get_template('myaccount/customer/customer-affiliate.php', array());
     }
 
     function tsg_service_offering_tab_content(): void
@@ -172,15 +172,17 @@ class WooAccountCustomizations
             }
             wp_reset_postdata();
         }
-        wc_get_template('myaccount/service-offering.php', array('business' => $business, 'products' => $available_products));
+        wc_get_template('myaccount/customer/service-offering.php', array('business' => $business, 'products' => $available_products));
     }
 
     function tsg_sf_settings_tab_content(): void
     {
         if (current_user_can('manage_options')) {
-            wc_get_template('myaccount/admin-exchange-settings.php', array());
+            wc_get_template('myaccount/admin/admin-exchange-settings.php', array());
         } else {
-            wc_get_template('myaccount/customer-sf-overview.php', array());
+            $customer_history_args = array('user_id' => get_current_user_id());
+            $history_data = new myCRED_Query_Log($customer_history_args);
+            wc_get_template('myaccount/customer/customer-sf-overview.php', array('history' => $history_data->results));
         }
     }
 
@@ -200,7 +202,7 @@ class WooAccountCustomizations
         $subscriptions = [];
         if ( $loop->have_posts() ) {
             while ( $loop->have_posts() ) : $loop->the_post();
-                $subscriptions[] = get_the_ID();
+                $subscriptions[] = array('id' => get_the_ID(), 'title' => get_the_title());
             endwhile;
         }
         
@@ -209,7 +211,7 @@ class WooAccountCustomizations
         $options = array(
             'sf_bonus_allocation' => get_option('sf_bonus_allocation', 0)
         );
-        wc_get_template('myaccount/admin-sf-management.php', array('plans' => $subscriptions, 'options' => $options)); 
+        wc_get_template('myaccount/admin/admin-sf-management.php', array('plans' => $subscriptions, 'options' => $options)); 
     }
 
     /**

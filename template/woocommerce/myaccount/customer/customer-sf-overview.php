@@ -15,6 +15,13 @@ $sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
 
         <div class="block-lines">
 
+            <?php
+            foreach($history as $line){
+                echo '<pre>';
+                print_r($line);
+                echo '</pre>';
+            }
+            ?>
             <div class="block-line spb">
                 <div class="line-left va">
                     <div class="line-square square-green"></div>
