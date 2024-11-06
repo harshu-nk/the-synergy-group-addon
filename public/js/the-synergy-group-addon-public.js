@@ -268,31 +268,58 @@ jQuery(document).ready(function ($) {
    // When a product is selected, populate the form fields
    $("#user-products").on("click", "li", function () {
       var productId = $(this).data("id");
-      $("#selected-product").val(productId);
 
-      // Fetch product details
-      $.ajax({
-         url: tsg_public_ajax.ajax_url,
-         type: "POST",
-         data: { action: "get_product_details", product_id: productId },
-         success: function (response) {
-            if (response.success) {
-               var product = response.data;
-               $("#product-id").val(product.id);
-               $("#service-name").val(product.name);
-               $("#long-desc").val(product.long_description);
-               $("#short-desc").val(product.short_description);
-               // $("#product-price").val(product.chf_price);
-               $("#pricing-units").val(product.pricing_units);
-               $("#pricing-sf").val(product.pricing_sf);
-               $("#pricing-chf").val(product.pricing_chf);
-               $("#taxonomy-select").val(product.category);
-               $("#activity-type").val(product.activity);
-               $("#main-imagee").val(product.main_image);
-               // $('#activity-type').val(product.gallery); // Load gallery images (implement your logic here)
-            }
-         },
-      });
+      if (productId === "create-new") {
+         $(".tsg-delete-service-btn").hide();
+
+         $("#selected-service").val("");
+         $("#product-id").val("");
+         $("#service-name").val("");
+         $("#long-desc").val("");
+         $("#short-desc").val("");
+         // $("#product-price").val(""); 
+         $("#pricing-units").val("");
+         $("#pricing-sf").val("");
+         $("#pricing-chf").val("");
+         $("#taxonomy-select").val("");
+         $("#activity-type").val("");
+         $("#service-image").val("");
+
+         $("#tsg-selected-service span").text("Create New");
+
+     } else {
+         $(".tsg-delete-service-btn").show();
+         $("#selected-service").val(productId);
+
+         let selectedText = $(this).text();
+         $("#tsg-selected-service span").text(selectedText);
+
+         // Fetch product details
+         $.ajax({
+            url: tsg_public_ajax.ajax_url,
+            type: "POST",
+            data: { action: "get_product_details", product_id: productId },
+            success: function (response) {
+               if (response.success) {
+                  var product = response.data;
+                  $("#product-id").val(product.id);
+                  $("#service-name").val(product.name);
+                  $("#long-desc").val(product.long_description);
+                  $("#short-desc").val(product.short_description);
+                  // $("#product-price").val(product.chf_price);
+                  $("#pricing-units").val(product.pricing_units);
+                  $("#pricing-sf").val(product.pricing_sf);
+                  $("#pricing-chf").val(product.pricing_chf);
+                  $("#taxonomy-select").val(product.category);
+                  $("#activity-type").val(product.activity);
+                  // $("#service-image").val(product.main_image);
+                  $("#service-image").attr("src", product.main_image);
+                  // $('#activity-type').val(product.gallery); // Load gallery images (implement your logic here)
+
+               }
+            },
+         });
+      }
    });
 
    // Handle form submission (create/edit product)
@@ -687,3 +714,101 @@ jQuery(document).ready(function ($) {
          $("#affiliate-datepicker").toggle();
       });
 });
+
+
+jQuery(document).ready(function($) {
+   //For SF value control (service offering page)
+   function validateFields() {
+         let sfValue = parseInt($("#pricing-sf").val());
+         let chfValue = parseInt($("#pricing-chf").val());
+         let error = "";
+
+         if (sfValue < 25 || sfValue > 99) {
+            error = "SF value must be between 25 and 99.";
+         } else if (chfValue < 1 || chfValue > 75) {
+            error = "CHF value must be between 1 and 75.";
+         } else if ((sfValue + chfValue) !== 100) {
+            error = "SF and CHF values must add up to 100.";
+         }
+
+         if (error) {
+            $(".error-message").remove();
+            $(".tsg-sf-and-chf-wrapper").append(`<div class="error-message" style="color:red;">${error}</div>`);
+         } else {
+            $(".error-message").remove();
+         }
+   }
+
+   $("#pricing-sf").on("input", function () {
+         let sfValue = parseInt($(this).val());
+
+         if (sfValue >= 25 && sfValue <= 99) {
+            $("#pricing-chf").val(100 - sfValue);
+         }
+
+         validateFields();
+   });
+
+   $("#pricing-chf").on("input", function () {
+         let chfValue = parseInt($(this).val());
+
+         if (chfValue >= 1 && chfValue <= 75) {
+            $("#pricing-sf").val(100 - chfValue);
+         }
+
+         validateFields();
+   });
+
+   //Delete product - service offering page
+   $("#tsg-delete-service").on("click", function () {
+      let productId = $("#product-id").val();
+
+      if (!confirm("Are you sure you want to delete this product?")) {
+          return;
+      }
+
+      $.ajax({
+          url: tsg_public_ajax.ajax_url,  
+          type: "POST",
+          data: {
+              action: "delete_product",
+              product_id: productId,
+          },
+          success: function (response) {
+              if (response.success) {
+                  alert(response.data.message);
+                  location.reload();
+              } else {
+                  alert(response.data.message);
+              }
+          },
+          error: function () {
+              alert("An error occurred while deleting the product.");
+          }
+      });
+   });
+
+   //gallery file input click
+   $("#service-image-btn").on("click", function () {
+      $("#service-image").click();
+   });
+
+   $("#service-gallery-btn").on("click", function () {
+      $("#service-gallery").click();
+   });
+
+   $("#service-image").on("change", function (event) {
+      if (event.target.files && event.target.files[0]) {
+          var reader = new FileReader();
+
+          reader.onload = function (e) {
+              $("#main-image").attr("src", e.target.result );
+          };
+
+          reader.readAsDataURL(event.target.files[0]); 
+      }
+   });
+
+});
+
+ 

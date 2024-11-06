@@ -228,3 +228,30 @@ function save_certificates() {
 //     wp_send_json_success(['certificates' => $certificates]);
 //     wp_die();
 // }
+
+//Service offering - delete selected product
+add_action('wp_ajax_delete_product', 'tsg_delete_product');
+
+function tsg_delete_product() {
+
+    if (!isset($_POST['product_id']) || !current_user_can('delete_posts')) {
+        wp_send_json_error(['message' => 'Unauthorized request']);
+        wp_die();
+    }
+
+    $product_id = intval($_POST['product_id']);
+
+    if (get_post_type($product_id) !== 'product') {
+        wp_send_json_error(['message' => 'Invalid product ID']);
+        wp_die();
+    }
+
+    if (wp_delete_post($product_id, true)) {
+        wp_send_json_success(['message' => 'Product deleted successfully']);
+    } else {
+        wp_send_json_error(['message' => 'Failed to delete the product']);
+    }
+
+    wp_die();
+}
+

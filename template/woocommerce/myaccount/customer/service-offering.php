@@ -133,9 +133,10 @@
       </div>
       <div class="line-right input-field width2">
         <div class="select">
-          <p class="select-name"><span>Select Service</span></p>
+          <p class="select-name" id="tsg-selected-service"><span>Select Service</span></p>
           <input type="hidden" id="selected-service" name="selected-service" value="" />
           <ul class="select-list hauto" id="user-products">
+            <li data-id="create-new">Create New</li>
             <?php 
             //foreach ($products as $product) {
               //echo "<li data-value='{$product['id']}'>{$product['title']}</li>";
@@ -146,18 +147,12 @@
 
     <div class="block-lines small-lines media-full">
       <div class="block-line spb small-line">
-        <div class="line-left">
-          <p><strong><?php _e('Manage', 'the-synergy-group-addon'); ?></strong></p>
-        </div>
         <div class="line-right va btns-part">
           <div class="btn-block">
-            <a href="#" class="btn style2">create</a>
+            <a href="#" class="btn style2 tsg-edit-service-btn">edit</a>
           </div>
           <div class="btn-block">
-            <a href="#" class="btn style2">edit</a>
-          </div>
-          <div class="btn-block">
-            <a href="#" class="btn style2">delete</a>
+            <a href="#" class="btn style2 tsg-delete-service-btn" id="tsg-delete-service">delete</a>
           </div>
         </div>
       </div>
@@ -199,25 +194,15 @@
           <div class="line-right input-field">
             <input type="number" placeholder="100" id="pricing-units" name="product-price">
           </div>
-          <div class="items pad10">
+          <div class="items pad10 tsg-sf-and-chf-wrapper">
             <div class="item w2">
               <div class="itemr">
-                <div class="qtydiv">
-                  <div class="qtybox">
-                    <div class="btnqty qtyplus">
-                      <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/qty_top.svg" alt="plus" />
-                    </div>
-                    <input type="text" id="pricing-sf" name="pricing-sf" placeholder="SF 20%" min="1" class="quantity-selector quantity-input">
-                    <div class="btnqty qtyminus">
-                      <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/qty_bottom.svg" alt="minus" />
-                    </div>
-                  </div>
-                </div>
+                    <input type="number" id="pricing-sf" name="pricing-sf" placeholder="SF 20%" min="1" class="quantity-selector quantity-input">
               </div>
             </div>
             <div class="item w2">
               <div class="itemr">
-                <input type="text" id="pricing-chf" name="pricing-chf" placeholder="CHF 80%">
+                <input type="number" id="pricing-chf" name="pricing-chf" min="1" max="75" placeholder="CHF 80%">
               </div>
             </div>
           </div>
@@ -259,13 +244,13 @@
             <div class="items pictures pad10">
               <div class="item w3">
                 <div class="itemr">
-                  <div class="uploaded-picture opt" id="main-image"></div>
+                  <img class="uploaded-picture opt" id="main-image"/>
                 </div>
               </div>
             </div>
             <div class="btn-block">
-              <input type="file" name="service-image" id="service-image">
-              <a href="#" class="btn style2">change</a>
+              <input type="file" name="service-image" id="service-image" style="display: none;">
+              <a href="#" class="btn style2" id="service-image-btn">change</a>
             </div>
           </div>
         </div>
@@ -279,38 +264,13 @@
           <div class="items pictures pad10">
             <div class="item w3">
               <div class="itemr">
-                <div class="uploaded-picture opt"></div>
-              </div>
-            </div>
-            <div class="item w3">
-              <div class="itemr">
-                <div class="uploaded-picture opt"></div>
-              </div>
-            </div>
-            <div class="item w3">
-              <div class="itemr">
-                <div class="uploaded-picture opt"></div>
-              </div>
-            </div>
-            <div class="item w3">
-              <div class="itemr">
-                <div class="uploaded-picture opt"></div>
-              </div>
-            </div>
-            <div class="item w3">
-              <div class="itemr">
-                <div class="uploaded-picture opt"></div>
-              </div>
-            </div>
-            <div class="item w3">
-              <div class="itemr">
-                <div class="uploaded-picture opt"></div>
+                <img class="uploaded-picture opt" />
               </div>
             </div>
           </div>
           <div class="btn-block fl-end mt20">
-            <input type="file" name="service-gallery" id="service-gallery" multiple>
-            <a href="#" class="btn style2">change</a>
+            <input type="file" name="service-gallery" id="service-gallery" multiple style="display: none;">
+            <a href="#" class="btn style2" id="service-gallery-btn">change</a>
           </div>
         </div>
       </div>
