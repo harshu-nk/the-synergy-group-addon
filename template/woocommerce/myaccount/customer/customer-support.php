@@ -119,7 +119,8 @@
                             'post_type'      => 'emd_ticket', 
                             'post_status'    => 'publish', 
                             'posts_per_page' => -1, 
-                            'fields'         => 'ids' 
+                            'fields'         => 'ids',
+                            'author'         => get_current_user_id()  
                         );
                     
                         $tickets = new WP_Query($args);

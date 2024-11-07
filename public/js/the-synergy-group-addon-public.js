@@ -811,13 +811,115 @@ jQuery(document).ready(function($) {
 
 });
 
-//customer support page controls
+//customer support page controls | admin sf management page control
 jQuery(document).ready(function($) {
    $('#tsg-submit-ticket-btn').on("click", function () {
       $("#tsg-submit-ticket-container").toggle();
    });
    $('#tsg-active-tickets-btn').on("click", function () {
       $("#tsg-active-tickets-container").toggle();
+   });
+   
+   //Date picker
+   $("#calendar").datepicker({
+      dateFormat: "dd-mm-yy", 
+      showAnim: "slideDown", 
+      position: {
+         my: "left top",
+         at: "left bottom",
+      }
+   });
+
+   $('.tsg-item-toggle-btn').on("click", function (e) {
+      e.preventDefault(); 
+      
+      var target = $(this).data('target');
+      $(target).toggle();
+   });
+
+   $("#tsg-configure-subscription-save-btn").on("click", function () {   
+      $.ajax({
+          url: tsg_public_ajax.ajax_url,  
+          type: "POST",
+          data: {
+              action: "configure_subscription",
+              data: subscriptionPlan,
+          },
+          success: function (response) {
+              console.log(response);
+          },
+          error: function () {
+              alert("An error occurred.");
+          }
+      });
+   });
+
+   $("#tsg-adjust-sf-bonus-save-btn").on("click", function () {   
+      $.ajax({
+          url: tsg_public_ajax.ajax_url,  
+          type: "POST",
+          data: {
+              action: "adjust_sf_bonus",
+              data: sfBonus,
+          },
+          success: function (response) {
+              console.log(response);
+          },
+          error: function () {
+              alert("An error occurred.");
+          }
+      });
+   });
+
+   $("#tsg-allocate-sf-to-member-save-btn").on("click", function () {   
+      $.ajax({
+          url: tsg_public_ajax.ajax_url,  
+          type: "POST",
+          data: {
+              action: "allocate_sf_to_member",
+              data: allocatedMember,
+          },
+          success: function (response) {
+              console.log(response);
+          },
+          error: function () {
+              alert("An error occurred.");
+          }
+      });
+   });
+
+   $("#tsg-withdraw-sf-from-member-save-btn").on("click", function () {   
+      $.ajax({
+          url: tsg_public_ajax.ajax_url,  
+          type: "POST",
+          data: {
+              action: "withdraw_sf_from_member",
+              data: withdrawedMember,
+          },
+          success: function (response) {
+              console.log(response);
+          },
+          error: function () {
+              alert("An error occurred.");
+          }
+      });
+   });
+
+   $("#tsg-remove-sf-from-circulation-save-btn").on("click", function () {   
+      $.ajax({
+          url: tsg_public_ajax.ajax_url,  
+          type: "POST",
+          data: {
+              action: "remove_sf_from_circulation",
+              data: removedSf,
+          },
+          success: function (response) {
+              console.log(response);
+          },
+          error: function () {
+              alert("An error occurred.");
+          }
+      });
    });
 });
 

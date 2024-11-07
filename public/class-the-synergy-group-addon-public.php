@@ -61,7 +61,8 @@ class The_Synergy_Group_Addon_Public {
 	 */
 	public function enqueue_styles() {
 		wp_enqueue_style( $this->plugin_name , plugin_dir_url( __FILE__ ) . 'css/the-synergy-group-addon-public.css', array(), $this->version, 'all' );
-		
+		wp_enqueue_style( 'datepicker-css', plugin_dir_url( __FILE__ ) . 'datepicker/css/datepicker.min.css', array(), '1.0.0' );
+
 		if(is_account_page() && current_user_can( 'manage_options' )){ //Only for Admins
 			wp_enqueue_style( 'tsg-select2-css', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', array(), '4.1.0-rc.0');
 			wp_enqueue_script( 'tsg-select2-js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', 'jquery', '4.1.0-rc.0');
@@ -92,6 +93,9 @@ class The_Synergy_Group_Addon_Public {
 		wp_localize_script( $this->plugin_name . '-my-account-public', 'tsg_public_ajax', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
 		wp_enqueue_script( $this->plugin_name . '-my-account-form', plugin_dir_url( __FILE__ ) . 'js/form.js', array( 'jquery' ), '1.19.5', true );
 		wp_enqueue_script( 'dropzone-js', 'https://unpkg.com/dropzone@5/dist/min/dropzone.min.js', array(), $this->version, true );
+		wp_enqueue_script( 'datepicker-js', plugin_dir_url( __FILE__ ) . 'datepicker/js/datepicker.min.js', array( 'jquery' ), '1.0.0', true );
+    	wp_enqueue_script( 'datepicker-en', plugin_dir_url( __FILE__ ) . 'datepicker/js/i18n/datepicker.en.js', array( 'datepicker-js' ), '1.0.0', true );
+    	wp_enqueue_script( 'calendar-js', plugin_dir_url( __FILE__ ) . 'js/calendar.js', array( 'jquery', 'datepicker-js' ), '1.0.0', true );
 	}
 
 }

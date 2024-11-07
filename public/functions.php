@@ -281,3 +281,73 @@ function unique_multidim_obj($obj, $key){
     $uniqueArray = array_values($uniqueArray);
     return $uniqueArray;
 }
+
+//Admin SF management - configure subscription
+add_action('wp_ajax_configure_subscription', 'tsg_configure_subscription');
+
+function tsg_configure_subscription() {
+
+    if (!isset($_POST['data'])) {
+        wp_send_json_error(['message' => 'Unauthorized request']);
+        wp_die();
+    } else {
+
+    }
+    wp_die();
+}
+
+//Admin SF management - adjust SF bonus
+add_action('wp_ajax_adjust_sf_bonus', 'tsg_adjust_sf_bonus');
+
+function tsg_adjust_sf_bonus() {
+
+    if (!isset($_POST['data'])) {
+        wp_send_json_error(['message' => 'Unauthorized request']);
+        wp_die();
+    } else {
+        
+    }
+    wp_die();
+}
+
+//Admin SF management - allocate SF to member
+add_action('wp_ajax_allocate_sf_to_member', 'tsg_allocate_sf_to_member');
+
+function tsg_allocate_sf_to_member() {
+
+    if (!isset($_POST['data'])) {
+        wp_send_json_error(['message' => 'Unauthorized request']);
+        wp_die();
+    } else {
+        
+    }
+    wp_die();
+}
+
+//Admin SF management - withdraw SF from member
+add_action('wp_ajax_withdraw_sf_from_member', 'tsg_withdraw_sf_from_member');
+
+function tsg_withdraw_sf_from_member() {
+
+    if (!isset($_POST['data'])) {
+        wp_send_json_error(['message' => 'Unauthorized request']);
+        wp_die();
+    } else {
+        
+    }
+    wp_die();
+}
+
+//Admin SF management - remove SF from circulation
+add_action('wp_ajax_remove_sf_from_circulation', 'tsg_remove_sf_from_circulation');
+
+function tsg_remove_sf_from_circulation() {
+
+    if (!isset($_POST['data'])) {
+        wp_send_json_error(['message' => 'Unauthorized request']);
+        wp_die();
+    } else {
+        
+    }
+    wp_die();
+}
