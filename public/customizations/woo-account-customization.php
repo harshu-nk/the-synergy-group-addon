@@ -182,7 +182,19 @@ class WooAccountCustomizations
         } else {
             $customer_history_args = array('user_id' => get_current_user_id());
             $history_data = new myCRED_Query_Log($customer_history_args);
-            wc_get_template('myaccount/customer/customer-sf-overview.php', array('history' => $history_data->results));
+
+            $uniqueArray = [];
+            foreach ($history_data->results as $object) {
+                if (isset($uniqueArray[$object->ref])) {
+                    // Sum the creds for the same ref
+                    $uniqueArray[$object->ref]->creds += $object->creds;
+                } else {
+                    // Add the object to the unique array
+                    $uniqueArray[$object->ref] = clone $object;
+                }
+            }
+            
+            wc_get_template('myaccount/customer/customer-sf-overview.php', array('history' => $uniqueArray));
         }
     }
 
