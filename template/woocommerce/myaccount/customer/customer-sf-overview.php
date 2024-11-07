@@ -16,13 +16,24 @@ $sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
         <div class="block-lines">
 
             <?php
-            foreach($history as $line){
-                echo '<pre>';
-                print_r($line);
-                echo '</pre>';
+            foreach(unique_multidim_obj($history, 'ref') as $line){
+                if(floatval($line->creds) < 0){
+                    continue;
+                }
+                ?>
+                <div class="block-line spb">
+                    <div class="line-left va">
+                        <div class="line-square square-green"></div>
+                        <p><?php echo $line->entry; ?></p>
+                    </div>
+                    <div class="line-right" data-ref="<?php echo $line->ref; ?>">
+                        <p class="main-val2"><?php echo do_shortcode('[mycred_total_points type="synergy_francs" user_id="'.get_current_user_id().'" ref="'.$line->ref.'"]') ?></p>
+                    </div>
+                </div>
+                <?php
             }
             ?>
-            <div class="block-line spb">
+            <!-- <div class="block-line spb">
                 <div class="line-left va">
                     <div class="line-square square-green"></div>
                     <p><?php _e('My Subscription', 'the-synergy-group-addon'); ?></p>
@@ -61,7 +72,7 @@ $sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
                     <p class="main-val2">SF 750</p>
                 </div>
             </div>
-
+ -->
             <div class="block-line spb">
                 <div class="line-left">
                     <p><?php _e('Total', 'the-synergy-group-addon'); ?></p>
@@ -80,7 +91,25 @@ $sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
         <h6 class="mt25"><strong><?php _e('Paid For', 'the-synergy-group-addon'); ?>:</strong></h6>
 
         <div class="block-lines">
-            <div class="block-line spb">
+        <?php
+            foreach(unique_multidim_obj($history, 'ref') as $line){
+                if(floatval($line->creds) > 0){
+                    continue;
+                }
+                ?>
+                <div class="block-line spb">
+                    <div class="line-left va">
+                        <div class="line-square square-green"></div>
+                        <p><?php echo $line->entry; ?></p>
+                    </div>
+                    <div class="line-right" data-ref="<?php echo $line->ref; ?>">
+                        <p class="main-val2"><?php echo do_shortcode('[mycred_total_points type="synergy_francs" user_id="'.get_current_user_id().'" ref="'.$line->ref.'"]') ?></p>
+                    </div>
+                </div>
+                <?php
+            }
+            ?>
+            <!-- <div class="block-line spb">
                 <div class="line-left va">
                     <div class="line-square square-green"></div>
                     <p><?php _e('Services I\'ve Purchased' ,'the-synergy-group-addon'); ?></p>
@@ -129,7 +158,7 @@ $sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
                     <p class="main-val2">SF 580</p>
                 </div>
             </div>
-
+ -->
             <div class="block-line spb">
                 <div class="line-left">
                     <p><?php _e('Total', 'the-synergy-group-addon'); ?></p>

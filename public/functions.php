@@ -255,3 +255,29 @@ function tsg_delete_product() {
     wp_die();
 }
 
+function unique_multidim_array($array, $key) {
+    $temp_array = array();
+    $i = 0;
+    $key_array = array();
+    foreach($array as $val) {
+        if (!in_array($val[$key], $key_array)) {
+            $key_array[$i] = $val[$key];
+            $temp_array[$i] = $val;
+        }
+        $i++;
+    }
+    return $temp_array;
+}
+
+function unique_multidim_obj($obj, $key){
+    $uniqueArray = [];
+    foreach ($obj as $object) {
+        if (!isset($uniqueArray[$object->{$key}])) {
+            $uniqueArray[$object->{$key}] = $object;
+        }
+    }
+
+    // Reset the keys of the unique array
+    $uniqueArray = array_values($uniqueArray);
+    return $uniqueArray;
+}
