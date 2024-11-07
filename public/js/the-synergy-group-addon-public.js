@@ -811,4 +811,14 @@ jQuery(document).ready(function($) {
 
 });
 
+//customer support page controls
+jQuery(document).ready(function($) {
+   $('#tsg-submit-ticket-btn').on("click", function () {
+      $("#tsg-submit-ticket-container").toggle();
+   });
+   $('#tsg-active-tickets-btn').on("click", function () {
+      $("#tsg-active-tickets-container").toggle();
+   });
+});
+
  

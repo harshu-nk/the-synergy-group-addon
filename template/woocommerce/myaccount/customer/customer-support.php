@@ -104,22 +104,33 @@
                 </div>
                 <div class="line-right width-field width2">
                     <div class="btn-block">
-                        <a href="#" class="btn style2 w100">Raise a New Ticket</a>
+                        <a href="#" class="btn style2 w100" id="tsg-submit-ticket-btn">Raise a New Ticket</a>
                     </div>
                 </div>
             </div>
-
+            <div class="block-line spb" id="tsg-submit-ticket-container" style="display: none;"><?php echo do_shortcode('[submit_tickets]'); ?></div>    
             <div class="block-line spb">
                 <div class="line-left">
                     <p>My Tickets</p>
                 </div>
                 <div class="line-right width-field width2">
+                    <?php 
+                        $args = array(
+                            'post_type'      => 'emd_ticket', 
+                            'post_status'    => 'publish', 
+                            'posts_per_page' => -1, 
+                            'fields'         => 'ids' 
+                        );
+                    
+                        $tickets = new WP_Query($args);
+                        $ticket_count = $tickets->found_posts;
+                    ?>
                     <div class="btn-block">
-                        <a href="#" class="btn style2 w100">2 active tickets</a>
+                        <a href="#" class="btn style2 w100" id="tsg-active-tickets-btn"><?php echo $ticket_count; ?> active tickets</a>
                     </div>
                 </div>
             </div>
-
+            <div class="block-line spb" id="tsg-active-tickets-container" style="display: none;"><?php echo do_shortcode('[support_tickets]'); ?></div>
         </div>
     </div>
 
