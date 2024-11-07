@@ -51,21 +51,21 @@ $mycred_transactions = mycred_get_users_reference_sum(get_current_user_id(), 'sy
         <div class="block-lines">
 
         <div class="block-lines">
-        <?php 
-        foreach($mycred_transactions as $label => $amount){ 
-            if($amount > 0){
-                continue;
-            }
-            ?>
-            <div class="block-line spb">
-                <div class="line-left">
-                    <p><?php echo ucwords(str_replace('_', ' ' , $label)); ?></p>
+            <?php 
+            foreach($mycred_transactions as $label => $amount){ 
+                if($amount > 0){
+                    continue;
+                }
+                ?>
+                <div class="block-line spb">
+                    <div class="line-left">
+                        <p><?php echo ucwords(str_replace('_', ' ' , $label)); ?></p>
+                    </div>
+                    <div class="line-right">
+                        <p class="main-val2">SF <?php echo number_format(abs($amount), 2); ?></p>
+                    </div>
                 </div>
-                <div class="line-right">
-                    <p class="main-val2">SF <?php echo number_format(abs($amount), 2); ?></p>
-                </div>
-            </div>
-        <?php } ?>
+            <?php } ?>
         </div>
 
             <!-- <div class="block-line spb">
