@@ -706,9 +706,7 @@ jQuery(document).ready(function ($) {
    $("#selected-aff-date").on("click", function (e) {
       $("#affiliate-datepicker").toggle();
    });
-});
 
-jQuery(document).ready(function ($) {
    //For SF value control (service offering page)
    function validateFields() {
       let sfValue = parseInt($("#pricing-sf").val());
@@ -819,6 +817,26 @@ jQuery(document).ready(function ($) {
       },
    });
 
+   //Date picker
+   $("#date-from").datepicker({
+      dateFormat: "dd-mm-yy",
+      showAnim: "slideDown",
+      position: {
+         my: "left top",
+         at: "left bottom",
+      },
+   });
+
+   //Date picker
+   $("#date-to").datepicker({
+      dateFormat: "dd-mm-yy",
+      showAnim: "slideDown",
+      position: {
+         my: "left top",
+         at: "left bottom",
+      },
+   });
+
    $(".tsg-item-toggle-btn").on("click", function (e) {
       e.preventDefault();
 
@@ -910,4 +928,7 @@ jQuery(document).ready(function ($) {
          },
       });
    });
+
+   date-from
+   
 });
