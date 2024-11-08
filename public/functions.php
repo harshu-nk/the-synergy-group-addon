@@ -290,9 +290,17 @@ function tsg_configure_subscription() {
     if (!isset($_POST['data'])) {
         wp_send_json_error(['message' => 'Unauthorized request']);
         wp_die();
-    } else {
-        $subscriptions = $_POST[''];
+    } 
+    
+    $subscriptions = $_POST['data'];
+
+    foreach ($subscriptions as $product_id => $sf_allowance_value) {
+        $product_id = intval($product_id);
+        $sf_allowance_value = sanitize_text_field($sf_allowance_value);
+
+        update_field('sf_allowance', $sf_allowance_value, $product_id);
     }
+    wp_send_json_success(['message' => 'Subscription data saved successfully']);
     wp_die();
 }
 

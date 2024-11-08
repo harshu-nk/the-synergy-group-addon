@@ -865,6 +865,16 @@ jQuery(document).ready(function ($) {
    });
 
    $("#tsg-configure-subscription-save-btn").on("click", function () {
+      let subscriptionPlan = {};
+
+      $("input[name^='subscription']").each(function() {
+         const fieldName = $(this).attr("name");
+         const productId = fieldName.match(/\d+/)[0];
+         const value = $(this).val();
+
+         subscriptionPlan[productId] = value;
+      });
+
       $.ajax({
          url: tsg_public_ajax.ajax_url,
          type: "POST",
@@ -873,6 +883,7 @@ jQuery(document).ready(function ($) {
             data: subscriptionPlan,
          },
          success: function (response) {
+            console.log("success");
             console.log(response);
          },
          error: function () {
