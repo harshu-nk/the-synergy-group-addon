@@ -2,7 +2,7 @@ jQuery(document).ready(function ($) {
    $(".edit-pencil:not(.bio-edit-pencil)").click(function (e) {
       e.preventDefault();
       $(this).toggleClass("active");
-      const parentRow = $(this).closest(".line-row"); 
+      const parentRow = $(this).closest(".line-row");
 
       parentRow.find(".form-curr-value").toggleClass("tsg-entry-hidden");
       parentRow.find(".form-row").toggleClass("tsg-entry-hidden");
@@ -12,7 +12,7 @@ jQuery(document).ready(function ($) {
       e.preventDefault();
       if ($(".bio").find(".form-curr-value").is(":visible")) {
          $(".bio").find(".form-curr-value").hide();
-         
+
          $(".bio").find(".form-row").show().addClass("active");
       } else {
          $(".bio").find(".form-curr-value").show();
@@ -20,7 +20,7 @@ jQuery(document).ready(function ($) {
       }
    });
 
-   $("#tsg-add-certificate").click(function(e){
+   $("#tsg-add-certificate").click(function (e) {
       e.preventDefault();
       $(".tsg-certificate-wrapper").toggleClass("tsg-entry-hidden");
    });
@@ -31,10 +31,10 @@ jQuery(document).ready(function ($) {
    //    var certificateText = $('#certificate-input').val().trim();
 
    //    if (certificateText === "") {
-   //        $('#tsg-certificate-error-message').show(); 
-   //        return; 
+   //        $('#tsg-certificate-error-message').show();
+   //        return;
    //    } else {
-   //        $('#tsg-certificate-error-message').hide(); 
+   //        $('#tsg-certificate-error-message').hide();
    //    }
 
    //    certificates.push(certificateText);
@@ -72,33 +72,32 @@ jQuery(document).ready(function ($) {
    //       return text !== certificateText;
    //    });
 
-   //    console.log(certificates); 
+   //    console.log(certificates);
    // });
 
    // Certificates Array
    var certificates = [];
 
    // Add Certificate Button Click
-   $('#tsg-user-add-certificate-btn').on('click', function() {
-      var certificateText = $('#certificate-input').val().trim();
+   $("#tsg-user-add-certificate-btn").on("click", function () {
+      var certificateText = $("#certificate-input").val().trim();
 
       if (certificateText === "") {
-         $('#tsg-certificate-error-message').show(); 
-         return; 
+         $("#tsg-certificate-error-message").show();
+         return;
       } else {
-         $('#tsg-certificate-error-message').hide(); 
+         $("#tsg-certificate-error-message").hide();
       }
 
       certificates.push(certificateText);
 
       // AJAX to Save Certificates
       saveCertificates();
-
    });
 
    // Render Certificate
    function renderCertificate(certificateText, id) {
-      var certificateId = 'certificate-' + id;
+      var certificateId = "certificate-" + id;
       var newCertificate = `
          <div class="item w2" id="${certificateId}">
                <div class="itemr">
@@ -114,17 +113,17 @@ jQuery(document).ready(function ($) {
                </div>
          </div>
       `;
-      $('#tsg-certificate-container').append(newCertificate);
+      $("#tsg-certificate-container").append(newCertificate);
    }
 
    // Delete Certificate Button Click
-   $('#tsg-certificate-container').on('click', '.delete-certificate-btn', function(e) {
+   $("#tsg-certificate-container").on("click", ".delete-certificate-btn", function (e) {
       e.preventDefault();
-      var certificateId = $(this).data('id');
-      var certificateText = $(this).data('text');
+      var certificateId = $(this).data("id");
+      var certificateText = $(this).data("text");
 
-      $('#' + certificateId).remove();
-      certificates = certificates.filter(text => text !== certificateText);
+      $("#" + certificateId).remove();
+      certificates = certificates.filter((text) => text !== certificateText);
 
       // Save Updated Certificates Array
       saveCertificates();
@@ -133,22 +132,22 @@ jQuery(document).ready(function ($) {
    // Save Certificates to Database via AJAX
    function saveCertificates() {
       $.ajax({
-          url: tsg_public_ajax.ajax_url,
-          type: "POST",
-          data: {
-              action: "save_certificates",
-              certificates: certificates
-          },
-          success: function(response) {
-               console.log(response);
-               renderCertificate(certificateText, certificates.length);
-               $('#certificate-input').val('');
-               $(".tsg-certificate-wrapper").addClass("tsg-entry-hidden");
-              //console.log("Certificates saved successfully:", response);
-          },
-          error: function(error) {
-              console.error("Error saving certificates:", error);
-          }
+         url: tsg_public_ajax.ajax_url,
+         type: "POST",
+         data: {
+            action: "save_certificates",
+            certificates: certificates,
+         },
+         success: function (response) {
+            console.log(response);
+            renderCertificate(certificateText, certificates.length);
+            $("#certificate-input").val("");
+            $(".tsg-certificate-wrapper").addClass("tsg-entry-hidden");
+            //console.log("Certificates saved successfully:", response);
+         },
+         error: function (error) {
+            console.error("Error saving certificates:", error);
+         },
       });
    }
 
@@ -172,20 +171,18 @@ jQuery(document).ready(function ($) {
    //          console.error("AJAX error fetching certificates:", error);
    //       }
    // });
-  
-
 
    //user profile pic show
-   $('#tsg-avatar-upload-input').on('change', function(event) {
-      var imgPreview = $('#tsg-profile-img-preview');
+   $("#tsg-avatar-upload-input").on("change", function (event) {
+      var imgPreview = $("#tsg-profile-img-preview");
       var file = event.target.files[0];
 
       if (file) {
-          var reader = new FileReader();
-          reader.onload = function(e) {
-              imgPreview.attr('src', e.target.result);
-          };
-          reader.readAsDataURL(file);
+         var reader = new FileReader();
+         reader.onload = function (e) {
+            imgPreview.attr("src", e.target.result);
+         };
+         reader.readAsDataURL(file);
       }
    });
 
@@ -277,7 +274,7 @@ jQuery(document).ready(function ($) {
          $("#service-name").val("");
          $("#long-desc").val("");
          $("#short-desc").val("");
-         // $("#product-price").val(""); 
+         // $("#product-price").val("");
          $("#pricing-units").val("");
          $("#pricing-sf").val("");
          $("#pricing-chf").val("");
@@ -286,8 +283,7 @@ jQuery(document).ready(function ($) {
          $("#service-image").val("");
 
          $("#tsg-selected-service span").text("Create New");
-
-     } else {
+      } else {
          $(".tsg-delete-service-btn").show();
          $("#selected-service").val(productId);
 
@@ -315,7 +311,6 @@ jQuery(document).ready(function ($) {
                   // $("#service-image").val(product.main_image);
                   $("#service-image").attr("src", product.main_image);
                   // $('#activity-type').val(product.gallery); // Load gallery images (implement your logic here)
-
                }
             },
          });
@@ -582,9 +577,7 @@ jQuery(document).ready(function ($) {
                      }
                   },
                   error: function () {
-                     $(".sales-products").html(
-                        '<div class="error-message"><p>An error occurred while fetching the orders. Please try again later.</p></div>'
-                     );
+                     $(".sales-products").html('<div class="error-message"><p>An error occurred while fetching the orders. Please try again later.</p></div>');
                   },
                });
             }
@@ -628,65 +621,65 @@ jQuery(document).ready(function ($) {
                         response.data.forEach(function (order) {
                            var $orderTemplate = $(
                               '<div class="block-lines media-full affiliate-product-item">' +
-                                  '<div class="block-line spb">' +
-                                      '<div class="line-left">' +
-                                          '<p>Date</p>' +
-                                      '</div>' +
-                                      '<div class="line-right">' +
-                                          '<p><strong class="date"></strong></p>' +
-                                      '</div>' +
-                                  '</div>' +
-                                  '<div class="block-line spb">' +
-                                      '<div class="line-left">' +
-                                          '<p>Referred Member Name</p>' +
-                                      '</div>' +
-                                      '<div class="line-right">' +
-                                          '<p><strong class="ref-by"></strong></p>' +
-                                      '</div>' +
-                                  '</div>' +
-                                  '<div class="block-line spb">' +
-                                      '<div class="line-left">' +
-                                          '<p>Service/Product Purchased</p>' +
-                                      '</div>' +
-                                      '<div class="line-right">' +
-                                          '<p><strong class="product-name"></strong></p>' +
-                                      '</div>' +
-                                  '</div>' +
-                                  '<div class="block-line spb">' +
-                                      '<div class="line-left">' +
-                                          '<p>Transaction Amount (CHF)</p>' +
-                                      '</div>' +
-                                      '<div class="line-right">' +
-                                          '<p><strong class="product-pricing"></strong></p>' +
-                                      '</div>' +
-                                  '</div>' +
-                                  '<div class="block-line spb">' +
-                                      '<div class="line-left">' +
-                                          '<p>Affiliate Fee Earned (CHF)</p>' +
-                                      '</div>' +
-                                      '<div class="line-right">' +
-                                          '<p><strong class="aff_chf"></strong></p>' +
-                                      '</div>' +
-                                  '</div>' +
-                                  '<div class="block-line spb">' +
-                                      '<div class="line-left">' +
-                                          '<p>Affiliate Fee Earned (SF)</p>' +
-                                      '</div>' +
-                                      '<div class="line-right">' +
-                                          '<p><strong class="aff_sf"></strong></p>' +
-                                      '</div>' +
-                                  '</div>' +
-                              '</div>'
-                          );
-  
-                          $orderTemplate.find('.date').text(order.order_date);
-                          $orderTemplate.find('.ref-by').text(order.ref);
-                          $orderTemplate.find('.product-name').text(order.product_name);
-                          $orderTemplate.find('.product-pricing').text(order.main_cost);
-                          $orderTemplate.find('.aff_chf').text('CHF ' + parseFloat(order.chf_cost));
-                          $orderTemplate.find('.aff_sf').text('SF ' + parseFloat(order.sf_cost));
-  
-                          $affiliateProducts.append($orderTemplate);
+                                 '<div class="block-line spb">' +
+                                 '<div class="line-left">' +
+                                 "<p>Date</p>" +
+                                 "</div>" +
+                                 '<div class="line-right">' +
+                                 '<p><strong class="date"></strong></p>' +
+                                 "</div>" +
+                                 "</div>" +
+                                 '<div class="block-line spb">' +
+                                 '<div class="line-left">' +
+                                 "<p>Referred Member Name</p>" +
+                                 "</div>" +
+                                 '<div class="line-right">' +
+                                 '<p><strong class="ref-by"></strong></p>' +
+                                 "</div>" +
+                                 "</div>" +
+                                 '<div class="block-line spb">' +
+                                 '<div class="line-left">' +
+                                 "<p>Service/Product Purchased</p>" +
+                                 "</div>" +
+                                 '<div class="line-right">' +
+                                 '<p><strong class="product-name"></strong></p>' +
+                                 "</div>" +
+                                 "</div>" +
+                                 '<div class="block-line spb">' +
+                                 '<div class="line-left">' +
+                                 "<p>Transaction Amount (CHF)</p>" +
+                                 "</div>" +
+                                 '<div class="line-right">' +
+                                 '<p><strong class="product-pricing"></strong></p>' +
+                                 "</div>" +
+                                 "</div>" +
+                                 '<div class="block-line spb">' +
+                                 '<div class="line-left">' +
+                                 "<p>Affiliate Fee Earned (CHF)</p>" +
+                                 "</div>" +
+                                 '<div class="line-right">' +
+                                 '<p><strong class="aff_chf"></strong></p>' +
+                                 "</div>" +
+                                 "</div>" +
+                                 '<div class="block-line spb">' +
+                                 '<div class="line-left">' +
+                                 "<p>Affiliate Fee Earned (SF)</p>" +
+                                 "</div>" +
+                                 '<div class="line-right">' +
+                                 '<p><strong class="aff_sf"></strong></p>' +
+                                 "</div>" +
+                                 "</div>" +
+                                 "</div>"
+                           );
+
+                           $orderTemplate.find(".date").text(order.order_date);
+                           $orderTemplate.find(".ref-by").text(order.ref);
+                           $orderTemplate.find(".product-name").text(order.product_name);
+                           $orderTemplate.find(".product-pricing").text(order.main_cost);
+                           $orderTemplate.find(".aff_chf").text("CHF " + parseFloat(order.chf_cost));
+                           $orderTemplate.find(".aff_sf").text("SF " + parseFloat(order.sf_cost));
+
+                           $affiliateProducts.append($orderTemplate);
                         });
                      } else {
                         $purchasedProducts.html('<div class="no-orders"><p>No orders found for the selected date.</p></div>');
@@ -710,53 +703,52 @@ jQuery(document).ready(function ($) {
          $(this).hide();
       });
 
-      $("#selected-aff-date").on("click", function (e) {
-         $("#affiliate-datepicker").toggle();
-      });
+   $("#selected-aff-date").on("click", function (e) {
+      $("#affiliate-datepicker").toggle();
+   });
 });
 
-
-jQuery(document).ready(function($) {
+jQuery(document).ready(function ($) {
    //For SF value control (service offering page)
    function validateFields() {
-         let sfValue = parseInt($("#pricing-sf").val());
-         let chfValue = parseInt($("#pricing-chf").val());
-         let error = "";
+      let sfValue = parseInt($("#pricing-sf").val());
+      let chfValue = parseInt($("#pricing-chf").val());
+      let error = "";
 
-         if (sfValue < 25 || sfValue > 99) {
-            error = "SF value must be between 25 and 99.";
-         } else if (chfValue < 1 || chfValue > 75) {
-            error = "CHF value must be between 1 and 75.";
-         } else if ((sfValue + chfValue) !== 100) {
-            error = "SF and CHF values must add up to 100.";
-         }
+      if (sfValue < 25 || sfValue > 99) {
+         error = "SF value must be between 25 and 99.";
+      } else if (chfValue < 1 || chfValue > 75) {
+         error = "CHF value must be between 1 and 75.";
+      } else if (sfValue + chfValue !== 100) {
+         error = "SF and CHF values must add up to 100.";
+      }
 
-         if (error) {
-            $(".error-message").remove();
-            $(".tsg-sf-and-chf-wrapper").append(`<div class="error-message" style="color:red;">${error}</div>`);
-         } else {
-            $(".error-message").remove();
-         }
+      if (error) {
+         $(".error-message").remove();
+         $(".tsg-sf-and-chf-wrapper").append(`<div class="error-message" style="color:red;">${error}</div>`);
+      } else {
+         $(".error-message").remove();
+      }
    }
 
    $("#pricing-sf").on("input", function () {
-         let sfValue = parseInt($(this).val());
+      let sfValue = parseInt($(this).val());
 
-         if (sfValue >= 25 && sfValue <= 99) {
-            $("#pricing-chf").val(100 - sfValue);
-         }
+      if (sfValue >= 25 && sfValue <= 99) {
+         $("#pricing-chf").val(100 - sfValue);
+      }
 
-         validateFields();
+      validateFields();
    });
 
    $("#pricing-chf").on("input", function () {
-         let chfValue = parseInt($(this).val());
+      let chfValue = parseInt($(this).val());
 
-         if (chfValue >= 1 && chfValue <= 75) {
-            $("#pricing-sf").val(100 - chfValue);
-         }
+      if (chfValue >= 1 && chfValue <= 75) {
+         $("#pricing-sf").val(100 - chfValue);
+      }
 
-         validateFields();
+      validateFields();
    });
 
    //Delete product - service offering page
@@ -764,27 +756,27 @@ jQuery(document).ready(function($) {
       let productId = $("#product-id").val();
 
       if (!confirm("Are you sure you want to delete this product?")) {
-          return;
+         return;
       }
 
       $.ajax({
-          url: tsg_public_ajax.ajax_url,  
-          type: "POST",
-          data: {
-              action: "delete_product",
-              product_id: productId,
-          },
-          success: function (response) {
-              if (response.success) {
-                  alert(response.data.message);
-                  location.reload();
-              } else {
-                  alert(response.data.message);
-              }
-          },
-          error: function () {
-              alert("An error occurred while deleting the product.");
-          }
+         url: tsg_public_ajax.ajax_url,
+         type: "POST",
+         data: {
+            action: "delete_product",
+            product_id: productId,
+         },
+         success: function (response) {
+            if (response.success) {
+               alert(response.data.message);
+               location.reload();
+            } else {
+               alert(response.data.message);
+            }
+         },
+         error: function () {
+            alert("An error occurred while deleting the product.");
+         },
       });
    });
 
@@ -799,128 +791,123 @@ jQuery(document).ready(function($) {
 
    $("#service-image").on("change", function (event) {
       if (event.target.files && event.target.files[0]) {
-          var reader = new FileReader();
+         var reader = new FileReader();
 
-          reader.onload = function (e) {
-              $("#main-image").attr("src", e.target.result );
-          };
+         reader.onload = function (e) {
+            $("#main-image").attr("src", e.target.result);
+         };
 
-          reader.readAsDataURL(event.target.files[0]); 
+         reader.readAsDataURL(event.target.files[0]);
       }
    });
 
-});
-
-//customer support page controls | admin sf management page control
-jQuery(document).ready(function($) {
-   $('#tsg-submit-ticket-btn').on("click", function () {
+   //customer support page controls | admin sf management page control
+   $("#tsg-submit-ticket-btn").on("click", function () {
       $("#tsg-submit-ticket-container").toggle();
    });
-   $('#tsg-active-tickets-btn').on("click", function () {
+   $("#tsg-active-tickets-btn").on("click", function () {
       $("#tsg-active-tickets-container").toggle();
    });
-   
+
    //Date picker
    $("#calendar").datepicker({
-      dateFormat: "dd-mm-yy", 
-      showAnim: "slideDown", 
+      dateFormat: "dd-mm-yy",
+      showAnim: "slideDown",
       position: {
          my: "left top",
          at: "left bottom",
-      }
+      },
    });
 
-   $('.tsg-item-toggle-btn').on("click", function (e) {
-      e.preventDefault(); 
-      
-      var target = $(this).data('target');
+   $(".tsg-item-toggle-btn").on("click", function (e) {
+      e.preventDefault();
+
+      var target = $(this).data("target");
       $(target).toggle();
    });
 
-   $("#tsg-configure-subscription-save-btn").on("click", function () {   
+   $("#tsg-configure-subscription-save-btn").on("click", function () {
       $.ajax({
-          url: tsg_public_ajax.ajax_url,  
-          type: "POST",
-          data: {
-              action: "configure_subscription",
-              data: subscriptionPlan,
-          },
-          success: function (response) {
-              console.log(response);
-          },
-          error: function () {
-              alert("An error occurred.");
-          }
+         url: tsg_public_ajax.ajax_url,
+         type: "POST",
+         data: {
+            action: "configure_subscription",
+            data: subscriptionPlan,
+         },
+         success: function (response) {
+            console.log(response);
+         },
+         error: function () {
+            alert("An error occurred.");
+         },
       });
    });
 
-   $("#tsg-adjust-sf-bonus-save-btn").on("click", function () {   
+   $("#tsg-adjust-sf-bonus-save-btn").on("click", function () {
       $.ajax({
-          url: tsg_public_ajax.ajax_url,  
-          type: "POST",
-          data: {
-              action: "adjust_sf_bonus",
-              data: sfBonus,
-          },
-          success: function (response) {
-              console.log(response);
-          },
-          error: function () {
-              alert("An error occurred.");
-          }
+         url: tsg_public_ajax.ajax_url,
+         type: "POST",
+         data: {
+            action: "adjust_sf_bonus",
+            data: sfBonus,
+         },
+         success: function (response) {
+            console.log(response);
+         },
+         error: function () {
+            alert("An error occurred.");
+         },
       });
    });
 
-   $("#tsg-allocate-sf-to-member-save-btn").on("click", function () {   
+   $("#tsg-allocate-sf-to-member-save-btn").on("click", function () {
       $.ajax({
-          url: tsg_public_ajax.ajax_url,  
-          type: "POST",
-          data: {
-              action: "allocate_sf_to_member",
-              data: allocatedMember,
-          },
-          success: function (response) {
-              console.log(response);
-          },
-          error: function () {
-              alert("An error occurred.");
-          }
+         url: tsg_public_ajax.ajax_url,
+         type: "POST",
+         data: {
+            action: "allocate_sf_to_member",
+            data: allocatedMember,
+         },
+         success: function (response) {
+            console.log(response);
+         },
+         error: function () {
+            alert("An error occurred.");
+         },
       });
    });
 
-   $("#tsg-withdraw-sf-from-member-save-btn").on("click", function () {   
+   $("#tsg-withdraw-sf-from-member-save-btn").on("click", function () {
       $.ajax({
-          url: tsg_public_ajax.ajax_url,  
-          type: "POST",
-          data: {
-              action: "withdraw_sf_from_member",
-              data: withdrawedMember,
-          },
-          success: function (response) {
-              console.log(response);
-          },
-          error: function () {
-              alert("An error occurred.");
-          }
+         url: tsg_public_ajax.ajax_url,
+         type: "POST",
+         data: {
+            action: "withdraw_sf_from_member",
+            data: withdrawedMember,
+         },
+         success: function (response) {
+            console.log(response);
+         },
+         error: function () {
+            alert("An error occurred.");
+         },
       });
    });
 
-   $("#tsg-remove-sf-from-circulation-save-btn").on("click", function () {   
+   $("#tsg-remove-sf-from-circulation-save-btn").on("click", function () {
       $.ajax({
-          url: tsg_public_ajax.ajax_url,  
-          type: "POST",
-          data: {
-              action: "remove_sf_from_circulation",
-              data: removedSf,
-          },
-          success: function (response) {
-              console.log(response);
-          },
-          error: function () {
-              alert("An error occurred.");
-          }
+         url: tsg_public_ajax.ajax_url,
+         type: "POST",
+         data: {
+            action: "remove_sf_from_circulation",
+            data: removedSf,
+         },
+         success: function (response) {
+            console.log(response);
+         },
+         error: function () {
+            alert("An error occurred.");
+         },
       });
    });
 });
-
- 
