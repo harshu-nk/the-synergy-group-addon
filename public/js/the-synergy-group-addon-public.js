@@ -1006,28 +1006,94 @@ jQuery(document).ready(function ($) {
    }
    
   function sendAllTransactionsData() {
-   const data = {
-       dateFrom: $('#tsg-all-transactions-date-from').val(),
-       dateTo: $('#tsg-all-transactions-date-to').val(),
-       transactionType: $('#all-transactions-transaction-type').val(),
-       member: $('#all-transactions-member').val(),
-   };
+      const data = {
+         dateFrom: $('#tsg-all-transactions-date-from').val(),
+         dateTo: $('#tsg-all-transactions-date-to').val(),
+         transactionType: $('#all-transactions-transaction-type').val(),
+         member: $('#all-transactions-member').val(),
+      };
 
 
-   $.ajax({
-      url: tsg_public_ajax.ajax_url,
-      type: "POST",
-      data: {
-         action: "display_all_transactions_data",
-         data: data,
-      },
-      success: function (response) {
-         console.log(response);
-      },
-      error: function () {
-         alert("An error occurred.");
-      },
+      $.ajax({
+         url: tsg_public_ajax.ajax_url,
+         type: "POST",
+         data: {
+            action: "display_all_transactions_data",
+            data: data,
+         },
+         success: function (response) {
+            console.log(response);
+         },
+         error: function () {
+            alert("An error occurred.");
+         },
+      });
+   }
+
+   //Transaction history display
+   $('#tsg-transaction-history-save').on('click', function(e) { 
+      e.preventDefault(); 
+
+      if (transactionsHistoryValidate()) {
+         sendAllTransactionsHistory();
+      }
    });
-}
+
+   function transactionsHistoryValidate() {
+      let isValid = true;
+      let errorMsg = "";
+   
+      $('#tsg-all-transactions-error-msg').empty();
+      const currentDate = new Date().toISOString().split('T')[0];
+   
+      const dateFrom = $('#tsg-transaction-history-date-from').val();
+      const dateTo = $('#tsg-transaction-history-date-to').val();
+   
+      if (dateFrom > currentDate) {
+         errorMsg += "'Date From' cannot be in the future.<br>";
+         isValid = false;
+      }
+   
+      if (dateTo > currentDate) {
+         errorMsg += "'Date To' cannot be in the future.<br>";
+         isValid = false;
+      } else if (dateFrom && dateTo < dateFrom) {
+         errorMsg += "'Date To' cannot be earlier than 'Date From'.<br>";
+         isValid = false;
+      } 
+   
+      if (!isValid) {
+         $('#tsg-transaction-history-error-msg').html(errorMsg);
+      }
+   
+      return isValid;
+   }
+   
+   function sendAllTransactionsHistory() {
+      const data = {
+         dataSearch: $('#tsg-transaction-search-value').val(),
+         dateFrom: $('#tsg-transaction-history-date-from').val(),
+         dateTo: $('#tsg-transaction-history-date-to').val(),
+         transactionType: $('#tsg-history-transaction-type').val(),
+         member: $('#tsg-transaction-history-member').val(),
+      };
+
+
+      $.ajax({
+         url: tsg_public_ajax.ajax_url,
+         type: "POST",
+         data: {
+            action: "display_all_transactions_history",
+            data: data,
+         },
+         success: function (response) {
+            console.log(response);
+            $('#tsg-display-transaction-history').append(response);
+         },
+         error: function () {
+            alert("An error occurred.");
+         },
+      });
+   }
    
 });

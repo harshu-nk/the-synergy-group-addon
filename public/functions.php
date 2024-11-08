@@ -365,3 +365,81 @@ function tsg_display_all_transactions_data() {
     }
     wp_die();
 }
+
+//All transactions - Display all transactions.
+add_action('wp_ajax_display_all_transactions_history', 'tsg_display_all_transactions_history');
+
+function tsg_display_all_transactions_history() {
+
+    global $wpdb;
+
+    $dataSearch = isset($_POST['dataSearch']) ? sanitize_text_field($_POST['dataSearch']) : '';
+    $dateFrom = isset($_POST['dateFrom']) ? sanitize_text_field($_POST['dateFrom']) : '';
+    $dateTo = isset($_POST['dateTo']) ? sanitize_text_field($_POST['dateTo']) : '';
+    $transactionType = isset($_POST['transactionType']) ? sanitize_text_field($_POST['transactionType']) : '';
+    $member = isset($_POST['member']) ? intval($_POST['member']) : 0;
+
+    $query = "SELECT * FROM {$wpdb->prefix}myCRED_log WHERE 1=1";
+    $params = [];
+
+    if (!empty($dataSearch)) {
+        $query .= " AND entry LIKE %s";
+        $params[] = '%' . $wpdb->esc_like($dataSearch) . '%';
+    }
+
+    if (!empty($dateFrom)) {
+        $query .= " AND time >= %d";
+        $params[] = strtotime($dateFrom);
+    }
+
+    if (!empty($dateTo)) {
+        $query .= " AND time <= %d";
+        $params[] = strtotime($dateTo);
+    }
+
+    if (!empty($transactionType)) {
+        $query .= " AND ref = %s";
+        $params[] = $transactionType;
+    }
+
+    if ($member) {
+        $query .= " AND user_id = %d";
+        $params[] = $member;
+    }
+
+    $prepared_query = $wpdb->prepare($query, ...$params);
+    $results = $wpdb->get_results($prepared_query);
+
+    // Output the results
+    if ($results) {
+        foreach ($results as $row) {
+            $user_info = get_userdata($row->user_id);
+            $user_name = $user_info ? $user_info->display_name : 'Unknown User';
+
+            echo '<div class="message-block spb" >
+                <div class="text-icon">
+                    <img src="'. THE_SYNERGY_GROUP_URL . 'public/img/account/transactions_blue.svg" alt="transaction icon"/>
+                </div>';
+            echo '<div class="message-text">
+                    <p><strong>Affiliate member: ' . $user_name . '</strong><br>SF' . $row->creds . ' (' . $row->entry . ')' . date('Y-m-d H:i:s', $row->time) . '</p>
+                </div>';
+            echo '<div class="btn-block">
+                    <a href="#" class="btn">read more</a>
+                </div>
+            </div>';
+
+            // echo "<div class='transaction-record'>";
+            // echo "<p>Transaction ID: {$row->id}</p>";
+            // echo "<p>Type: {$row->ref}</p>";
+            // echo "<p>User ID: {$row->user_id}</p>";
+            // echo "<p>Credits: {$row->creds}</p>";
+            // echo "<p>Entry: {$row->entry}</p>";
+            // echo "<p>Date: " . date('Y-m-d H:i:s', $row->time) . "</p>";
+            // echo "</div><hr>";
+        }
+    } else {
+        echo "<p>No transactions found matching the criteria.</p>";
+    }
+
+    wp_die();
+}
