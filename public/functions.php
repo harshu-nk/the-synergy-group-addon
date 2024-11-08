@@ -291,7 +291,7 @@ function tsg_configure_subscription() {
         wp_send_json_error(['message' => 'Unauthorized request']);
         wp_die();
     } else {
-
+        $subscriptions = $_POST[''];
     }
     wp_die();
 }
