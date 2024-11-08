@@ -203,6 +203,9 @@ class The_Synergy_Group_Addon {
 		$this->loader->add_action('woocommerce_account_sf-management_endpoint', $woo_customizations, 'tsg_sf_management_tab_content');
 		$this->loader->add_action( 'woocommerce_save_account_details', $woo_customizations, 'tsg_save_custom_fields_my_account' );
 
+		$this->loader->add_action('woocommerce_account_synergy-network-transactions_endpoint', $woo_customizations, 'tsg_synergy_network_dashboard_transactions_tab_content');
+
+
 		// Activity Log on Messages / Activities Tab
 		// $this->loader->add_action('admin_head', $woo_customizations, 'tsg_simple_history_output');
 		// Force History Fetching for the Frontend

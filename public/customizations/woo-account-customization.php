@@ -49,6 +49,9 @@ class WooAccountCustomizations
         add_rewrite_endpoint('my-affiliate', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('customer-settings', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('sf-management', EP_ROOT | EP_PAGES);
+
+
+        add_rewrite_endpoint('synergy-network-transactions', EP_ROOT | EP_PAGES);
     }
 
     function tsg_my_acc_tabs_query_vars($vars)
@@ -60,6 +63,8 @@ class WooAccountCustomizations
         $vars[] = 'customer-support';
         $vars[] = 'my-affiliate';
         $vars[] = 'sf-management';
+
+        $vars[] = 'synergy-network-transactions';
         return $vars;
     }
 
@@ -92,6 +97,8 @@ class WooAccountCustomizations
         $items['service-offering'] = __('Service Offering', 'the-synergy-group-addon');
         $items['synergy-network-exchange-settings'] = $sf_overview_tab_title;
         $items['subscriptions'] = __('Transactions', 'the-synergy-group-addon');
+
+        $items['synergy-network-transactions'] = __('Synergy Network Transactions', 'the-synergy-group-addon');
 
         $customOrder = [
             'dashboard',
@@ -623,6 +630,12 @@ class WooAccountCustomizations
                 update_user_meta($current_user_id, 'data_export', sanitize_title($data_export));
             }
         }
+    }
+
+    // Syn Network Dashboard
+    function tsg_synergy_network_dashboard_transactions_tab_content(): void
+    {
+        wc_get_template('myaccount/synergy-group-dashboard/synergy-network-transactions.php', array());
     }
 
     // function get_service_details() {
