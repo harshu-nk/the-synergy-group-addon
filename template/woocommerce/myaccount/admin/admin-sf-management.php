@@ -37,7 +37,7 @@
                                     <tr>
                                         <td><?php echo $plan_product['title'] ?></td>
                                         <td>
-                                            <input type="number" name="">
+                                            <input type="number" name="subscription[<?php echo $plan_product['id'] ?>]" value="<?php $plan_product['value'] ?>">
                                         </td>
                                     </tr>
                                 <?php } ?>

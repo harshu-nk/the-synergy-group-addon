@@ -221,7 +221,7 @@ class WooAccountCustomizations
         $subscriptions = [];
         if ( $loop->have_posts() ) {
             while ( $loop->have_posts() ) : $loop->the_post();
-                $subscriptions[] = array('id' => get_the_ID(), 'title' => get_the_title());
+                $subscriptions[] = array('id' => get_the_ID(), 'title' => get_the_title(), 'value' => get_field('sf_allowance', get_the_ID()));
             endwhile;
         }
         
