@@ -351,3 +351,17 @@ function tsg_remove_sf_from_circulation() {
     }
     wp_die();
 }
+
+//All transactions - Display all transactions.
+add_action('wp_ajax_display_all_transactions_data', 'tsg_display_all_transactions_data');
+
+function tsg_display_all_transactions_data() {
+
+    if (!isset($_POST['data'])) {
+        wp_send_json_error(['message' => 'Unauthorized request']);
+        wp_die();
+    } else {
+        
+    }
+    wp_die();
+}
