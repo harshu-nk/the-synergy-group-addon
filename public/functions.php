@@ -291,16 +291,18 @@ function tsg_configure_subscription() {
         wp_send_json_error(['message' => 'Unauthorized request']);
         wp_die();
     } 
+    else{
+        $subscriptions = $_POST['data'];
+
+        foreach ($subscriptions as $product_id => $sf_allowance_value) {
+            $product_id = intval($product_id);
+            $sf_allowance_value = sanitize_text_field($sf_allowance_value);
     
-    $subscriptions = $_POST['data'];
-
-    foreach ($subscriptions as $product_id => $sf_allowance_value) {
-        $product_id = intval($product_id);
-        $sf_allowance_value = sanitize_text_field($sf_allowance_value);
-
-        update_field('sf_allowance', $sf_allowance_value, $product_id);
+            update_field('sf_allowance', $sf_allowance_value, $product_id);
+        }
+        wp_send_json_success(['message' => 'Subscription data saved successfully']);
     }
-    wp_send_json_success(['message' => 'Subscription data saved successfully']);
+    
     wp_die();
 }
 
@@ -313,13 +315,22 @@ function tsg_adjust_sf_bonus() {
         wp_send_json_error(['message' => 'Unauthorized request']);
         wp_die();
     } else {
-        
+
+        $sf_bonus_allocation = sanitize_text_field($_POST['data']['sf_bonus_allocation']);
+        $selected_date = sanitize_text_field($_POST['data']['date']);
+
+        update_option('sf_bonus_allocation', $sf_bonus_allocation);
+        update_option('selected_date', $selected_date);
+        wp_send_json_success([
+            'message' => 'SF Bonus allocation and date saved successfully',
+            'debug' => $_POST['data']
+        ]);
     }
     wp_die();
 }
 
 //Admin SF management - allocate SF to member
-add_action('wp_ajax_allocate_sf_to_member', 'tsg_allocate_sf_to_member');
+add_action('wp_ajax_+', 'tsg_allocate_sf_to_member');
 
 function tsg_allocate_sf_to_member() {
 
@@ -336,13 +347,27 @@ function tsg_allocate_sf_to_member() {
 add_action('wp_ajax_withdraw_sf_from_member', 'tsg_withdraw_sf_from_member');
 
 function tsg_withdraw_sf_from_member() {
-
-    if (!isset($_POST['data'])) {
-        wp_send_json_error(['message' => 'Unauthorized request']);
+    if (!isset($_POST['data']['amount']) || !isset($_POST['data']['user_id'])) {
+        wp_send_json_error(['message' => 'Missing required data']);
         wp_die();
-    } else {
-        
     }
+
+    $amount = absint($_POST['data']['amount']);
+    $user_id = intval($_POST['data']['user_id']);
+
+    if ($amount <= 0 || $user_id <= 0) {
+        wp_send_json_error(['message' => 'Invalid amount or user ID']);
+        wp_die();
+    }
+
+    $result = mycred_subtract('withdrawal', $user_id, -$amount, 'Points deduction for withdrawal');
+
+    if ($result) {
+        wp_send_json_success(['message' => 'Points deducted successfully']);
+    } else {
+        wp_send_json_error(['message' => 'Failed to deduct points']);
+    }
+
     wp_die();
 }
 
@@ -351,11 +376,31 @@ add_action('wp_ajax_remove_sf_from_circulation', 'tsg_remove_sf_from_circulation
 
 function tsg_remove_sf_from_circulation() {
 
-    if (!isset($_POST['data'])) {
-        wp_send_json_error(['message' => 'Unauthorized request']);
+    if (!isset($_POST['data']['amount'])) {
+        wp_send_json_error(['message' => 'Missing required data']);
         wp_die();
-    } else {
-        
     }
+
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => 'Unauthorized: Only admin can perform this action']);
+        wp_die();
+    }
+
+    $admin_id = get_current_user_id();
+    $amount = absint($_POST['data']['amount']);
+
+    if ($amount <= 0) {
+        wp_send_json_error(['message' => 'Invalid amount']);
+        wp_die();
+    }
+
+    $result = mycred_subtract('admin_deduction', $admin_id, -$amount, 'Points removed from circulation by admin');
+
+    if ($result) {
+        wp_send_json_success(['message' => 'Points deducted from admin successfully']);
+    } else {
+        wp_send_json_error(['message' => 'Failed to deduct points from admin']);
+    }
+
     wp_die();
 }

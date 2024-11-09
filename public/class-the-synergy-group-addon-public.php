@@ -81,6 +81,8 @@ class The_Synergy_Group_Addon_Public
 			wp_enqueue_style('dropzone-css', 'https://unpkg.com/dropzone@5/dist/min/dropzone.min.css', array(), $this->version, 'all');
 			wp_enqueue_style('jquery-ui-css', 'https://code.jquery.com/ui/1.13.3/themes/smoothness/jquery-ui.css', array(), $this->version, 'all');
 		}
+
+
 	}
 
 	/**
@@ -99,5 +101,7 @@ class The_Synergy_Group_Addon_Public
 		wp_enqueue_script('datepicker-js', plugin_dir_url(__FILE__) . 'datepicker/js/datepicker.min.js', array('jquery'), '1.0.0', true);
 		wp_enqueue_script('datepicker-en', plugin_dir_url(__FILE__) . 'datepicker/js/i18n/datepicker.en.js', array('datepicker-js'), '1.0.0', true);
 		wp_enqueue_script('calendar-js', plugin_dir_url(__FILE__) . 'js/calendar.js', array('jquery', 'datepicker-js'), '1.0.0', true);
+		// wp_enqueue_style( 'select2css', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', false, '1.0', 'all' );
+		// wp_enqueue_script( 'select2', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', array( 'jquery' ), '1.0', true );
 	}
 }

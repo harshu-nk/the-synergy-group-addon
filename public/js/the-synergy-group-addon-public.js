@@ -873,12 +873,21 @@ jQuery(document).ready(function ($) {
    });
 
    $("#tsg-adjust-sf-bonus-save-btn").on("click", function () {
+      const sfBonus = $("input[name='sf_bonus_allocation']").val();
+      const selectedDate = $("input[name='date']").val();
+
+      console.log("sf_bonus_allocation:", sfBonus);
+      console.log("date:", selectedDate);
+
       $.ajax({
          url: tsg_public_ajax.ajax_url,
          type: "POST",
          data: {
             action: "adjust_sf_bonus",
-            data: sfBonus,
+            data: {
+                sf_bonus_allocation: sfBonus,
+                date: selectedDate
+            }
          },
          success: function (response) {
             console.log(response);
@@ -907,15 +916,25 @@ jQuery(document).ready(function ($) {
    });
 
    $("#tsg-withdraw-sf-from-member-save-btn").on("click", function () {
+      const amount = $("input[name='withdraw-sf-from-member']").val();
+      const userId = $("#sf-withdraw-member-id").val();
       $.ajax({
          url: tsg_public_ajax.ajax_url,
          type: "POST",
          data: {
             action: "withdraw_sf_from_member",
-            data: withdrawedMember,
+            data: {
+               amount: amount,
+               user_id: userId
+            }
          },
          success: function (response) {
-            console.log(response);
+            // console.log(response);
+            if (response.success) {
+               console.log("Credit deducted successfully:", response.message);
+            } else {
+               console.error("Error:", response.data.message);
+            }
          },
          error: function () {
             alert("An error occurred.");
@@ -924,15 +943,23 @@ jQuery(document).ready(function ($) {
    });
 
    $("#tsg-remove-sf-from-circulation-save-btn").on("click", function () {
+      const amount = $("input[name='remove-sf-from-circulation']").val();
       $.ajax({
          url: tsg_public_ajax.ajax_url,
          type: "POST",
          data: {
             action: "remove_sf_from_circulation",
-            data: removedSf,
+            data: {
+               amount: amount
+            }
          },
          success: function (response) {
-            console.log(response);
+            // console.log(response);
+            if (response.success) {
+               console.log("Points deducted from admin successfully:", response.message);
+            } else {
+               console.error("Error:", response.data.message);
+            }
          },
          error: function () {
             alert("An error occurred.");

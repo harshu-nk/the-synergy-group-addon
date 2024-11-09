@@ -119,9 +119,17 @@
                 </div>
             </div>
             <div class="block-line spb small-line light-style " id="tsg-allocate-sf-to-member-container" style="display: none;">
-                <div class="line-left">
+                <!-- <div class="line-left">
                     <input type="text" name="allocate-sf-to-member" value="">
-                </div>
+                    <select id="affiliate-profiles" class="select2-list">
+                        <option value="Option 1">Option 1</option>
+                        <option value="Option 2">Option 2</option>
+                        <option value="Option 3">Option 3</option>
+                        <option value="Option 4">Option 4</option>
+                        <option value="Option 5">Option 5</option>
+                    </select>
+                </div> -->
+                <?php echo do_shortcode( '[mycred_transfer types="synergy_francs" ref="send_to_user" button="Transfer"]' ) ?>
                 <div class="line-right va btns-part">
                     <div class="btn-block">
                         <a href="#" class="btn style2 minw2" id="tsg-allocate-sf-to-member-save-btn">Save</a>
@@ -142,6 +150,14 @@
             <div class="block-line spb small-line light-style" id="tsg-withdraw-sf-from-member-container" style="display: none;">
                 <div class="line-left">
                     <input type="text" name="withdraw-sf-from-member" value="">
+                    <select id="sf-withdraw-member-id" class="select2-list">
+                        <?php
+                        $users = get_users();
+                        foreach ($users as $user) {
+                            echo "<option value='{$user->ID}'>{$user->display_name}</option>";
+                        }
+                        ?>
+                    </select>
                 </div>
                 <div class="line-right va btns-part">
                     <div class="btn-block">
