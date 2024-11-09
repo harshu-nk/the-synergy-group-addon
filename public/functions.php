@@ -495,6 +495,7 @@ function tsg_display_all_transactions_history() {
     wp_die();
 }
 
+//Fiter SF balance by member
 add_action('wp_ajax_filter_members', 'tsg_filter_members');
 
 function tsg_filter_members() {
@@ -581,5 +582,95 @@ function tsg_filter_members() {
         </div>
     </div>';
    
+    wp_die();
+}
+
+//Filter member with transaction details
+add_action('wp_ajax_filter_member_transactions', 'tsg_filter_member_transactions');
+
+function tsg_filter_member_transactions() {
+    $member = isset($_POST['member']) ? sanitize_text_field($_POST['member']) : '';
+
+    if( !empty($member) ){
+        $balance = mycred_get_users_total_balance( $member );
+        echo '<div class="block-line spb">
+                <div class="line-left">
+                    <p>Individual member SF balance</p>
+                </div>
+                <div class="line-right va">
+                    <p class="main-val2">SF ' . $balance . '</p>
+                </div>
+            </div>';
+
+        echo '<h6 class="borderb"><strong>Transaction history </strong></h6>';
+        echo '<div class="messages">
+                <div class="messages-sub-block last-bord">
+                    <div class="message-block spb">
+                        <div class="text-icon">
+                            <img src="' . THE_SYNERGY_GROUP_URL . 'public/img/account/transactions_blue.svg" alt="transaction progress line icon "/>
+                        </div>
+                        <div class="message-text">
+                            <p><strong>Transaction 001 (Sell)</strong><br>
+                            SF290 (affiliate partnership program)
+                            </p>
+                        </div>
+                        <div class="btn-block">
+                            <a href="#" class="btn">read more</a>
+                        </div>
+                    </div>
+                </div>
+            </div>';
+
+        echo '<div class="block-lines2 big-p">
+                <div class="block-line spb first">
+                    <div class="line-left">
+                    <p>Affiliate Earnings:</p>
+                    </div>
+                    <div class="line-right va">
+                    <p class="main-val2">CHF 400 + SF ' .$balance. '</p>
+                    </div>
+                </div>
+            </div>';
+
+        echo '<h6 class="borderb"><strong>Referred Members:</strong></h6>';
+        echo '<div class="messages">
+                <div class="messages-sub-block last-bord">
+                    <div class="message-block spb">
+                        <div class="text-icon">
+                            <img src="' . THE_SYNERGY_GROUP_URL . 'public/img/account/avatar.svg" alt="avatar icon "/>
+                        </div>
+                        <div class="message-text">
+                            <p><strong>Affiliate member: John Troomer</strong><br>
+                            Transaction fees SF290
+                            </p>
+                        </div>
+                        <div class="btn-block">
+                            <a href="#" class="btn">read more</a>
+                        </div>
+                    </div>
+                </div>
+            </div>';
+
+        echo '<h6 class="borderb"><strong>Referral Activity:</strong></h6>';
+        echo '<div class="messages">
+                <div class="messages-sub-block last-bord">
+                    <div class="message-block spb">
+                        <div class="text-icon">
+                            <img src="' . THE_SYNERGY_GROUP_URL . 'public/img/account/transactions_blue.svg" alt="transaction progress line icon "/>
+                        </div>
+                        <div class="message-text">
+                            <p><strong>Affiliate member: John Troomer</strong><br>
+                            SF290 (affiliate partnership program)
+                            </p>
+                        </div>
+                        <div class="btn-block">
+                            <a href="#" class="btn">read more</a>
+                        </div>
+                    </div>
+                </div>
+            </div>';
+    } else {
+        echo '<p>User is undefined.</p>';
+    }
     wp_die();
 }

@@ -71,138 +71,37 @@
       <div class="line-right input-field">
         <div class="select">
           <p class="select-name"><span>Select</span></p>
-          <input type="hidden" id="member" name="member" value="Bella Tomson" />
-          <ul class="select-list hauto">
-            <li>Bella Tomson</li>
-            <li>Member 2</li>
-            <li>Member 3</li>
-          </ul>
+          <input type="hidden" id="tsg-member-member" name="member" value="" />
+          <?php
+            global $wpdb;
+            $results = $wpdb->get_results("SELECT DISTINCT user_id FROM {$wpdb->prefix}myCRED_log");
+
+            echo '<ul class="select-list hauto" id="tsg-member-member-list">';
+            echo '<li data-id="0">Any</li>';
+            if ($results) {
+                foreach ($results as $row) {
+                    $user_info = get_userdata($row->user_id);
+                    $user_name = $user_info ? $user_info->display_name : 'Unknown User';
+
+                    echo '<li data-id="' . esc_attr($row->user_id) . '">' . esc_html($user_name) . '</li>';
+                }
+            } 
+            echo '</ul>';
+          ?>
         </div>
       </div>
     </div>
-
-    <div class="block-line spb">
-      <div class="line-left">
-        <p>Individual member SF balance</p>
-      </div>
-      <div class="line-right va">
-        <p class="main-val2">SF 1,200</p>
-      </div>
-    </div>
-  </div>
-
-  <h6 class="borderb"><strong>Transaction history </strong></h6>
-  <div class="messages">
-    <div class="messages-sub-block last-bord">
-      <div class="message-block spb">
-        <div class="text-icon">
-          <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/transactions_blue.svg" alt="transaction progress line icon "/>
-        </div>
-        <div class="message-text">
-          <p><strong>Transaction 001 (Sell)</strong><br>
-            SF290 (affiliate partnership program)
-          </p>
-        </div>
-        <div class="btn-block">
-          <a href="#" class="btn">read more</a>
-        </div>
-      </div>
-
-      <div class="message-block spb">
-        <div class="text-icon">
-          <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/transactions_blue.svg" alt="transaction progress line icon "/>
-        </div>
-        <div class="message-text">
-          <p><strong>Transaction 002 (Buy)</strong><br>
-            SF250 (affiliate partnership program)
-          </p>
-        </div>
-        <div class="btn-block">
-          <a href="#" class="btn">read more</a>
-        </div>
-      </div>
+    <div class="btn-block">
+      <a href="#" class="btn" id="tsg-member-member-filter-btn">Filter</a>
     </div>
   </div>
 
-  <div class="block-lines2 big-p">
-    <div class="block-line spb first">
-      <div class="line-left">
-        <p>Affiliate Earnings:</p>
-      </div>
-      <div class="line-right va">
-        <p class="main-val2">CHF 400 + SF 1,200</p>
-      </div>
-    </div>
-  </div>
-
-  <h6 class="borderb"><strong>Referred Members:</strong></h6>
-  <div class="messages">
-    <div class="messages-sub-block last-bord">
-      <div class="message-block spb">
-        <div class="text-icon">
-          <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/avatar.svg" alt="avatar icon "/>
-        </div>
-        <div class="message-text">
-          <p><strong>Affiliate member: John Troomer</strong><br>
-            Transaction fees SF290
-          </p>
-        </div>
-        <div class="btn-block">
-          <a href="#" class="btn">read more</a>
-        </div>
-      </div>
-
-      <div class="message-block spb">
-        <div class="text-icon">
-          <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/avatar.svg" alt="avatar icon "/>
-        </div>
-        <div class="message-text">
-          <p><strong>Affiliate member: Sarah Topler</strong><br>
-            Transaction fees SF250
-          </p>
-        </div>
-        <div class="btn-block">
-          <a href="#" class="btn">read more</a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <h6 class="borderb"><strong>Referral Activity:</strong></h6>
-  <div class="messages">
-    <div class="messages-sub-block last-bord">
-      <div class="message-block spb">
-        <div class="text-icon">
-          <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/transactions_blue.svg" alt="transaction progress line icon "/>
-        </div>
-        <div class="message-text">
-          <p><strong>Affiliate member: John Troomer</strong><br>
-            SF290 (affiliate partnership program)
-          </p>
-        </div>
-        <div class="btn-block">
-          <a href="#" class="btn">read more</a>
-        </div>
-      </div>
-
-      <div class="message-block spb">
-        <div class="text-icon">
-          <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/transactions_blue.svg" alt="transaction progress line icon "/>
-        </div>
-        <div class="message-text">
-          <p><strong>Affiliate member: Sarah Topler</strong><br>
-            SF250 (affiliate partnership program)
-          </p>
-        </div>
-        <div class="btn-block">
-          <a href="#" class="btn">read more</a>
-        </div>
-      </div>
-    </div>
+  <div id="tsg-member-details-container">
   </div>
 
 </div>
 
+<!-- thid section -->
 <div class="account-text-block">
   <div class="account-title-block spb">
     <div class="title-content va">

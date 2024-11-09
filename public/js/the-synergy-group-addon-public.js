@@ -1153,6 +1153,11 @@ jQuery(document).ready(function ($) {
       var status = $(this).data('id');
       $('#tsg-member-status').val(status);
    });
+   $('#tsg-member-member-list li').on('click', function(e) {
+      e.preventDefault();
+      var status = $(this).data('id');
+      $('#tsg-member-member').val(status);
+   });
  
    $("#tsg-members-filter-btn").on("click", function () {
       const data = {
@@ -1169,6 +1174,26 @@ jQuery(document).ready(function ($) {
               console.log(response);
               $('#tsg-members-filter-container-label').removeClass('tsg-entry-hidden');
               $('#tsg-members-filter-container').html(response);
+          },
+          error: function () {
+              alert("An error occurred.");
+          },
+      });
+   });
+
+   $("#tsg-member-member-filter-btn").on("click", function () {
+      const data = {
+          action: "filter_member_transactions", 
+          member: $('#tsg-member-member').val(),
+      };
+  
+      $.ajax({
+          url: tsg_public_ajax.ajax_url,
+          type: "POST",
+          data: data,
+          success: function (response) {
+              console.log(response);
+              $('#tsg-member-details-container').html(response);
           },
           error: function () {
               alert("An error occurred.");
