@@ -1143,6 +1143,11 @@ jQuery(document).ready(function ($) {
          var userId = $(this).data('id');
          $('#tsg-transaction-history-member').val(userId);
    });
+   // $('#tsg-history-transaction-type-list li').on('click', function(e) {
+   //    e.preventDefault();
+   //    var userId = $(this).data('id');
+   //    $('#tsg-history-transaction-type').val(userId);
+   // });
    $('#tsg-sf-balance-range-list li.tsg-select-option').on('click', function(e) {
       e.preventDefault();
       var range = $(this).data('id');
@@ -1158,6 +1163,12 @@ jQuery(document).ready(function ($) {
       var status = $(this).data('id');
       $('#tsg-member-member').val(status);
    });
+   $('#tsg-sf-adjust-member-list li').on('click', function(e) {
+      e.preventDefault();
+      var status = $(this).data('id');
+      $('#tsg-sf-adjust-member').val(status);
+   });
+   
  
    $("#tsg-members-filter-btn").on("click", function () {
       const data = {
@@ -1201,5 +1212,76 @@ jQuery(document).ready(function ($) {
       });
    });
   
+   $('#tsg-adjust-affiliate-earning-container').hide();
+   $('#tsg-adjust-sf-container').hide();
+   $('#tsg-adjust-sf-btn').on("click", function () {
+      $('#tsg-adjust-sf-container').toggle();
+      $('#tsg-adjust-affiliate-earning-container').hide();
+   });
+   $('#tsg-adjust-affiliate-earning-btn').on("click", function () {
+      $('#tsg-adjust-affiliate-earning-container').toggle();
+      $('#tsg-adjust-sf-container').hide();
+   });
+  
+
+   $("#tsg-adjust-sf-save").on("click", function () {
+      const data = {
+         action: "adjust_sf_amount",
+         member: $('#tsg-sf-adjust-member').val(), 
+         newSf: $('#tsg-adjust-sf').val()
+     };
+     
+     if (!data.member) {
+         $('#tsg-adjust-msg-container').removeClass('tsg-entry-hidden');
+         $('#tsg-adjust-msg-container').css('color', 'red').html('Error: Please select a member.');
+     } else {
+
+         $.ajax({
+             url: tsg_public_ajax.ajax_url,
+             type: "POST",
+             data: data,
+             success: function (response) {
+                 console.log(response);
+                 $('#tsg-adjust-msg-container').removeClass('tsg-entry-hidden');
+                 $('#tsg-adjust-msg-container').css('color', '').html(response); 
+             },
+             error: function () {
+                 $('#tsg-adjust-msg-container').removeClass('tsg-entry-hidden');
+                 $('#tsg-adjust-msg-container').css('color', 'red').html('An error occurred.');
+             },
+         });
+     }     
+   });
+
+   $("#tsg-adjust-affiliate-earning-save").on("click", function () {
+
+      const data = {
+         action: "adjust_affiliate_earning", 
+         member: $('#tsg-sf-adjust-member').val(),
+         newAffiliateEarning: $('#tsg-adjust-affiliate-earning').val()
+     };
+     
+     if (!data.member) {
+         $('#tsg-adjust-msg-container').removeClass('tsg-entry-hidden');
+         $('#tsg-adjust-msg-container').css('color', 'red').html('Error: Please select a member.');
+     } else {
+     
+         $.ajax({
+             url: tsg_public_ajax.ajax_url,
+             type: "POST",
+             data: data,
+             success: function (response) {
+                 console.log(response);
+                 $('#tsg-adjust-msg-container').removeClass('tsg-entry-hidden');
+                 $('#tsg-adjust-msg-container').css('color', '').html(response); 
+             },
+             error: function () {
+                 $('#tsg-adjust-msg-container').removeClass('tsg-entry-hidden');
+                 $('#tsg-adjust-msg-container').css('color', 'red').html('An error occurred.');
+             },
+         });
+     }
+     
+   });
  
 });

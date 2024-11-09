@@ -48,7 +48,7 @@
     </div>
   </div>
 
-  <h6 class="borderb" id="tsg-members-filter-container-label tsg-entry-hidden" ><strong>List of all members</strong></h6>
+  <h6 class="borderb tsg-entry-hidden" ><strong>List of all members</strong></h6>
 
     <div class="messages" id="tsg-members-filter-container">
     
@@ -117,13 +117,23 @@
       </div>
       <div class="line-right input-field">
         <div class="select">
-          <p class="select-name"><span>Bella Tomson</span></p>
-          <input type="hidden" id="member2" name="member2" value="Bella Tomson" />
-          <ul class="select-list hauto">
-            <li>Bella Tomson</li>
-            <li>Member 2</li>
-            <li>Member 3</li>
-          </ul>
+          <p class="select-name"><span>Select</span></p>
+          <input type="hidden" id="tsg-sf-adjust-member" name="member2" value="" />
+          <?php
+            global $wpdb;
+            $results = $wpdb->get_results("SELECT DISTINCT user_id FROM {$wpdb->prefix}myCRED_log");
+
+            echo '<ul class="select-list hauto" id="tsg-sf-adjust-member-list">';
+            if ($results) {
+                foreach ($results as $row) {
+                    $user_info = get_userdata($row->user_id);
+                    $user_name = $user_info ? $user_info->display_name : 'Unknown User';
+
+                    echo '<li data-id="' . esc_attr($row->user_id) . '">' . esc_html($user_name) . '</li>';
+                }
+            } 
+            echo '</ul>';
+          ?>
         </div>
       </div>
     </div>
@@ -131,13 +141,30 @@
     <div class="block-line fl-end">
       <div class="line-right fl btns-part">
         <div class="btn-block">
-          <a href="#" class="btn">Adjust AFFiliate Earnings</a>
+          <a href="#" class="btn" id="tsg-adjust-affiliate-earning-btn">Adjust AFFiliate Earnings</a>
         </div>
         <div class="btn-block">
-          <a href="#" class="btn">adjust SF</a>
+          <a href="#" class="btn" id="tsg-adjust-sf-btn">adjust SF</a>
         </div>
       </div>
     </div>
+    <div class="block-line light-style" id="tsg-adjust-sf-container">
+        <div class="search-line">
+          <input type="text" id="tsg-adjust-sf" placeholder="Enter SF Value">
+        </div>
+        <div class="btn-block">
+          <a href="#" class="btn" id="tsg-adjust-sf-save">Adjust</a>
+        </div>
+    </div>
+    <div class="block-line light-style" id="tsg-adjust-affiliate-earning-container" >
+        <div class="search-line">
+          <input type="text" id="tsg-adjust-affiliate-earning" placeholder="Enter New Affiliate Earnings">
+        </div>
+        <div class="btn-block">
+          <a href="#" class="btn" id="tsg-adjust-affiliate-earning-save">Adjust</a>
+        </div>
+    </div>
+    <div class="block-line light-style" id="tsg-adjust-msg-container"></div>
   </div>
 
 </div>

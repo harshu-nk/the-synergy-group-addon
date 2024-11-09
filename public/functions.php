@@ -585,7 +585,7 @@ function tsg_filter_members() {
     wp_die();
 }
 
-//Filter member with transaction details
+//Filter sf transaction details by member
 add_action('wp_ajax_filter_member_transactions', 'tsg_filter_member_transactions');
 
 function tsg_filter_member_transactions() {
@@ -671,6 +671,36 @@ function tsg_filter_member_transactions() {
             </div>';
     } else {
         echo '<p>User is undefined.</p>';
+    }
+    wp_die();
+}
+
+//Adjust SF values
+//All transactions - Display all transactions.
+add_action('wp_ajax_adjust_sf_amount', 'tsg_adjust_sf_amount');
+
+function tsg_adjust_sf_amount() {
+
+    if (!isset($_POST['member']) || !isset($_POST['newSf'])) {
+        echo '<p>Fail to send data</p>';
+        wp_die();
+    } else {
+        echo '<p>' . $_POST['member'] . '</p>';
+        echo '<p>' . $_POST['newSf'] . '</p>';
+    }
+    wp_die();
+}
+
+add_action('wp_ajax_adjust_affiliate_earning', 'tsg_adjust_affiliate_earning');
+
+function tsg_adjust_affiliate_earning() {
+
+    if (!isset($_POST['member']) || !isset($_POST['newAffiliateEarning'])) {
+        echo '<p>Fail to send data</p>';
+        wp_die();
+    } else {
+        echo '<p>' . $_POST['member'] . '</p>';
+        echo '<p>' . $_POST['newAffiliateEarning'] . '</p>';
     }
     wp_die();
 }
