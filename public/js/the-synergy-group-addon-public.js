@@ -1099,7 +1099,7 @@ jQuery(document).ready(function ($) {
          },
          success: function (response) {
             console.log(response);
-            $('#tsg-display-transaction-history').append(response);
+            $('#tsg-display-transaction-history').html(response);
          },
          error: function () {
             alert("An error occurred.");
