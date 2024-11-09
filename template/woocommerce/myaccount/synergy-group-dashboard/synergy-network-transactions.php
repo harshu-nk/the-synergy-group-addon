@@ -232,13 +232,13 @@
       <div class="line-right input-field width3">
         <div class="select">
           <p class="select-name"><span>Any</span></p>
-          <input type="hidden" id="tsg-transaction-history-member" name="member" value="Any" />
+          <input type="hidden" id="tsg-transaction-history-member" name="member" value="0" />
           <?php
             global $wpdb;
             $results = $wpdb->get_results("SELECT DISTINCT user_id FROM {$wpdb->prefix}myCRED_log");
 
             if ($results) {
-                echo '<ul class="select-list hauto">';
+                echo '<ul class="select-list hauto" id="tsg-transaction-history-member-list">';
                 foreach ($results as $row) {
                     $user_info = get_userdata($row->user_id);
                     $user_name = $user_info ? $user_info->display_name : 'Unknown User';

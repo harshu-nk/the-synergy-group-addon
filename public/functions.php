@@ -381,11 +381,11 @@ function tsg_display_all_transactions_history() {
 
     global $wpdb;
 
-    $dataSearch = isset($_POST['dataSearch']) ? sanitize_text_field($_POST['dataSearch']) : '';
-    $dateFrom = isset($_POST['dateFrom']) ? sanitize_text_field($_POST['dateFrom']) : '';
-    $dateTo = isset($_POST['dateTo']) ? sanitize_text_field($_POST['dateTo']) : '';
-    $transactionType = isset($_POST['transactionType']) ? sanitize_text_field($_POST['transactionType']) : '';
-    $member = isset($_POST['member']) ? intval($_POST['member']) : 0;
+    $dataSearch = isset($_POST['data']['dataSearch']) ? sanitize_text_field($_POST['data']['dataSearch']) : '';
+    $dateFrom = isset($_POST['data']['dateFrom']) ? sanitize_text_field($_POST['data']['dateFrom']) : '';
+    $dateTo = isset($_POST['data']['dateTo']) ? sanitize_text_field($_POST['data']['dateTo']) : '';
+    $transactionType = isset($_POST['data']['transactionType']) ? sanitize_text_field($_POST['data']['transactionType']) : '';
+    $member = isset($_POST['data']['member']) ? intval($_POST['data']['member']) : 0;
 
     $query = "SELECT * FROM {$wpdb->prefix}myCRED_log WHERE 1=1";
     $params = [];
@@ -410,16 +410,22 @@ function tsg_display_all_transactions_history() {
         $params[] = $transactionType;
     }
 
-    if ($member) {
+    if ($member > 0) {
         $query .= " AND user_id = %d";
         $params[] = $member;
     }
 
-    $prepared_query = $wpdb->prepare($query, ...$params);
-    $results = $wpdb->get_results($prepared_query);
+    if (!empty($params)) {
+        $prepared_query = $wpdb->prepare($query, ...$params);
+        $results = $wpdb->get_results($prepared_query);
+    } else {
+        $results = $wpdb->get_results($query);
+    }
 
-    // Output the results
     if ($results) {
+        // echo '<pre>';
+        // print_r($results);
+        // echo '</pre>';
         foreach ($results as $row) {
             $user_info = get_userdata($row->user_id);
             $user_name = $user_info ? $user_info->display_name : 'Unknown User';
@@ -436,14 +442,6 @@ function tsg_display_all_transactions_history() {
                 </div>
             </div>';
 
-            // echo "<div class='transaction-record'>";
-            // echo "<p>Transaction ID: {$row->id}</p>";
-            // echo "<p>Type: {$row->ref}</p>";
-            // echo "<p>User ID: {$row->user_id}</p>";
-            // echo "<p>Credits: {$row->creds}</p>";
-            // echo "<p>Entry: {$row->entry}</p>";
-            // echo "<p>Date: " . date('Y-m-d H:i:s', $row->time) . "</p>";
-            // echo "</div><hr>";
         }
     } else {
         echo "<p>No transactions found matching the criteria.</p>";

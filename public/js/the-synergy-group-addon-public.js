@@ -1106,5 +1106,17 @@ jQuery(document).ready(function ($) {
          },
       });
    }
-   
+
+   //For select 2 fields
+   $(".select2-list").select2();
+
+   //For select field custom to select id without a text
+   $('#tsg-transaction-history-member-list li').on('click', function(e) {
+         e.preventDefault();
+         var userId = $(this).data('id');
+         $('#tsg-transaction-history-member').val(userId);
+   });
+ 
+  
+ 
 });
