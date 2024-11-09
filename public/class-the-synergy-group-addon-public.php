@@ -82,6 +82,8 @@ class The_Synergy_Group_Addon_Public
 			wp_enqueue_style('dropzone-css', 'https://unpkg.com/dropzone@5/dist/min/dropzone.min.css', array(), $this->version, 'all');
 			wp_enqueue_style('jquery-ui-css', 'https://code.jquery.com/ui/1.13.3/themes/smoothness/jquery-ui.css', array(), $this->version, 'all');
 		}
+
+
 	}
 
 	/**
