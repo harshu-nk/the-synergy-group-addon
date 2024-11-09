@@ -1116,7 +1116,38 @@ jQuery(document).ready(function ($) {
          var userId = $(this).data('id');
          $('#tsg-transaction-history-member').val(userId);
    });
+   $('#tsg-sf-balance-range-list li.tsg-select-option').on('click', function(e) {
+      e.preventDefault();
+      var range = $(this).data('id');
+      $('#tsg-sf-balance-range').val(range);
+   });
+   $('#tsg-member-status-list li.tsg-select-option').on('click', function(e) {
+      e.preventDefault();
+      var status = $(this).data('id');
+      $('#tsg-member-status').val(status);
+   });
  
+   $("#tsg-members-filter-btn").on("click", function () {
+      const data = {
+          action: "filter_members", 
+          sfRange: $('#tsg-sf-balance-range').val(),
+          userStatus: $('#tsg-member-status').val(),
+      };
+  
+      $.ajax({
+          url: tsg_public_ajax.ajax_url,
+          type: "POST",
+          data: data,
+          success: function (response) {
+              console.log(response);
+              $('#tsg-members-filter-container-label').removeClass('tsg-entry-hidden');
+              $('#tsg-members-filter-container').html(response);
+          },
+          error: function () {
+              alert("An error occurred.");
+          },
+      });
+   });
   
  
 });

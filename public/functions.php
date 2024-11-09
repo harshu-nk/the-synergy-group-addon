@@ -449,3 +449,92 @@ function tsg_display_all_transactions_history() {
 
     wp_die();
 }
+
+add_action('wp_ajax_filter_members', 'tsg_filter_members');
+
+function tsg_filter_members() {
+  
+    $sfRange = isset($_POST['sfRange']) ? sanitize_text_field($_POST['sfRange']) : '';
+    $userStatus = isset($_POST['userStatus']) ? sanitize_text_field($_POST['userStatus']) : '';
+
+    $ranges = [
+        [1, 50],
+        [50, 100],
+        [100, 150]
+    ];
+
+    if (array_key_exists($sfRange, $ranges)) {
+        $selectedRange = $ranges[$sfRange];
+        $minBalance = $selectedRange[0];
+        $maxBalance = $selectedRange[1];
+    } else {
+        $minBalance = 0;
+        $maxBalance = PHP_INT_MAX;
+    }
+
+    $users_in_range = [];
+    $all_users = get_users();
+
+    foreach ($all_users as $user) {
+        $user_id = $user->ID;
+        $user_sf_balance = mycred_get_users_total_balance($user_id);
+        $user_status = get_user_meta($user_id, 'tsg_user_status', true);
+
+        if (
+            $user_sf_balance >= $minBalance && 
+            $user_sf_balance <= $maxBalance && 
+            $user_status == $userStatus
+        ) {
+            $users_in_range[] = [
+                'user_id' => $user_id,
+                'user_name' => $user->display_name,
+                'sf_balance' => $user_sf_balance,
+                'tsg_user_status' => $user_status,
+            ];
+        }
+    }
+
+    $member_count = 0;
+    echo '<div class="messages-sub-block last-bord" >'; 
+    if (!empty($users_in_range)) {
+        foreach ($users_in_range as $user) {
+            $member_count++;
+            if ($user['tsg_user_status'] == 0) {
+                $user_status_txt = "Inactive";
+            } elseif ($user['tsg_user_status'] == 1) {
+                $user_status_txt = "Active";
+            } else {
+                $user_status_txt = "Undefined";
+            }  
+            echo '<div class="message-block spb">
+                <div class="text-icon">';
+            echo '<img src="' . THE_SYNERGY_GROUP_URL . 'public/img/account/avatar_profile.svg" alt="avatar icon "/>
+                </div>
+                <div class="message-text">';
+            echo '<p><strong>ID: ' . esc_html($user['user_id']) . ' | Member: ' . esc_html($user['user_name']) . '</strong><br>';
+            echo '(SF Balance: ' . esc_html($user['sf_balance']) . ' - User Status: ' . $user_status_txt . ')
+                </p>
+                </div>
+                <div class="btn-block">
+                <a href="#" class="btn">read more</a>
+                </div>
+            </div>';       
+        }
+    } else {
+        echo '<p>No users found matching the selected balance range and status.</p>';
+    }
+    echo '</div>';
+
+    echo '<div class="block-lines2 big-p">
+        <div class="block-line spb first">
+        <div class="line-left">
+            <p>Member Count:</p>
+        </div>
+        <div class="line-right va" >
+            <p class="main-val2" >' . $member_count . '</p>
+        </div>
+        </div>
+    </div>';
+   
+    wp_die();
+}
