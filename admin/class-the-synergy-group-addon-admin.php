@@ -97,6 +97,9 @@ class The_Synergy_Group_Addon_Admin {
 		 */
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/the-synergy-group-addon-admin.js', array( 'jquery' ), $this->version, false );
+		wp_localize_script($this->plugin_name, 'tsg_ajax', array('ajax_url' => admin_url('admin-ajax.php')));
+		//wp_enqueue_script($this->plugin_name, 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', 'jquery', '4.1.0-rc.0');
+		//wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/the-syndergy-admin.js', array('jquery', $this->plugin_name), $this->version, true);
 
 	}
 

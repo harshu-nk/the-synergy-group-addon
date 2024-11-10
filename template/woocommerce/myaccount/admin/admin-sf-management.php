@@ -164,7 +164,7 @@
 
                     <br>
                     <br>
-                    <?php echo do_shortcode( '[mycred_pending_log]' ) ?>
+                    <?php echo do_shortcode( '[mycred_pending_log]' ); ?>
                 </div>
                 <!-- <div class="line-right va btns-part">
                     <div class="btn-block">

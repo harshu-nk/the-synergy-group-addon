@@ -1,4 +1,5 @@
 jQuery(document).ready(function ($) {
+   console.log('select2 function initialized');
    $("#select-members").select2({
       ajax: {
          url: tsg_ajax.ajax_url,
@@ -12,6 +13,7 @@ jQuery(document).ready(function ($) {
             };
          },
          processResults: function (data) {
+            console.log("AJAX request successful:", data);
             return {
                results: data, // Parse the results into the format expected by Select2
             };
@@ -19,9 +21,10 @@ jQuery(document).ready(function ($) {
          cache: true,
       },
       placeholder: "Select members",
-      minimumInputLength: 2, // Start searching after 2 characters
-      multiple: true, // Allow multiple selections
+      // minimumInputLength: 1, // Start searching after 2 characters
+      // multiple: true, // Allow multiple selections
    });
+   
 
    $("#communications-form").validate();
    $("#communications-form").submit(function (event) {
