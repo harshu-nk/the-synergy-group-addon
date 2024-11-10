@@ -53,6 +53,8 @@ class WooAccountCustomizations
 
         add_rewrite_endpoint('synergy-network-transactions', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('synergy-network-members', EP_ROOT | EP_PAGES);
+
+        add_rewrite_endpoint('synergy-network-admin-withdrawals', EP_ROOT | EP_PAGES);
         
     }
 
@@ -68,6 +70,7 @@ class WooAccountCustomizations
 
         $vars[] = 'synergy-network-transactions';
         $vars[] = 'synergy-network-members';
+        $vars[] = 'synergy-network-admin-withdrawals';
         return $vars;
     }
 
@@ -103,6 +106,7 @@ class WooAccountCustomizations
 
         $items['synergy-network-transactions'] = __('Synergy Network Transactions', 'the-synergy-group-addon');
         $items['synergy-network-members'] = __('Members', 'the-synergy-group-addon');
+        $items['synergy-network-admin-withdrawals'] = __('Admin Withdrawals', 'the-synergy-group-addon');
 
         $customOrder = [
             'dashboard',
@@ -161,6 +165,11 @@ class WooAccountCustomizations
     function tsg_customer_affiliate_tab_content(): void
     {
         wc_get_template('myaccount/customer/customer-affiliate.php', array());
+    }
+
+    function tsg_synergy_network_dashboard_admin_withdrawals_tab_content(): void
+    {
+        wc_get_template('myaccount/admin/admin-withdrawals.php', array());
     }
 
     function tsg_service_offering_tab_content(): void
