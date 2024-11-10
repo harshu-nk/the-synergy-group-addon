@@ -53,7 +53,6 @@ class WooAccountCustomizations
 
         add_rewrite_endpoint('synergy-network-transactions', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('synergy-network-members', EP_ROOT | EP_PAGES);
-        add_rewrite_endpoint('synergy-network-reports', EP_ROOT | EP_PAGES);
         
     }
 
@@ -69,7 +68,6 @@ class WooAccountCustomizations
 
         $vars[] = 'synergy-network-transactions';
         $vars[] = 'synergy-network-members';
-        $vars[] = 'synergy-network-reports';
         return $vars;
     }
 
@@ -105,7 +103,6 @@ class WooAccountCustomizations
 
         $items['synergy-network-transactions'] = __('Synergy Network Transactions', 'the-synergy-group-addon');
         $items['synergy-network-members'] = __('Members', 'the-synergy-group-addon');
-        $items['synergy-network-reports'] = __('Reports & Analytics', 'the-synergy-group-addon');
 
         $customOrder = [
             'dashboard',
@@ -644,15 +641,10 @@ class WooAccountCustomizations
     {
         wc_get_template('myaccount/synergy-group-dashboard/synergy-network-transactions.php', array());
     }
-
+    
     function tsg_synergy_network_dashboard_members_tab_content(): void
     {
         wc_get_template('myaccount/synergy-group-dashboard/synergy-network-members.php', array());
-    }
-
-    function tsg_synergy_network_dashboard_reports_tab_content(): void
-    {
-        wc_get_template('myaccount/synergy-group-dashboard/synergy-network-reports.php', array());
     }
 
     // function get_service_details() {
