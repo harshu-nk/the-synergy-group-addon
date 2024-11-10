@@ -494,3 +494,4 @@ function tsg_display_all_transactions_history() {
 
     wp_die();
 }
+

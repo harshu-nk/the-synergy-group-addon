@@ -149,6 +149,9 @@
             </div>
             <div class="block-line spb small-line light-style" id="tsg-withdraw-sf-from-member-container" style="display: none;">
                 <div class="line-left">
+                    <?php echo do_shortcode( '[mycred_cashcred]' ) ?>
+                    <hr>
+                    
                     <input type="text" name="withdraw-sf-from-member" value="">
                     <select id="sf-withdraw-member-id" class="select2-list">
                         <?php
@@ -158,12 +161,16 @@
                         }
                         ?>
                     </select>
+
+                    <br>
+                    <br>
+                    <?php echo do_shortcode( '[mycred_pending_log]' ) ?>
                 </div>
-                <div class="line-right va btns-part">
+                <!-- <div class="line-right va btns-part">
                     <div class="btn-block">
                         <a href="#" class="btn style2 minw2" id="tsg-withdraw-sf-from-member-save-btn">Save</a>
                     </div>
-                </div>
+                </div> -->
             </div>
 
         </div>
