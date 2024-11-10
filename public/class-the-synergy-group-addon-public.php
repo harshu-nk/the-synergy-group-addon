@@ -109,6 +109,7 @@ class The_Synergy_Group_Addon_Public
 
 		//wp_localize_script('tsg-account-admin-js', 'tsg_ajax', array('ajax_url' => admin_url('admin-ajax.php')));
 
+		wp_enqueue_script('select2-js', plugin_dir_url(__FILE__) . 'js/custom-select2.js', array('jquery'), '1.0.0', true);
 		wp_enqueue_script('tsg-select2-js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', 'jquery', '4.1.0-rc.0');
 		wp_enqueue_script('tsg-account-admin-js', plugin_dir_url(__FILE__) . 'js/the-syndergy-admin.js', array('jquery', 'tsg-select2-js', 'select2-js'), $this->version, true);
 

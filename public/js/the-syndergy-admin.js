@@ -8,14 +8,17 @@ jQuery(document).ready(function ($) {
          delay: 250,
          data: function (params) {
             return {
-               action: "ajax_search_users", 
+               action: "search_users", 
                search: params.term, 
             };
          },
          processResults: function (data) {
             console.log("AJAX request successful:", data);
             return {
-               results: data, 
+               results: data.map(item => ({
+                  id: item.id,  // Replace with the correct property name
+                  text: item.text // Replace with the correct property name
+               })),
             };
          },
          cache: true,
