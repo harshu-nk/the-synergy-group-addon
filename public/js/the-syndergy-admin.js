@@ -15,11 +15,14 @@ jQuery(document).ready(function ($) {
          processResults: function (data) {
             console.log("AJAX request successful:", data);
             return {
-               results: data.map(item => ({
-                  id: item.id,  // Replace with the correct property name
-                  text: item.text // Replace with the correct property name
-               })),
+               results: data, 
             };
+            // return {
+            //    results: data.map(item => ({
+            //       id: item.id,  
+            //       text: item.text 
+            //    })),
+            // };
          },
          cache: true,
       },
