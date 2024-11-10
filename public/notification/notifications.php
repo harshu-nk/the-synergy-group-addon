@@ -203,9 +203,9 @@ class Notifier
                             <p><?php _e('Select Members', 'the-synergy-group-addon'); ?></p>
                         </div>
                         <div class="line-right input-field">
-                            <Select class="select2-list" id="select-members" name="members[]" multiple="multiple" required>
+                            <Select2 class="select2-list" id="select-members" name="members[]" multiple="multiple" required>
                                 <option value="Member 1">Member 1</option>
-                            </Select>
+                            </Select2>
                             <!-- <div class="select">
                         <p class="select-name"><span>Select</span></p>
                         <input type="hidden" id="number-members" name="number-members" value="" />

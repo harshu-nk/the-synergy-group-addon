@@ -103,14 +103,14 @@ class The_Synergy_Group_Addon_Public
 		wp_enqueue_script('datepicker-en', plugin_dir_url(__FILE__) . 'datepicker/js/i18n/datepicker.en.js', array('datepicker-js'), '1.0.0', true);
 		wp_enqueue_script('calendar-js', plugin_dir_url(__FILE__) . 'js/calendar.js', array('jquery', 'datepicker-js'), '1.0.0', true);
 		wp_enqueue_script('files-js', plugin_dir_url(__FILE__) . 'js/files.js', array('jquery'), '1.0.0', true);
-		wp_enqueue_script('select2-js', plugin_dir_url(__FILE__) . 'js/select2.min.js', array('jquery'), '1.0.0', true);
+		//wp_enqueue_script('select2-js', plugin_dir_url(__FILE__) . 'js/select2.min.js', array('jquery'), '1.0.0', true);
 		wp_enqueue_script('quantity-js', plugin_dir_url(__FILE__) . 'js/quantity.js', array('jquery'), '1.0.0', true);
 		wp_enqueue_script('stars-js', plugin_dir_url(__FILE__) . 'js/stars.js', array('jquery'), '1.0.0', true);
 
 		//wp_localize_script('tsg-account-admin-js', 'tsg_ajax', array('ajax_url' => admin_url('admin-ajax.php')));
 
 		wp_enqueue_script('tsg-select2-js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', 'jquery', '4.1.0-rc.0');
-		wp_enqueue_script('tsg-account-admin-js', plugin_dir_url(__FILE__) . 'js/the-syndergy-admin.js', array('jquery', 'tsg-select2-js'), $this->version, true);
+		wp_enqueue_script('tsg-account-admin-js', plugin_dir_url(__FILE__) . 'js/the-syndergy-admin.js', array('jquery', 'tsg-select2-js', 'select2-js'), $this->version, true);
 
 	}
 }

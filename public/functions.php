@@ -704,3 +704,4 @@ function tsg_adjust_affiliate_earning() {
     }
     wp_die();
 }
+
