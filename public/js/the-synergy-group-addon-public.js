@@ -36,8 +36,13 @@ jQuery(document).ready(function ($) {
          $('#tsg-certificate-error-message').hide();
       }
 
-      var certificateId = 'certificate-' + (certificates.length + 1);
-      certificates.push({ id: certificateId, text: certificateText });
+      // var certificateId = 'certificate-' + (certificates.length + 1);
+      // certificates.push({ id: certificateId, text: certificateText });
+
+      certificates.push({ text: certificateText });
+      var certificateIndex = certificates.length - 1;
+      var certificateId = 'certificate-' + certificateIndex;
+      certificates[certificateIndex].id = certificateId;
 
       $('#tsg-certificate-input').val(JSON.stringify(certificates));
 
@@ -55,8 +60,11 @@ jQuery(document).ready(function ($) {
       var certificateText = $(this).data('text');
 
       // Find the certificate text in the array and remove it
+      // certificates = certificates.filter(function(certificate) {
+      //    return certificate.text !== certificateText;
+      // });
       certificates = certificates.filter(function(certificate) {
-         return certificate.text !== certificateText;
+         return certificate.id !== certificateId && certificate.text !== certificateText;
       });
 
       $('#tsg-certificate-input').val(JSON.stringify(certificates));
