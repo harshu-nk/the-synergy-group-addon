@@ -108,6 +108,7 @@ class WooAccountCustomizations
         $user_role_admin = 'administrator';
         $user_role_manager = 'synergy_manager';
         $user_role_customer = 'customer';
+        $user_role_subscriber = 'subscriber';
 
         $save_for_later = array(
             'edit-account' => __('Profile', 'the-synergy-group-addon')
@@ -214,7 +215,7 @@ class WooAccountCustomizations
                 'customer-logout'
             ];
 
-        } elseif (members_current_user_has_role( $user_role_customer )) {
+        } elseif (members_current_user_has_role( $user_role_customer ) || members_current_user_has_role( $user_role_subscriber ) ) {
             $sf_overview_tab_title = __('Synergy Francs', 'the-synergy-group-addon');
             $notifications_tab_title = __('Activity / Messages', 'the-synergy-group-addon');
 
