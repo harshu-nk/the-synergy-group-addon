@@ -1334,7 +1334,7 @@ jQuery(document).ready(function ($) {
 
    $("#tsg-affiliate-profiles-status-change").on("click", function() {
       if (!$("#affiliate-profiles").val()) {
-         $('#tsg-affiliate-profiles-error-message').text("Please select a profile before submitting.").show();
+         $('#tsg-affiliate-profiles-error-message').text("Please select a member before submitting.").show();
       } else {
          $('#tsg-affiliate-profiles-error-message').text("").hide();
          const data = {
@@ -1360,5 +1360,51 @@ jQuery(document).ready(function ($) {
          },
      });
    }
+
+   $('#tsg-adjust-fee-commission').on('click', function(e) {
+      e.preventDefault();
+      var commissionRate = parseFloat($('#tsg-commission-rate-input').val());
+
+      if (isNaN(commissionRate) || commissionRate < 0 || commissionRate > 100) {
+         $('#tsg-commission-rate-error').text("Please enter a value between 0 and 100.").show();
+      } else {
+         $('#tsg-commission-rate-error').text("").hide();
+
+         $.ajax({
+            url: tsg_public_ajax.ajax_url,
+            type: 'POST',
+            data: {
+               action: 'save_affiliate_commission_rate',
+               commission_rate: commissionRate,
+            },
+            success: function(response) {
+               $('#tsg-commission-rate-display').html(response);
+            },
+            error: function() {
+               alert('An error occurred while saving the commission rate.');
+            }
+         });
+      }
+   });
+
+   $('#tsg-adjust-fee-commission').on('click', function(e) {
+      e.preventDefault();
+
+      // $.ajax({
+      //    url: tsg_public_ajax.ajax_url,
+      //    type: 'POST',
+      //    data: {
+      //       action: 'save_affiliate_commission_rate',
+      //       commission_rate: commissionRate,
+      //    },
+      //    success: function(response) {
+      //       $('#tsg-commission-rate-display').html(response);
+      //    },
+      //    error: function() {
+      //       alert('An error occurred while saving the commission rate.');
+      //    }
+      // });
+   });
+  
  
 });

@@ -1,4 +1,3 @@
-
 <form class="light-style">
 
   <div class="account-text-block">
@@ -49,7 +48,7 @@
     <div class="btn-block fl-end mt25">
       <a href="#" class="btn btn-small minw" id="tsg-affiliate-profiles-status-change">Change Status</a>
     </div>
-    <div class="" id="#tsg-affiliate-profiles-error-message" style="color: red;"></div>
+    <div class="" id="tsg-affiliate-profiles-error-message" style="color: red;"></div>
   </div>
 
   <div class="account-text-block">
@@ -217,6 +216,12 @@
   </div>
 
   <div class="account-text-block">
+    <?php
+      global $wpdb;
+      $user_id = get_current_user_id();
+      $affiliate_commission_data = get_user_meta($user_id, 'affiliate_commission_rate', true);
+      $commission_rate = isset($affiliate_commission_data['rate']) ? $affiliate_commission_data['rate'] : 'Not set';
+    ?>
     <div class="account-title-block spb">
       <div class="title-content va">
         <img width="50" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/fee_money.svg" alt="fee adjustments icon">
@@ -228,18 +233,22 @@
         <div class="line-left">
           <p>Adjust Fee Earnings</p>
         </div>
-        <div class="line-right icon-right va">
-          <p><strong>10%</strong></p>
-          <a href="#" class="icon-a"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon"></a>
+        <div class="line-right icon-right va light-style">
+          <p><strong id="tsg-commission-rate-display"><?php echo esc_html($commission_rate); ?> %</strong></p>
+          <p class="form-row">
+            <input type="number" min="0" max="100" class="woocommerce-Input woocommerce-Input--text input-text" name="tsg-commission-rate-input" id="tsg-commission-rate-input" autocomplete="given-name" value="" />
+          </p>
+          <a href="#" class="icon-a " id="tsg-adjust-fee-commission"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon"></a>
         </div>
       </div>
+      <div id="tsg-commission-rate-error"></div>
       <div class="block-line spb small-line">
         <div class="line-left">
           <p>Dispute Resolution</p>
         </div>
         <div class="line-right va btns-part">
           <div class="btn-block">
-            <a href="#" class="btn style2 minw">raise disputes</a>
+            <a href="<?php site_url(); ?>/my-account/admin-help-support/" class="btn style2 minw">raise disputes</a>
           </div>
         </div>
       </div>
@@ -249,10 +258,11 @@
         </div>
         <div class="line-right va btns-part">
           <div class="btn-block">
-            <a href="#" class="btn style2 minw">Audit Trial</a>
+            <a href="#" class="btn style2 minw" id="tsg-affiliate-audit-btn">Audit Trial</a>
           </div>
         </div>
       </div>
+      <div class="block-line spb small-line" id="tsg-affiliate-audit-container"></div>
     </div>
 
   </div>

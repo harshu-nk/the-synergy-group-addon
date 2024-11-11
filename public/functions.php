@@ -787,7 +787,7 @@ function tsg_load_affiliate_profiles() {
           <p>Earnings from Referrals</p>
         </div>
         <div class="line-right">
-          <p class="main-val2"><strong>' . $sum_creds . '</strong></p>
+          <p class="main-val2"><strong>SF ' . $sum_creds . '</strong></p>
         </div>
       </div>
       <div class="block-line spb media-full">
@@ -802,5 +802,20 @@ function tsg_load_affiliate_profiles() {
     wp_die();
 }
 
+add_action('wp_ajax_save_affiliate_commission_rate', 'tsg_save_affiliate_commission_rate');
 
+function tsg_save_affiliate_commission_rate() {
+    $user_id = get_current_user_id();
+    $commission_rate = isset($_POST['commission_rate']) ? sanitize_text_field($_POST['commission_rate']) : '';
+
+    $affiliate_commission_data = array(
+        'rate' => $commission_rate,
+        'date' => current_time('Y-m-d'),
+        'time' => current_time('H:i:s'),
+    );
+
+    update_user_meta($user_id, 'affiliate_commission_rate', $affiliate_commission_data);
+    echo $commission_rate;
+    wp_die();
+}
 
