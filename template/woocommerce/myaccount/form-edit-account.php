@@ -253,7 +253,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 			</div>
 		</div>
 
-		<div class="items equal pt25" id="tsg-certificate-container">
+		<div class="items equal pt25">
 
 			<!-- Input Field for Adding Certificate -->
 			<div class="line-right line-row icon-right va tsg-certificate-wrapper tsg-entry-hidden">
@@ -306,9 +306,9 @@ do_action('woocommerce_before_edit_account_form'); ?>
 					</a>
 				</div>
 			</div>
-
 		</div>
-
+		<div id="tsg-certificate-container"></div>
+		<input type="hidden" id="tsg-certificate-input" value=""/>							
 	</div>
 
 	<div class="account-text-block">

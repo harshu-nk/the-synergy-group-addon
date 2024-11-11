@@ -25,40 +25,76 @@ jQuery(document).ready(function ($) {
       $(".tsg-certificate-wrapper").toggleClass("tsg-entry-hidden");
    });
 
-   //user certificate control
-   // var certificates = [];
-   // $('#tsg-user-add-certificate-btn').on('click', function() {
-   //    var certificateText = $('#certificate-input').val().trim();
+   var certificates = JSON.parse($('#tsg-certificate-input').val() || '[]');
+   $('#tsg-user-add-certificate-btn').on('click', function() {
+      var certificateText = $('#certificate-input').val().trim();
 
-   //    if (certificateText === "") {
-   //        $('#tsg-certificate-error-message').show();
-   //        return;
-   //    } else {
-   //        $('#tsg-certificate-error-message').hide();
-   //    }
+      if (certificateText === "") {
+         $('#tsg-certificate-error-message').show();
+         return;
+      } else {
+         $('#tsg-certificate-error-message').hide();
+      }
 
-   //    certificates.push(certificateText);
-   //    var certificateId = 'certificate-' + certificates.length;
+      // var certificateId = 'certificate-' + (certificates.length + 1);
+      // certificates.push({ id: certificateId, text: certificateText });
 
-   //    var newCertificate = `
-   //          <div class="item w2" id="${certificateId}">
-   //              <div class="itemr">
-   //                  <div class="award-block tc">
-   //                      <a href="#" class="block-edit delete-certificate-btn" data-id="${certificateId}" data-text="${certificateText}"><img src="https://thesynergygroup.ch/wp-content/plugins/the-synergy-group-addon/public/img/account/edit.svg" alt="edit icon"></a>
-   //                      <div class="award-icon">
-   //                          <img src="https://thesynergygroup.ch/wp-content/plugins/the-synergy-group-addon/public/img/account/award.svg" alt="award icon">
-   //                      </div>
-   //                      <p class="fs-20 mt18 tsg-certificate-name">${certificateText}</p>
-   //                  </div>
-   //              </div>
-   //          </div>
-   //      `;
+      certificates.push({ text: certificateText });
+      var certificateIndex = certificates.length - 1;
+      var certificateId = 'certificate-' + certificateIndex;
+      certificates[certificateIndex].id = certificateId;
 
-   //    $('#tsg-certificate-container').append(newCertificate);
+      $('#tsg-certificate-input').val(JSON.stringify(certificates));
 
-   //    $('#certificate-input').val('');
-   //    $(".tsg-certificate-wrapper").addClass("tsg-entry-hidden");
-   // });
+      const data = {
+         action: "tsg_add_save_certificates",
+         certificates: JSON.stringify(certificates) 
+      };
+
+      renderCertificate(data);
+   });
+
+   $(document).on('click', '.delete-certificate-btn', function(e) {  
+      e.preventDefault();
+      var certificateId = $(this).data('id');
+      var certificateText = $(this).data('text');
+
+      // Find the certificate text in the array and remove it
+      // certificates = certificates.filter(function(certificate) {
+      //    return certificate.text !== certificateText;
+      // });
+      certificates = certificates.filter(function(certificate) {
+         return certificate.id !== certificateId && certificate.text !== certificateText;
+      });
+
+      $('#tsg-certificate-input').val(JSON.stringify(certificates));
+      $('#' + certificateId).remove();
+
+      const data = {
+         action: "tsg_add_save_certificates",
+         certificates: JSON.stringify(certificates) 
+      };
+
+      renderCertificate(data);
+   });
+
+   function renderCertificate(data) {
+      $.ajax({
+         url: tsg_public_ajax.ajax_url,
+         type: "POST",
+         data: data,
+         success: function (response) {
+             console.log(response);
+             $('#certificate-input').val('');
+             $('#tsg-certificate-container').html(response);
+         },
+         error: function () {
+             $('#tsg-adjust-msg-container').removeClass('tsg-entry-hidden');
+             $('#tsg-adjust-msg-container').css('color', 'red').html('An error occurred.');
+         },
+      });
+   }
+
 
    // $('#tsg-certificate-container').on('click', '.delete-certificate-btn', function(e) {
    //    e.preventDefault();
@@ -76,80 +112,80 @@ jQuery(document).ready(function ($) {
    // });
 
    // Certificates Array
-   var certificates = [];
+   // var certificates = [];
 
    // Add Certificate Button Click
-   $("#tsg-user-add-certificate-btn").on("click", function () {
-      var certificateText = $("#certificate-input").val().trim();
+   // $("#tsg-user-add-certificate-btn").on("click", function () {
+   //    var certificateText = $("#certificate-input").val().trim();
 
-      if (certificateText === "") {
-         $("#tsg-certificate-error-message").show();
-         return;
-      } else {
-         $("#tsg-certificate-error-message").hide();
-      }
+   //    if (certificateText === "") {
+   //       $("#tsg-certificate-error-message").show();
+   //       return;
+   //    } else {
+   //       $("#tsg-certificate-error-message").hide();
+   //    }
 
-      certificates.push(certificateText);
+   //    certificates.push(certificateText);
 
-      // AJAX to Save Certificates
-      saveCertificates();
-   });
+   //    // AJAX to Save Certificates
+   //    saveCertificates();
+   // });
 
    // Render Certificate
-   function renderCertificate(certificateText, id) {
-      var certificateId = "certificate-" + id;
-      var newCertificate = `
-         <div class="item w2" id="${certificateId}">
-               <div class="itemr">
-                  <div class="award-block tc">
-                     <a href="#" class="block-edit delete-certificate-btn" data-id="${certificateId}" data-text="${certificateText}">
-                           <img src="https://thesynergygroup.ch/wp-content/plugins/the-synergy-group-addon/public/img/account/edit.svg" alt="edit icon">
-                     </a>
-                     <div class="award-icon">
-                           <img src="https://thesynergygroup.ch/wp-content/plugins/the-synergy-group-addon/public/img/account/award.svg" alt="award icon">
-                     </div>
-                     <p class="fs-20 mt18 tsg-certificate-name">${certificateText}</p>
-                  </div>
-               </div>
-         </div>
-      `;
-      $("#tsg-certificate-container").append(newCertificate);
-   }
+   // function renderCertificate(certificateText, id) {
+   //    var certificateId = "certificate-" + id;
+   //    var newCertificate = `
+   //       <div class="item w2" id="${certificateId}">
+   //             <div class="itemr">
+   //                <div class="award-block tc">
+   //                   <a href="#" class="block-edit delete-certificate-btn" data-id="${certificateId}" data-text="${certificateText}">
+   //                         <img src="https://thesynergygroup.ch/wp-content/plugins/the-synergy-group-addon/public/img/account/edit.svg" alt="edit icon">
+   //                   </a>
+   //                   <div class="award-icon">
+   //                         <img src="https://thesynergygroup.ch/wp-content/plugins/the-synergy-group-addon/public/img/account/award.svg" alt="award icon">
+   //                   </div>
+   //                   <p class="fs-20 mt18 tsg-certificate-name">${certificateText}</p>
+   //                </div>
+   //             </div>
+   //       </div>
+   //    `;
+   //    $("#tsg-certificate-container").append(newCertificate);
+   // }
 
    // Delete Certificate Button Click
-   $("#tsg-certificate-container").on("click", ".delete-certificate-btn", function (e) {
-      e.preventDefault();
-      var certificateId = $(this).data("id");
-      var certificateText = $(this).data("text");
+   // $("#tsg-certificate-container").on("click", ".delete-certificate-btn", function (e) {
+   //    e.preventDefault();
+   //    var certificateId = $(this).data("id");
+   //    var certificateText = $(this).data("text");
 
-      $("#" + certificateId).remove();
-      certificates = certificates.filter((text) => text !== certificateText);
+   //    $("#" + certificateId).remove();
+   //    certificates = certificates.filter((text) => text !== certificateText);
 
-      // Save Updated Certificates Array
-      saveCertificates();
-   });
+   //    // Save Updated Certificates Array
+   //    saveCertificates();
+   // });
 
    // Save Certificates to Database via AJAX
-   function saveCertificates() {
-      $.ajax({
-         url: tsg_public_ajax.ajax_url,
-         type: "POST",
-         data: {
-            action: "save_certificates",
-            certificates: certificates,
-         },
-         success: function (response) {
-            console.log(response);
-            renderCertificate(certificateText, certificates.length);
-            $("#certificate-input").val("");
-            $(".tsg-certificate-wrapper").addClass("tsg-entry-hidden");
-            //console.log("Certificates saved successfully:", response);
-         },
-         error: function (error) {
-            console.error("Error saving certificates:", error);
-         },
-      });
-   }
+   // function saveCertificates() {
+   //    $.ajax({
+   //       url: tsg_public_ajax.ajax_url,
+   //       type: "POST",
+   //       data: {
+   //          action: "save_certificates",
+   //          certificates: certificates,
+   //       },
+   //       success: function (response) {
+   //          console.log(response);
+   //          renderCertificate(certificateText, certificates.length);
+   //          $("#certificate-input").val("");
+   //          $(".tsg-certificate-wrapper").addClass("tsg-entry-hidden");
+   //          //console.log("Certificates saved successfully:", response);
+   //       },
+   //       error: function (error) {
+   //          console.error("Error saving certificates:", error);
+   //       },
+   //    });
+   // }
 
    // Fetch Certificates on Page Load
 

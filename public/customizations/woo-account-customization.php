@@ -12,7 +12,6 @@ class WooAccountCustomizations
         // add_action('wp_ajax_nopriv_get_taxonomy_terms', array($this, 'get_taxonomy_terms'));
         add_action('wp_ajax_get_service_details', array($this, 'get_service_details'));
         // add_action('wp_ajax_nopriv_get_service_details', array($this, 'get_service_details')); // If needed for non-logged-in users
-
     }
 
     function woo_adon_plugin_template($template, $template_name, $template_path)
@@ -77,6 +76,10 @@ class WooAccountCustomizations
 
     function my_account_tabs_customize($items): array
     {
+        $user_role_admin = 'administrator';
+        $user_role_manager = 'synergy_manager';
+        $user_role_customer = 'customer';
+
         $save_for_later = array(
             'edit-account' => __('Profile', 'the-synergy-group-addon')
         );
@@ -89,40 +92,108 @@ class WooAccountCustomizations
         $items = array_merge(array_slice($items, 0, 1), $save_for_later, array_slice($items, 2)); // PLACE TAB AFTER POSITION 2
 
         // New Tabs
-        if (current_user_can('manage_options')) {
+        
+        if (members_current_user_has_role( $user_role_admin )) {
+            $notifications_tab_title = __('Notifications', 'the-synergy-group-addon');
+
+            $items['synergy-network-admin-withdrawals'] = __('Admin Withdrawals', 'the-synergy-group-addon');
+            $items['admin-help-support'] = __('Admin Help & Support', 'the-synergy-group-addon');
+            $items['notifications'] = $notifications_tab_title;
+
+            unset($items['synergy-network-members']);
+            unset($items['sf-management']);
+            unset($items['synergy-network-exchange-settings']);
+            unset($items['synergy-network-transactions']);
+            unset($items['customer-settings']);
+            unset($items['customer-support']);
+            unset($items['my-affiliate']);
+            unset($items['service-offering']);
+            unset($items['synergy-network-exchange-settings']);
+            unset($items['subscriptions']);
+
+            $customOrder = [
+                'dashboard',
+                'synergy-network-admin-withdrawals',
+                'notifications',
+                'admin-help-support',
+                'customer-logout'
+            ];
+
+        } elseif (members_current_user_has_role( $user_role_manager )) {
             $notifications_tab_title = __('Notifications', 'the-synergy-group-addon');
             $sf_overview_tab_title = __('SF Exchange Settings', 'the-synergy-group-addon');
+
+            $items['synergy-network-members'] = __('Members', 'the-synergy-group-addon');
+            $items['notifications'] = $notifications_tab_title;
             $items['sf-management'] = __('SF Management', 'the-synergy-group-addon');
-        } else {
-            $notifications_tab_title = __('Activity / Messages', 'the-synergy-group-addon');
+            $items['synergy-network-exchange-settings'] = $sf_overview_tab_title;
+            $items['synergy-network-transactions'] = __('Synergy Network Transactions', 'the-synergy-group-addon');
+
+            unset($items['synergy-network-admin-withdrawals']);
+            unset($items['admin-help-support']);
+            unset($items['customer-settings']);
+            unset($items['customer-support']);
+            unset($items['my-affiliate']);
+            unset($items['service-offering']);
+            unset($items['subscriptions']);
+
+            $customOrder = [
+                'dashboard',
+                'sf-management',
+                'synergy-network-members',
+                'synergy-network-exchange-settings',
+                'notifications',
+                'synergy-network-transactions',
+                'customer-logout'
+            ];
+
+        } elseif (members_current_user_has_role( $user_role_customer )) {
             $sf_overview_tab_title = __('Synergy Francs', 'the-synergy-group-addon');
+            $notifications_tab_title = __('Activity / Messages', 'the-synergy-group-addon');
+
+            $items['customer-settings'] = __('Settings', 'the-synergy-group-addon');
+            $items['notifications'] = $notifications_tab_title;
+            $items['customer-support'] = __('Support', 'the-synergy-group-addon');
+            $items['my-affiliate'] = __('Affiliate', 'the-synergy-group-addon');
+            $items['service-offering'] = __('Service Offering', 'the-synergy-group-addon');
+            $items['synergy-network-exchange-settings'] = $sf_overview_tab_title;
+            $items['subscriptions'] = __('Transactions', 'the-synergy-group-addon');
+
+            unset($items['synergy-network-admin-withdrawals']);
+            unset($items['admin-help-support']);
+            unset($items['synergy-network-members']);
+            unset($items['sf-management']);
+            unset($items['synergy-network-exchange-settings']);
+            unset($items['synergy-network-transactions']);
+
+            $customOrder = [
+                'dashboard',
+                'notifications',
+                'customer-settings',
+                'subscriptions',
+                'service-offering',
+                'synergy-network-exchange-settings',
+                'customer-support',
+                'my-affiliate',
+                'customer-logout'
+            ];
+        } else {
+            
         }
-        $items['notifications'] = $notifications_tab_title;
-        $items['customer-settings'] = __('Settings', 'the-synergy-group-addon');
-        $items['customer-support'] = __('Support', 'the-synergy-group-addon');
-        $items['my-affiliate'] = __('Affiliate', 'the-synergy-group-addon');
-        $items['service-offering'] = __('Service Offering', 'the-synergy-group-addon');
-        $items['synergy-network-exchange-settings'] = $sf_overview_tab_title;
-        $items['subscriptions'] = __('Transactions', 'the-synergy-group-addon');
 
-        $items['synergy-network-transactions'] = __('Synergy Network Transactions', 'the-synergy-group-addon');
-        $items['synergy-network-members'] = __('Members', 'the-synergy-group-addon');
-        $items['synergy-network-admin-withdrawals'] = __('Admin Withdrawals', 'the-synergy-group-addon');
-        $items['admin-help-support'] = __('Admin Help & Support', 'the-synergy-group-addon');
-
-        $customOrder = [
-            'dashboard',
-            'sf-management',
-            'edit-account',
-            'notifications',
-            'customer-settings',
-            'subscriptions',
-            'service-offering',
-            'synergy-network-exchange-settings',
-            'customer-support',
-            'my-affiliate',
-            'customer-logout',
-        ];
+        // $customOrder = [
+        //     'dashboard',
+        //     'sf-management',
+        //     'edit-account',
+        //     'notifications',
+        //     'customer-settings',
+        //     'subscriptions',
+        //     'service-offering',
+        //     'synergy-network-exchange-settings',
+        //     'customer-support',
+        //     'my-affiliate',
+        //     'customer-logout',
+        // ];
 
         uksort($items, function ($a, $b) use ($customOrder) {
             return array_search($a, $customOrder) - array_search($b, $customOrder);

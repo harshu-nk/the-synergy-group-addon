@@ -200,21 +200,35 @@ add_action('wp_head', 'test_bench');
 
 
 // Save Certificates Handler
-add_action('wp_ajax_save_certificates', 'save_certificates');
-function save_certificates() {
-    if (!empty($_POST['certificates']) && is_array($_POST['certificates'])) {
-        $user_id = get_current_user_id();
-        $certificates = array_map('wc_clean', $_POST['certificates']);
+add_action('wp_ajax_tsg_add_save_certificates', 'tsg_add_save_certificates');
+function tsg_add_save_certificates() {
 
-        // Save certificates as a single string or JSON encoded array
-        $certificates_str = json_encode($certificates);
-        xprofile_set_field_data('certificate', $user_id, $certificates_str);
+    if (!isset($_POST['certificates'])) {
+        echo '<p>Failed to send data</p>';
+        wp_die();
     }
-    $user_id = get_current_user_id();
-    $certificates_str = xprofile_get_field_data('certificate', $user_id);
 
-    $certificates = !empty($certificates_str) ? json_decode($certificates_str) : [];
-    wp_send_json_success(['certificates' => $certificates]);
+    $certificates = json_decode(stripslashes($_POST['certificates']), true);
+
+    if (is_array($certificates)) {
+        foreach ($certificates as $certificate) {
+            if (isset($certificate['id']) && isset($certificate['text'])) {
+                echo '<div class="item w2" id="' . esc_html($certificate['id']) . '">
+                        <div class="itemr">
+                            <div class="award-block tc">
+                                <a href="#" class="block-edit delete-certificate-btn" data-id="' . esc_html($certificate['id']) . '" data-text="' . esc_html($certificate['text']) . '"><img src="' . THE_SYNERGY_GROUP_URL . '/public/img/account/edit.svg" alt="edit icon"></a>
+                                <div class="award-icon">
+                                    <img src="' . THE_SYNERGY_GROUP_URL . '/public/img/account/award.svg" alt="award icon">
+                                </div>
+                                <p class="fs-20 mt18 tsg-certificate-name">' . esc_html($certificate['text']) . '</p>
+                            </div>
+                        </div>
+                    </div>';
+            }
+        }
+    } else {
+        echo '<p>No valid certificates found</p>';
+    }
     wp_die();
 }
 
@@ -704,4 +718,11 @@ function tsg_adjust_affiliate_earning() {
     }
     wp_die();
 }
+
+//For testing perpose test
+function tsg_console_log($message, $data) {
+    $json_data = json_encode($data);
+    echo "<script>console.log('$message:', " . $json_data . ");</script>";
+}
+
 
