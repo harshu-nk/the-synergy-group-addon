@@ -36,7 +36,7 @@ class Referrals
 
             $this->updateRefDataToUsers($referral_code, $user_id);
         }
-
+        update_user_meta($user_id, 'referred_status', 1);
         $this->generateRefCode($user_id);
     }
 

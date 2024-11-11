@@ -31,12 +31,6 @@ jQuery(document).ready(function ($) {
       multiple: true, 
    });
 
-   $('#select-members').on('select2:select', function (e) {
-      var data = e.params.data;
-      console.log(data);
-   });
-   
-
    $("#communications-form").validate();
    $("#communications-form").submit(function (event) {
       event.preventDefault();
