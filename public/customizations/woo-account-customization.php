@@ -55,6 +55,14 @@ class WooAccountCustomizations
 
         add_rewrite_endpoint('synergy-network-admin-withdrawals', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('admin-help-support', EP_ROOT | EP_PAGES);
+
+        add_rewrite_endpoint('admin-affiliate', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('admin-audit-compliance', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('admin-fee-management', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('admin-fee-settings', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('admin-members', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('admin-reports', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('admin-transaction-details', EP_ROOT | EP_PAGES);
     }
 
     function tsg_my_acc_tabs_query_vars($vars)
@@ -71,6 +79,16 @@ class WooAccountCustomizations
         $vars[] = 'synergy-network-members';
         $vars[] = 'synergy-network-admin-withdrawals';
         $vars[] = 'admin-help-support';
+
+        $vars[] = 'admin-affiliate';
+        $vars[] = 'admin-audit-compliance';
+        $vars[] = 'admin-fee-management';
+        $vars[] = 'admin-fee-settings';
+        $vars[] = 'admin-members';
+        $vars[] = 'admin-reports';
+        $vars[] = 'admin-transaction-details';
+
+
         return $vars;
     }
 
@@ -96,9 +114,18 @@ class WooAccountCustomizations
         if (members_current_user_has_role( $user_role_admin )) {
             $notifications_tab_title = __('Notifications', 'the-synergy-group-addon');
 
-            $items['synergy-network-admin-withdrawals'] = __('Admin Withdrawals', 'the-synergy-group-addon');
-            $items['admin-help-support'] = __('Admin Help & Support', 'the-synergy-group-addon');
+            $items['synergy-network-admin-withdrawals'] = __('Withdrawals', 'the-synergy-group-addon');
+            $items['admin-help-support'] = __('Help & Support', 'the-synergy-group-addon');
             $items['notifications'] = $notifications_tab_title;
+
+            $items['admin-affiliate'] = __('Affiliate Management', 'the-synergy-group-addon');
+            $items['admin-audit-compliance'] = __('Audit & Compliance', 'the-synergy-group-addon');
+            $items['admin-fee-management'] = __('Fee Management', 'the-synergy-group-addon');
+            $items['admin-fee-settings'] = __('Fee Settings', 'the-synergy-group-addon');
+            $items['admin-members'] = __('Members', 'the-synergy-group-addon');
+            $items['admin-reports'] = __('Reports & Analytics', 'the-synergy-group-addon');
+            $items['admin-transaction-details'] = __('Transaction Details', 'the-synergy-group-addon');
+
 
             unset($items['synergy-network-members']);
             unset($items['sf-management']);
@@ -113,8 +140,15 @@ class WooAccountCustomizations
 
             $customOrder = [
                 'dashboard',
+                'admin-affiliate',
+                'admin-fee-management',
+                'admin-transaction-details',
+                'admin-members',
                 'synergy-network-admin-withdrawals',
+                'admin-reports',
+                'admin-fee-settings',
                 'notifications',
+                'admin-audit-compliance',
                 'admin-help-support',
                 'customer-logout'
             ];
@@ -136,6 +170,15 @@ class WooAccountCustomizations
             unset($items['my-affiliate']);
             unset($items['service-offering']);
             unset($items['subscriptions']);
+
+            unset($items['admin-affiliate']);
+            unset($items['admin-audit-compliance']);
+            unset($items['admin-fee-management']);
+            unset($items['admin-fee-settings']);
+            unset($items['admin-members']);
+            unset($items['admin-reports']);
+            unset($items['admin-transaction-details']);
+
 
             $customOrder = [
                 'dashboard',
@@ -165,6 +208,15 @@ class WooAccountCustomizations
             unset($items['sf-management']);
             unset($items['synergy-network-exchange-settings']);
             unset($items['synergy-network-transactions']);
+
+            unset($items['admin-affiliate']);
+            unset($items['admin-audit-compliance']);
+            unset($items['admin-fee-management']);
+            unset($items['admin-fee-settings']);
+            unset($items['admin-members']);
+            unset($items['admin-reports']);
+            unset($items['admin-transaction-details']);
+
 
             $customOrder = [
                 'dashboard',
@@ -248,6 +300,41 @@ class WooAccountCustomizations
     function tsg_synergy_network_dashboard_admin_help_support_tab_content(): void
     {
         wc_get_template('myaccount/admin/admin-help-support.php', array());
+    }
+
+    function tsg_synergy_network_dashboard_admin_affiliate_tab_content(): void
+    {
+        wc_get_template('myaccount/admin/admin-affiliate.php', array());
+    }
+
+    function tsg_synergy_network_dashboard_admin_audit_compliance_tab_content(): void
+    {
+        wc_get_template('myaccount/admin/admin-audit-compliance.php', array());
+    }
+
+    function tsg_synergy_network_dashboard_admin_fee_management_tab_content(): void
+    {
+        wc_get_template('myaccount/admin/admin-fee-management.php', array());
+    }
+
+    function tsg_synergy_network_dashboard_admin_fee_settings_tab_content(): void
+    {
+        wc_get_template('myaccount/admin/admin-fee-settings.php', array());
+    }
+
+    function tsg_synergy_network_dashboard_admin_members_tab_content(): void
+    {
+        wc_get_template('myaccount/admin/admin-members.php', array());
+    }
+
+    function tsg_synergy_network_dashboard_admin_reports_tab_content(): void
+    {
+        wc_get_template('myaccount/admin/admin-reports.php', array());
+    }
+
+    function tsg_synergy_network_dashboard_admin_transaction_details_tab_content(): void
+    {
+        wc_get_template('myaccount/admin/admin-transaction-details.php', array());
     }
 
     function tsg_service_offering_tab_content(): void

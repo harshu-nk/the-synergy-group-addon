@@ -205,8 +205,17 @@ class The_Synergy_Group_Addon {
 
 		$this->loader->add_action('woocommerce_account_synergy-network-transactions_endpoint', $woo_customizations, 'tsg_synergy_network_dashboard_transactions_tab_content');
 		$this->loader->add_action('woocommerce_account_synergy-network-members_endpoint', $woo_customizations, 'tsg_synergy_network_dashboard_members_tab_content');
+
 		$this->loader->add_action('woocommerce_account_synergy-network-admin-withdrawals_endpoint', $woo_customizations, 'tsg_synergy_network_dashboard_admin_withdrawals_tab_content');
 		$this->loader->add_action('woocommerce_account_admin-help-support_endpoint', $woo_customizations, 'tsg_synergy_network_dashboard_admin_help_support_tab_content');
+
+		$this->loader->add_action('woocommerce_account_admin-affiliate_endpoint', $woo_customizations, 'tsg_synergy_network_dashboard_admin_affiliate_tab_content');
+		$this->loader->add_action('woocommerce_account_admin-audit-compliance_endpoint', $woo_customizations, 'tsg_synergy_network_dashboard_admin_audit_compliance_tab_content');
+		$this->loader->add_action('woocommerce_account_admin-fee-management_endpoint', $woo_customizations, 'tsg_synergy_network_dashboard_admin_fee_management_tab_content');
+		$this->loader->add_action('woocommerce_account_admin-fee-settings_endpoint', $woo_customizations, 'tsg_synergy_network_dashboard_admin_fee_settings_tab_content');
+		$this->loader->add_action('woocommerce_account_admin-members_endpoint', $woo_customizations, 'tsg_synergy_network_dashboard_admin_members_tab_content');
+		$this->loader->add_action('woocommerce_account_admin-reports_endpoint', $woo_customizations, 'tsg_synergy_network_dashboard_admin_reports_tab_content');
+		$this->loader->add_action('woocommerce_account_admin-transaction-details_endpoint', $woo_customizations, 'tsg_synergy_network_dashboard_admin_transaction_details_tab_content');
 
 		
 		// Activity Log on Messages / Activities Tab
