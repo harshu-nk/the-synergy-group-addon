@@ -217,7 +217,12 @@ class The_Synergy_Group_Addon {
 		$this->loader->add_action('woocommerce_account_admin-reports_endpoint', $woo_customizations, 'tsg_synergy_network_dashboard_admin_reports_tab_content');
 		$this->loader->add_action('woocommerce_account_admin-transaction-details_endpoint', $woo_customizations, 'tsg_synergy_network_dashboard_admin_transaction_details_tab_content');
 
-		
+		$this->loader->add_action('woocommerce_account_francs_endpoint', $woo_customizations, 'tsg_synergy_network_dashboard_francs_tab_content');
+
+		$this->loader->add_action('woocommerce_account_synergy-network-reports_endpoint', $woo_customizations, 'tsg_synergy_network_dashboard_synergy_network_reports_tab_content');
+		$this->loader->add_action('woocommerce_account_synergy-network-help-support_endpoint', $woo_customizations, 'tsg_synergy_network_dashboard_synergy_network_help_support_tab_content');
+		$this->loader->add_action('woocommerce_account_synergy-network-audit-compliance_endpoint', $woo_customizations, 'tsg_synergy_network_dashboard_synergy_network_audit_compliance_tab_content');
+
 		// Activity Log on Messages / Activities Tab
 		// $this->loader->add_action('admin_head', $woo_customizations, 'tsg_simple_history_output');
 		// Force History Fetching for the Frontend

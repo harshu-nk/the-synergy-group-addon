@@ -1,5 +1,5 @@
 jQuery(document).ready(function ($) {
-   console.log('select2 function initialized');
+   //console.log('select2 function initialized');
    $("#select-members").select2({
       ajax: {
          url: tsg_public_ajax.ajax_url,
@@ -27,8 +27,32 @@ jQuery(document).ready(function ($) {
          cache: true,
       },
       placeholder: "Select members",
-      minimumInputLength: 1, 
+      minimumInputLength: 2, 
       multiple: true, 
+   });
+
+   $("#affiliate-profiles").select2({
+      ajax: {
+         url: tsg_public_ajax.ajax_url,
+         type: "POST",
+         dataType: "json",
+         delay: 250,
+         data: function (params) {
+            return {
+               action: "search_users", 
+               search: params.term, 
+            };
+         },
+         processResults: function (data) {
+            console.log("AJAX request successful:", data);
+            return {
+               results: data, 
+            };
+         },
+         cache: true,
+      },
+      placeholder: "Select members",
+      minimumInputLength: 2, 
    });
    
 

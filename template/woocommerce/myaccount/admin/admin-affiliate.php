@@ -9,11 +9,6 @@
       </div>
       <div class="line-right input-field">
         <select id="affiliate-profiles" class="select2-list">
-            <option value="Option 1">Option 1</option>
-            <option value="Option 2">Option 2</option>
-            <option value="Option 3">Option 3</option>
-            <option value="Option 4">Option 4</option>
-            <option value="Option 5">Option 5</option>
         </select>
       </div>
     </div>
@@ -234,7 +229,7 @@
         </div>
         <div class="line-right icon-right va">
           <p><strong>10%</strong></p>
-          <a href="#" class="icon-a"><img src="img/account/edit.svg" alt="edit icon"></a>
+          <a href="#" class="icon-a"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon"></a>
         </div>
       </div>
       <div class="block-line spb small-line">
