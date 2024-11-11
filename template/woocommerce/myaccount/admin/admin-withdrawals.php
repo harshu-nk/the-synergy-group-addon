@@ -3,244 +3,249 @@
 <form class="account-col-right light-style">
               
     <div class="account-text-block">
-    <div class="account-title-block spb">
-        <div class="title-content va">
-        <img width="55" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/pending_withdrawal.svg" alt="pending withdrawal icon" />
-        <h5>Pending Withdrawals</h5>
-        </div>
-    </div>
-
-    <div class="messages mt2">
-        <div class="messages-sub-block">
-
-        <div class="message-block message-media spb">
-            <div class="message-icon">
-            <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/money2.svg" alt="money icon" />
-            </div>
-            <div class="message-text">
-            <div class="message-line spb">
-                <p class="message-line-name">Member:</p>
-                <p class="message-line-value"><strong>John Troomer</strong><br></p>
-            </div>
-            <div class="message-line spb">
-                <p class="message-line-name">Amount:</p>
-                <p class="message-line-value"><strong>CHF 923</strong><br></p>
-            </div>
-            <div class="message-line spb">
-                <p class="message-line-name">Date:</p>
-                <p class="message-line-value"><strong>21.10.2024</strong><br></p>
-            </div>
-            <div class="message-line spb">
-                <p class="message-line-name">Payment method:</p>
-                <p class="message-line-value"><strong>Bank Transfer</strong><br></p>
-            </div>
-            </div>
-            <div class="message-btns">
-            <div class="btns-first-line va">
-                <div class="btn-block">
-                <a href="#" class="btn green-btn">approve</a>
-                </div>
-                <div class="btn-block">
-                <a href="#" class="btn red-btn">reject</a>
-                </div>
-            </div>
-            <div class="btn-block">
-                <a href="#" class="btn">Request Additional info</a>
-            </div>
+        <div class="account-title-block spb">
+            <div class="title-content va">
+                <img width="55" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/pending_withdrawal.svg" alt="pending withdrawal icon" />
+                <h5>Pending Withdrawals</h5>
             </div>
         </div>
 
-        <div class="message-block message-media spb">
-            <div class="message-icon">
-            <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/money2.svg" alt="money icon" />
-            </div>
-            <div class="message-text">
-            <div class="message-line spb">
-                <p class="message-line-name">Member:</p>
-                <p class="message-line-value"><strong>John Troomer</strong><br></p>
-            </div>
-            <div class="message-line spb">
-                <p class="message-line-name">Amount:</p>
-                <p class="message-line-value"><strong>CHF 923</strong><br></p>
-            </div>
-            <div class="message-line spb">
-                <p class="message-line-name">Date:</p>
-                <p class="message-line-value"><strong>21.10.2024</strong><br></p>
-            </div>
-            <div class="message-line spb">
-                <p class="message-line-name">Payment method:</p>
-                <p class="message-line-value"><strong>Bank Transfer</strong><br></p>
-            </div>
-            </div>
-            <div class="message-btns">
-            <div class="btns-first-line va">
-                <div class="btn-block">
-                <a href="#" class="btn green-btn">approve</a>
+        <div class="messages mt2">
+            <div class="messages-sub-block">
+                <div>
+                    <?php //echo do_shortcode('[mycred_cashcred]'); ?>
                 </div>
-                <div class="btn-block">
-                <a href="#" class="btn red-btn">reject</a>
+                <div class="message-block message-media spb">
+                    <div class="message-icon">
+                        <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/money2.svg" alt="money icon" />
+                    </div>
+                    <div class="message-text">
+                        <div class="message-line spb">
+                            <p class="message-line-name">Member:</p>
+                            <p class="message-line-value"><strong>John Troomer</strong><br></p>
+                        </div>
+                        <div class="message-line spb">
+                            <p class="message-line-name">Amount:</p>
+                            <p class="message-line-value"><strong>CHF 923</strong><br></p>
+                        </div>
+                        <div class="message-line spb">
+                            <p class="message-line-name">Date:</p>
+                            <p class="message-line-value"><strong>21.10.2024</strong><br></p>
+                        </div>
+                        <div class="message-line spb">
+                            <p class="message-line-name">Payment method:</p>
+                            <p class="message-line-value"><strong>Bank Transfer</strong><br></p>
+                        </div>
+                    </div>
+                    <div class="message-btns">
+                        <div class="btns-first-line va">
+                            <div class="btn-block">
+                            <a href="#" class="btn green-btn">approve</a>
+                            </div>
+                            <div class="btn-block">
+                            <a href="#" class="btn red-btn">reject</a>
+                            </div>
+                        </div>
+                        <div class="btn-block">
+                            <a href="#" class="btn">Request Additional info</a>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="btn-block">
-                <a href="#" class="btn">Request Additional info</a>
-            </div>
+
+                <div class="message-block message-media spb">
+                    <div class="message-icon">
+                        <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/money2.svg" alt="money icon" />
+                    </div>
+                    <div class="message-text">
+                        <div class="message-line spb">
+                            <p class="message-line-name">Member:</p>
+                            <p class="message-line-value"><strong>John Troomer</strong><br></p>
+                        </div>
+                        <div class="message-line spb">
+                            <p class="message-line-name">Amount:</p>
+                            <p class="message-line-value"><strong>CHF 923</strong><br></p>
+                        </div>
+                        <div class="message-line spb">
+                            <p class="message-line-name">Date:</p>
+                            <p class="message-line-value"><strong>21.10.2024</strong><br></p>
+                        </div>
+                        <div class="message-line spb">
+                            <p class="message-line-name">Payment method:</p>
+                            <p class="message-line-value"><strong>Bank Transfer</strong><br></p>
+                        </div>
+                    </div>
+                    <div class="message-btns">
+                        <div class="btns-first-line va">
+                            <div class="btn-block">
+                            <a href="#" class="btn green-btn">approve</a>
+                            </div>
+                            <div class="btn-block">
+                            <a href="#" class="btn red-btn">reject</a>
+                            </div>
+                        </div>
+                        <div class="btn-block">
+                            <a href="#" class="btn">Request Additional info</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="message-block message-media spb">
+                    <div class="message-icon">
+                        <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/money2.svg" alt="money icon" />
+                    </div>
+                    <div class="message-text">
+                        <div class="message-line spb">
+                            <p class="message-line-name">Member:</p>
+                            <p class="message-line-value"><strong>John Troomer</strong><br></p>
+                        </div>
+                        <div class="message-line spb">
+                            <p class="message-line-name">Amount:</p>
+                            <p class="message-line-value"><strong>CHF 923</strong><br></p>
+                        </div>
+                        <div class="message-line spb">
+                            <p class="message-line-name">Date:</p>
+                            <p class="message-line-value"><strong>21.10.2024</strong><br></p>
+                        </div>
+                        <div class="message-line spb">
+                            <p class="message-line-name">Payment method:</p>
+                            <p class="message-line-value"><strong>Bank Transfer</strong><br></p>
+                        </div>
+                    </div>
+                    <div class="message-btns">
+                        <div class="btns-first-line va">
+                            <div class="btn-block">
+                            <a href="#" class="btn green-btn">approve</a>
+                            </div>
+                            <div class="btn-block">
+                            <a href="#" class="btn red-btn">reject</a>
+                            </div>
+                        </div>
+                        <div class="btn-block">
+                            <a href="#" class="btn">Request Additional info</a>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
-
-        <div class="message-block message-media spb">
-            <div class="message-icon">
-            <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/money2.svg" alt="money icon" />
-            </div>
-            <div class="message-text">
-            <div class="message-line spb">
-                <p class="message-line-name">Member:</p>
-                <p class="message-line-value"><strong>John Troomer</strong><br></p>
-            </div>
-            <div class="message-line spb">
-                <p class="message-line-name">Amount:</p>
-                <p class="message-line-value"><strong>CHF 923</strong><br></p>
-            </div>
-            <div class="message-line spb">
-                <p class="message-line-name">Date:</p>
-                <p class="message-line-value"><strong>21.10.2024</strong><br></p>
-            </div>
-            <div class="message-line spb">
-                <p class="message-line-name">Payment method:</p>
-                <p class="message-line-value"><strong>Bank Transfer</strong><br></p>
-            </div>
-            </div>
-            <div class="message-btns">
-            <div class="btns-first-line va">
-                <div class="btn-block">
-                <a href="#" class="btn green-btn">approve</a>
-                </div>
-                <div class="btn-block">
-                <a href="#" class="btn red-btn">reject</a>
-                </div>
-            </div>
-            <div class="btn-block">
-                <a href="#" class="btn">Request Additional info</a>
-            </div>
-            </div>
-        </div>
-
-        </div>
-    </div>
-
     </div>
 
     <div class="account-text-block">
-    <div class="account-title-block spb">
-        <div class="title-content va">
-        <img width="55" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/approved_withdrawal.svg" alt="approved withdrawal icon" />
-        <h5>Approved Withdrawals</h5>
+        <div class="account-title-block spb">
+            <div class="title-content va">
+                <img width="55" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/approved_withdrawal.svg" alt="approved withdrawal icon" />
+                <h5>Approved Withdrawals</h5>
+            </div>
         </div>
-    </div>
 
     <div class="messages mt2">
         <div class="messages-sub-block">
 
-        <div class="message-block message-media spb">
-            <div class="message-icon">
-            <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/money2.svg" alt="money icon" />
-            </div>
-            <div class="message-text">
-            <div class="message-line spb">
-                <p class="message-line-name">Member:</p>
-                <p class="message-line-value"><strong>John Troomer</strong><br></p>
-            </div>
-            <div class="message-line spb">
-                <p class="message-line-name">Amount:</p>
-                <p class="message-line-value"><strong>CHF 923</strong><br></p>
-            </div>
-            <div class="message-line spb">
-                <p class="message-line-name">Date:</p>
-                <p class="message-line-value"><strong>21.10.2024</strong><br></p>
-            </div>
-            <div class="message-line spb">
-                <p class="message-line-name">Payment method:</p>
-                <p class="message-line-value"><strong>Bank Transfer</strong><br></p>
-            </div>
-            </div>
-            <div class="message-btns">
-            <div class="btns-first-line fl-end">
-                <div class="btn-block">
-                <a href="#" class="btn green-btn">export</a>
+            <div class="message-block message-media spb">
+                <div class="message-icon">
+                    <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/money2.svg" alt="money icon" />
                 </div>
-            </div>
-            <div class="status">
-                <p>Status: <span class="goldc">Processing</span></p>
-            </div>
-            </div>
-        </div>
 
-        <div class="message-block message-media spb">
-            <div class="message-icon">
-            <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/money2.svg" alt="money icon" />
-            </div>
-            <div class="message-text">
-            <div class="message-line spb">
-                <p class="message-line-name">Member:</p>
-                <p class="message-line-value"><strong>John Troomer</strong><br></p>
-            </div>
-            <div class="message-line spb">
-                <p class="message-line-name">Amount:</p>
-                <p class="message-line-value"><strong>CHF 923</strong><br></p>
-            </div>
-            <div class="message-line spb">
-                <p class="message-line-name">Date:</p>
-                <p class="message-line-value"><strong>21.10.2024</strong><br></p>
-            </div>
-            <div class="message-line spb">
-                <p class="message-line-name">Payment method:</p>
-                <p class="message-line-value"><strong>Bank Transfer</strong><br></p>
-            </div>
-            </div>
-            <div class="message-btns">
-            <div class="btns-first-line fl-end">
-                <div class="btn-block">
-                <a href="#" class="btn green-btn">export</a>
+                <div class="message-text">
+                    <div class="message-line spb">
+                        <p class="message-line-name">Member:</p>
+                        <p class="message-line-value"><strong>John Troomer</strong><br></p>
+                    </div>
+                    <div class="message-line spb">
+                        <p class="message-line-name">Amount:</p>
+                        <p class="message-line-value"><strong>CHF 923</strong><br></p>
+                    </div>
+                    <div class="message-line spb">
+                        <p class="message-line-name">Date:</p>
+                        <p class="message-line-value"><strong>21.10.2024</strong><br></p>
+                    </div>
+                    <div class="message-line spb">
+                        <p class="message-line-name">Payment method:</p>
+                        <p class="message-line-value"><strong>Bank Transfer</strong><br></p>
+                    </div>
                 </div>
-            </div>
-            <div class="status">
-                <p>Status: <span class="goldc">Processing</span></p>
-            </div>
-            </div>
-        </div>
 
-        <div class="message-block message-media spb">
-            <div class="message-icon">
-            <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/money2.svg" alt="money icon" />
-            </div>
-            <div class="message-text">
-            <div class="message-line spb">
-                <p class="message-line-name">Member:</p>
-                <p class="message-line-value"><strong>John Troomer</strong><br></p>
-            </div>
-            <div class="message-line spb">
-                <p class="message-line-name">Amount:</p>
-                <p class="message-line-value"><strong>CHF 923</strong><br></p>
-            </div>
-            <div class="message-line spb">
-                <p class="message-line-name">Date:</p>
-                <p class="message-line-value"><strong>21.10.2024</strong><br></p>
-            </div>
-            <div class="message-line spb">
-                <p class="message-line-name">Payment method:</p>
-                <p class="message-line-value"><strong>Bank Transfer</strong><br></p>
-            </div>
-            </div>
-            <div class="message-btns">
-            <div class="btns-first-line fl-end">
-                <div class="btn-block">
-                <a href="#" class="btn green-btn">export</a>
+                <div class="message-btns">
+                    <div class="btns-first-line fl-end">
+                        <div class="btn-block">
+                        <a href="#" class="btn green-btn">export</a>
+                        </div>
+                    </div>
+                    <div class="status">
+                        <p>Status: <span class="goldc">Processing</span></p>
+                    </div>
                 </div>
             </div>
-            <div class="status">
-                <p>Status: <span class="goldc">Processing</span></p>
+
+            <div class="message-block message-media spb">
+                <div class="message-icon">
+                    <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/money2.svg" alt="money icon" />
+                </div>
+
+                <div class="message-text">
+                    <div class="message-line spb">
+                        <p class="message-line-name">Member:</p>
+                        <p class="message-line-value"><strong>John Troomer</strong><br></p>
+                    </div>
+                    <div class="message-line spb">
+                        <p class="message-line-name">Amount:</p>
+                        <p class="message-line-value"><strong>CHF 923</strong><br></p>
+                    </div>
+                    <div class="message-line spb">
+                        <p class="message-line-name">Date:</p>
+                        <p class="message-line-value"><strong>21.10.2024</strong><br></p>
+                    </div>
+                    <div class="message-line spb">
+                        <p class="message-line-name">Payment method:</p>
+                        <p class="message-line-value"><strong>Bank Transfer</strong><br></p>
+                    </div>
+                </div>
+
+                <div class="message-btns">
+                    <div class="btns-first-line fl-end">
+                        <div class="btn-block">
+                            <a href="#" class="btn green-btn">export</a>
+                        </div>
+                    </div>
+                    <div class="status">
+                        <p>Status: <span class="goldc">Processing</span></p>
+                    </div>
+                </div>
             </div>
+
+            <div class="message-block message-media spb">
+                <div class="message-icon">
+                    <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/money2.svg" alt="money icon" />
+                </div>
+                <div class="message-text">
+                    <div class="message-line spb">
+                        <p class="message-line-name">Member:</p>
+                        <p class="message-line-value"><strong>John Troomer</strong><br></p>
+                    </div>
+                    <div class="message-line spb">
+                        <p class="message-line-name">Amount:</p>
+                        <p class="message-line-value"><strong>CHF 923</strong><br></p>
+                    </div>
+                    <div class="message-line spb">
+                        <p class="message-line-name">Date:</p>
+                        <p class="message-line-value"><strong>21.10.2024</strong><br></p>
+                    </div>
+                    <div class="message-line spb">
+                        <p class="message-line-name">Payment method:</p>
+                        <p class="message-line-value"><strong>Bank Transfer</strong><br></p>
+                    </div>
+                </div>
+                <div class="message-btns">
+                    <div class="btns-first-line fl-end">
+                        <div class="btn-block">
+                        <a href="#" class="btn green-btn">export</a>
+                        </div>
+                    </div>
+                    <div class="status">
+                        <p>Status: <span class="goldc">Processing</span></p>
+                    </div>
+                </div>
             </div>
-        </div>
 
         </div>
     </div>
