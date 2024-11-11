@@ -9,11 +9,6 @@
       </div>
       <div class="line-right input-field">
         <select id="affiliate-profiles" class="select2-list">
-            <option value="Option 1">Option 1</option>
-            <option value="Option 2">Option 2</option>
-            <option value="Option 3">Option 3</option>
-            <option value="Option 4">Option 4</option>
-            <option value="Option 5">Option 5</option>
         </select>
       </div>
     </div>
