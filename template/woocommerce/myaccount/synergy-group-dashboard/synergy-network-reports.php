@@ -1,7 +1,7 @@
-<div class="account-text-block">
+<div class="account-text-block light-style">
   <div class="account-title-block spb">
     <div class="title-content va">
-      <img width="48" src="img/account/affiliate_progress.svg" alt="avatar icon" />
+      <img width="48" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/affiliate_progress.svg" alt="avatar icon" />
       <h5>Generate Reports</h5>
     </div>
   </div>
@@ -62,7 +62,7 @@
     <div class="messages-sub-block last-bord">
       <div class="message-block spb">
         <div class="text-icon">
-          <img src="img/account/transactions_blue.svg" alt="transaction progress line icon "/>
+          <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/transactions_blue.svg" alt="transaction progress line icon "/>
         </div>
         <div class="message-text">
           <p><strong>Transaction 001 (Sell)</strong><br>
@@ -76,7 +76,7 @@
 
       <div class="message-block spb">
         <div class="text-icon">
-          <img src="img/account/transactions_blue.svg" alt="transaction progress line icon "/>
+          <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/transactions_blue.svg" alt="transaction progress line icon "/>
         </div>
         <div class="message-text">
           <p><strong>Transaction 002 (Buy)</strong><br>
@@ -95,7 +95,7 @@
     <div class="messages-sub-block last-bord">
       <div class="message-block spb">
         <div class="text-icon">
-          <img src="img/account/transactions_blue.svg" alt="transaction progress line icon "/>
+          <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/transactions_blue.svg" alt="transaction progress line icon "/>
         </div>
         <div class="message-text">
           <p><strong>Affiliate member: John Troomer</strong><br>
@@ -109,7 +109,7 @@
 
       <div class="message-block spb">
         <div class="text-icon">
-          <img src="img/account/transactions_blue.svg" alt="transaction progress line icon "/>
+          <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/transactions_blue.svg" alt="transaction progress line icon "/>
         </div>
         <div class="message-text">
           <p><strong>Affiliate member: Sarah Topler</strong><br>
@@ -128,7 +128,7 @@
     <div class="messages-sub-block last-bord">
       <div class="message-block spb">
         <div class="text-icon">
-          <img src="img/account/transactions_blue.svg" alt="transaction progress line icon "/>
+          <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/transactions_blue.svg" alt="transaction progress line icon "/>
         </div>
         <div class="message-text">
           <p><strong>Affiliate member: John Troomer</strong><br>
@@ -142,7 +142,7 @@
 
       <div class="message-block spb">
         <div class="text-icon">
-          <img src="img/account/transactions_blue.svg" alt="transaction progress line icon "/>
+          <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/transactions_blue.svg" alt="transaction progress line icon "/>
         </div>
         <div class="message-text">
           <p><strong>Affiliate member: Sarah Topler</strong><br>
@@ -161,7 +161,7 @@
 <div class="account-text-block">
   <div class="account-title-block spb">
     <div class="title-content va">
-      <img width="50" src="img/account/analysis.svg" alt="analysis icon">
+      <img width="50" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/analysis.svg" alt="analysis icon">
       <div class="title-text">
         <h5 class="big-title">Market Analysis</h5>
       </div>
@@ -176,7 +176,7 @@
       </div>
       <div class="line-right va">
         <p class="main-val2">SF 350</p>
-        <img src="img/account/green_arrow_top.svg" class="arrow-right" alt="green arrow" />
+        <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/green_arrow_top.svg" class="arrow-right" alt="green arrow" />
       </div>
     </div>
 
@@ -186,7 +186,7 @@
       </div>
       <div class="line-right va">
         <p class="main-val2">SF 150</p>
-        <img src="img/account/red_arrow_bot.svg" class="arrow-right" alt="red arrow" />
+        <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/red_arrow_bot.svg" class="arrow-right" alt="red arrow" />
       </div>
     </div>
 
@@ -196,7 +196,7 @@
       </div>
       <div class="line-right va">
         <p class="main-val2">17</p>
-        <img src="img/account/green_arrow_top.svg" class="arrow-right" alt="green arrow" />
+        <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/green_arrow_top.svg" class="arrow-right" alt="green arrow" />
       </div>
     </div>
   </div>

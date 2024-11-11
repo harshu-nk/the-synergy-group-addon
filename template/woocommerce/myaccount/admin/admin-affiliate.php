@@ -234,7 +234,7 @@
         </div>
         <div class="line-right icon-right va">
           <p><strong>10%</strong></p>
-          <a href="#" class="icon-a"><img src="img/account/edit.svg" alt="edit icon"></a>
+          <a href="#" class="icon-a"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon"></a>
         </div>
       </div>
       <div class="block-line spb small-line">

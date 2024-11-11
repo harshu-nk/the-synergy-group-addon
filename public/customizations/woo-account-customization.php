@@ -63,6 +63,12 @@ class WooAccountCustomizations
         add_rewrite_endpoint('admin-members', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('admin-reports', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('admin-transaction-details', EP_ROOT | EP_PAGES);
+
+        add_rewrite_endpoint('francs', EP_ROOT | EP_PAGES);
+
+        add_rewrite_endpoint('synergy-network-reports', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('synergy-network-help-support', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('synergy-network-audit-compliance', EP_ROOT | EP_PAGES);
     }
 
     function tsg_my_acc_tabs_query_vars($vars)
@@ -88,6 +94,11 @@ class WooAccountCustomizations
         $vars[] = 'admin-reports';
         $vars[] = 'admin-transaction-details';
 
+        $vars[] = 'francs';
+
+        $vars[] = 'synergy-network-reports';
+        $vars[] = 'synergy-network-help-support';
+        $vars[] = 'synergy-network-audit-compliance';
 
         return $vars;
     }
@@ -97,6 +108,7 @@ class WooAccountCustomizations
         $user_role_admin = 'administrator';
         $user_role_manager = 'synergy_manager';
         $user_role_customer = 'customer';
+        $user_role_subscriber = 'subscriber';
 
         $save_for_later = array(
             'edit-account' => __('Profile', 'the-synergy-group-addon')
@@ -137,6 +149,11 @@ class WooAccountCustomizations
             unset($items['service-offering']);
             unset($items['synergy-network-exchange-settings']);
             unset($items['subscriptions']);
+            unset($items['francs']);
+
+            unset($items['synergy-network-reports']);
+            unset($items['synergy-network-help-support']);
+            unset($items['synergy-network-audit-compliance']);
 
             $customOrder = [
                 'dashboard',
@@ -161,7 +178,11 @@ class WooAccountCustomizations
             $items['notifications'] = $notifications_tab_title;
             $items['sf-management'] = __('SF Management', 'the-synergy-group-addon');
             $items['synergy-network-exchange-settings'] = $sf_overview_tab_title;
-            $items['synergy-network-transactions'] = __('Synergy Network Transactions', 'the-synergy-group-addon');
+            $items['synergy-network-transactions'] = __('Transactions', 'the-synergy-group-addon');
+
+            $items['synergy-network-reports'] = __('Reports & Analytics', 'the-synergy-group-addon');
+            $items['synergy-network-help-support'] = __('Help & Support', 'the-synergy-group-addon');
+            $items['synergy-network-audit-compliance'] = __('Audit & Compliance', 'the-synergy-group-addon');
 
             unset($items['synergy-network-admin-withdrawals']);
             unset($items['admin-help-support']);
@@ -178,19 +199,23 @@ class WooAccountCustomizations
             unset($items['admin-members']);
             unset($items['admin-reports']);
             unset($items['admin-transaction-details']);
+            unset($items['francs']);
 
 
             $customOrder = [
                 'dashboard',
                 'sf-management',
+                'synergy-network-transactions',
                 'synergy-network-members',
+                'synergy-network-reports',
                 'synergy-network-exchange-settings',
                 'notifications',
-                'synergy-network-transactions',
+                'synergy-network-audit-compliance',
+                'synergy-network-help-support',
                 'customer-logout'
             ];
 
-        } elseif (members_current_user_has_role( $user_role_customer )) {
+        } elseif (members_current_user_has_role( $user_role_customer ) || members_current_user_has_role( $user_role_subscriber ) ) {
             $sf_overview_tab_title = __('Synergy Francs', 'the-synergy-group-addon');
             $notifications_tab_title = __('Activity / Messages', 'the-synergy-group-addon');
 
@@ -201,6 +226,7 @@ class WooAccountCustomizations
             $items['service-offering'] = __('Service Offering', 'the-synergy-group-addon');
             $items['synergy-network-exchange-settings'] = $sf_overview_tab_title;
             $items['subscriptions'] = __('Transactions', 'the-synergy-group-addon');
+            $items['francs'] = __('Synergy Francs', 'the-synergy-group-addon');
 
             unset($items['synergy-network-admin-withdrawals']);
             unset($items['admin-help-support']);
@@ -217,6 +243,10 @@ class WooAccountCustomizations
             unset($items['admin-reports']);
             unset($items['admin-transaction-details']);
 
+            unset($items['synergy-network-reports']);
+            unset($items['synergy-network-help-support']);
+            unset($items['synergy-network-audit-compliance']);
+
 
             $customOrder = [
                 'dashboard',
@@ -225,6 +255,7 @@ class WooAccountCustomizations
                 'subscriptions',
                 'service-offering',
                 'synergy-network-exchange-settings',
+                'francs',
                 'customer-support',
                 'my-affiliate',
                 'customer-logout'
@@ -290,6 +321,11 @@ class WooAccountCustomizations
     function tsg_customer_affiliate_tab_content(): void
     {
         wc_get_template('myaccount/customer/customer-affiliate.php', array());
+    }
+
+    function tsg_synergy_network_dashboard_francs_tab_content(): void
+    {
+        wc_get_template('myaccount/customer/francs.php', array());
     }
 
     function tsg_synergy_network_dashboard_admin_withdrawals_tab_content(): void
@@ -819,6 +855,21 @@ class WooAccountCustomizations
     function tsg_synergy_network_dashboard_members_tab_content(): void
     {
         wc_get_template('myaccount/synergy-group-dashboard/synergy-network-members.php', array());
+    }
+
+    function tsg_synergy_network_dashboard_synergy_network_reports_tab_content(): void
+    {
+        wc_get_template('myaccount/synergy-group-dashboard/synergy-network-reports.php', array());
+    }
+
+    function tsg_synergy_network_dashboard_synergy_network_help_support_tab_content(): void
+    {
+        wc_get_template('myaccount/synergy-group-dashboard/synergy-network-help-support.php', array());
+    }
+
+    function tsg_synergy_network_dashboard_synergy_network_audit_compliance_tab_content(): void
+    {
+        wc_get_template('myaccount/synergy-group-dashboard/synergy-network-audit-compliance.php', array());
     }
 
     // function get_service_details() {
