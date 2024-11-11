@@ -25,40 +25,76 @@ jQuery(document).ready(function ($) {
       $(".tsg-certificate-wrapper").toggleClass("tsg-entry-hidden");
    });
 
-   //user certificate control
-   // var certificates = [];
-   // $('#tsg-user-add-certificate-btn').on('click', function() {
-   //    var certificateText = $('#certificate-input').val().trim();
+   var certificates = JSON.parse($('#tsg-certificate-input').val() || '[]');
+   $('#tsg-user-add-certificate-btn').on('click', function() {
+      var certificateText = $('#certificate-input').val().trim();
 
-   //    if (certificateText === "") {
-   //        $('#tsg-certificate-error-message').show();
-   //        return;
-   //    } else {
-   //        $('#tsg-certificate-error-message').hide();
-   //    }
+      if (certificateText === "") {
+         $('#tsg-certificate-error-message').show();
+         return;
+      } else {
+         $('#tsg-certificate-error-message').hide();
+      }
 
-   //    certificates.push(certificateText);
-   //    var certificateId = 'certificate-' + certificates.length;
+      // var certificateId = 'certificate-' + (certificates.length + 1);
+      // certificates.push({ id: certificateId, text: certificateText });
 
-   //    var newCertificate = `
-   //          <div class="item w2" id="${certificateId}">
-   //              <div class="itemr">
-   //                  <div class="award-block tc">
-   //                      <a href="#" class="block-edit delete-certificate-btn" data-id="${certificateId}" data-text="${certificateText}"><img src="https://thesynergygroup.ch/wp-content/plugins/the-synergy-group-addon/public/img/account/edit.svg" alt="edit icon"></a>
-   //                      <div class="award-icon">
-   //                          <img src="https://thesynergygroup.ch/wp-content/plugins/the-synergy-group-addon/public/img/account/award.svg" alt="award icon">
-   //                      </div>
-   //                      <p class="fs-20 mt18 tsg-certificate-name">${certificateText}</p>
-   //                  </div>
-   //              </div>
-   //          </div>
-   //      `;
+      certificates.push({ text: certificateText });
+      var certificateIndex = certificates.length - 1;
+      var certificateId = 'certificate-' + certificateIndex;
+      certificates[certificateIndex].id = certificateId;
 
-   //    $('#tsg-certificate-container').append(newCertificate);
+      $('#tsg-certificate-input').val(JSON.stringify(certificates));
 
-   //    $('#certificate-input').val('');
-   //    $(".tsg-certificate-wrapper").addClass("tsg-entry-hidden");
-   // });
+      const data = {
+         action: "tsg_add_save_certificates",
+         certificates: JSON.stringify(certificates) 
+      };
+
+      renderCertificate(data);
+   });
+
+   $(document).on('click', '.delete-certificate-btn', function(e) {  
+      e.preventDefault();
+      var certificateId = $(this).data('id');
+      var certificateText = $(this).data('text');
+
+      // Find the certificate text in the array and remove it
+      // certificates = certificates.filter(function(certificate) {
+      //    return certificate.text !== certificateText;
+      // });
+      certificates = certificates.filter(function(certificate) {
+         return certificate.id !== certificateId && certificate.text !== certificateText;
+      });
+
+      $('#tsg-certificate-input').val(JSON.stringify(certificates));
+      $('#' + certificateId).remove();
+
+      const data = {
+         action: "tsg_add_save_certificates",
+         certificates: JSON.stringify(certificates) 
+      };
+
+      renderCertificate(data);
+   });
+
+   function renderCertificate(data) {
+      $.ajax({
+         url: tsg_public_ajax.ajax_url,
+         type: "POST",
+         data: data,
+         success: function (response) {
+             console.log(response);
+             $('#certificate-input').val('');
+             $('#tsg-certificate-container').html(response);
+         },
+         error: function () {
+             $('#tsg-adjust-msg-container').removeClass('tsg-entry-hidden');
+             $('#tsg-adjust-msg-container').css('color', 'red').html('An error occurred.');
+         },
+      });
+   }
+
 
    // $('#tsg-certificate-container').on('click', '.delete-certificate-btn', function(e) {
    //    e.preventDefault();
@@ -76,80 +112,80 @@ jQuery(document).ready(function ($) {
    // });
 
    // Certificates Array
-   var certificates = [];
+   // var certificates = [];
 
    // Add Certificate Button Click
-   $("#tsg-user-add-certificate-btn").on("click", function () {
-      var certificateText = $("#certificate-input").val().trim();
+   // $("#tsg-user-add-certificate-btn").on("click", function () {
+   //    var certificateText = $("#certificate-input").val().trim();
 
-      if (certificateText === "") {
-         $("#tsg-certificate-error-message").show();
-         return;
-      } else {
-         $("#tsg-certificate-error-message").hide();
-      }
+   //    if (certificateText === "") {
+   //       $("#tsg-certificate-error-message").show();
+   //       return;
+   //    } else {
+   //       $("#tsg-certificate-error-message").hide();
+   //    }
 
-      certificates.push(certificateText);
+   //    certificates.push(certificateText);
 
-      // AJAX to Save Certificates
-      saveCertificates();
-   });
+   //    // AJAX to Save Certificates
+   //    saveCertificates();
+   // });
 
    // Render Certificate
-   function renderCertificate(certificateText, id) {
-      var certificateId = "certificate-" + id;
-      var newCertificate = `
-         <div class="item w2" id="${certificateId}">
-               <div class="itemr">
-                  <div class="award-block tc">
-                     <a href="#" class="block-edit delete-certificate-btn" data-id="${certificateId}" data-text="${certificateText}">
-                           <img src="https://thesynergygroup.ch/wp-content/plugins/the-synergy-group-addon/public/img/account/edit.svg" alt="edit icon">
-                     </a>
-                     <div class="award-icon">
-                           <img src="https://thesynergygroup.ch/wp-content/plugins/the-synergy-group-addon/public/img/account/award.svg" alt="award icon">
-                     </div>
-                     <p class="fs-20 mt18 tsg-certificate-name">${certificateText}</p>
-                  </div>
-               </div>
-         </div>
-      `;
-      $("#tsg-certificate-container").append(newCertificate);
-   }
+   // function renderCertificate(certificateText, id) {
+   //    var certificateId = "certificate-" + id;
+   //    var newCertificate = `
+   //       <div class="item w2" id="${certificateId}">
+   //             <div class="itemr">
+   //                <div class="award-block tc">
+   //                   <a href="#" class="block-edit delete-certificate-btn" data-id="${certificateId}" data-text="${certificateText}">
+   //                         <img src="https://thesynergygroup.ch/wp-content/plugins/the-synergy-group-addon/public/img/account/edit.svg" alt="edit icon">
+   //                   </a>
+   //                   <div class="award-icon">
+   //                         <img src="https://thesynergygroup.ch/wp-content/plugins/the-synergy-group-addon/public/img/account/award.svg" alt="award icon">
+   //                   </div>
+   //                   <p class="fs-20 mt18 tsg-certificate-name">${certificateText}</p>
+   //                </div>
+   //             </div>
+   //       </div>
+   //    `;
+   //    $("#tsg-certificate-container").append(newCertificate);
+   // }
 
    // Delete Certificate Button Click
-   $("#tsg-certificate-container").on("click", ".delete-certificate-btn", function (e) {
-      e.preventDefault();
-      var certificateId = $(this).data("id");
-      var certificateText = $(this).data("text");
+   // $("#tsg-certificate-container").on("click", ".delete-certificate-btn", function (e) {
+   //    e.preventDefault();
+   //    var certificateId = $(this).data("id");
+   //    var certificateText = $(this).data("text");
 
-      $("#" + certificateId).remove();
-      certificates = certificates.filter((text) => text !== certificateText);
+   //    $("#" + certificateId).remove();
+   //    certificates = certificates.filter((text) => text !== certificateText);
 
-      // Save Updated Certificates Array
-      saveCertificates();
-   });
+   //    // Save Updated Certificates Array
+   //    saveCertificates();
+   // });
 
    // Save Certificates to Database via AJAX
-   function saveCertificates() {
-      $.ajax({
-         url: tsg_public_ajax.ajax_url,
-         type: "POST",
-         data: {
-            action: "save_certificates",
-            certificates: certificates,
-         },
-         success: function (response) {
-            console.log(response);
-            renderCertificate(certificateText, certificates.length);
-            $("#certificate-input").val("");
-            $(".tsg-certificate-wrapper").addClass("tsg-entry-hidden");
-            //console.log("Certificates saved successfully:", response);
-         },
-         error: function (error) {
-            console.error("Error saving certificates:", error);
-         },
-      });
-   }
+   // function saveCertificates() {
+   //    $.ajax({
+   //       url: tsg_public_ajax.ajax_url,
+   //       type: "POST",
+   //       data: {
+   //          action: "save_certificates",
+   //          certificates: certificates,
+   //       },
+   //       success: function (response) {
+   //          console.log(response);
+   //          renderCertificate(certificateText, certificates.length);
+   //          $("#certificate-input").val("");
+   //          $(".tsg-certificate-wrapper").addClass("tsg-entry-hidden");
+   //          //console.log("Certificates saved successfully:", response);
+   //       },
+   //       error: function (error) {
+   //          console.error("Error saving certificates:", error);
+   //       },
+   //    });
+   // }
 
    // Fetch Certificates on Page Load
 
@@ -893,12 +929,21 @@ jQuery(document).ready(function ($) {
    });
 
    $("#tsg-adjust-sf-bonus-save-btn").on("click", function () {
+      const sfBonus = $("input[name='sf_bonus_allocation']").val();
+      const selectedDate = $("input[name='date']").val();
+
+      console.log("sf_bonus_allocation:", sfBonus);
+      console.log("date:", selectedDate);
+
       $.ajax({
          url: tsg_public_ajax.ajax_url,
          type: "POST",
          data: {
             action: "adjust_sf_bonus",
-            data: sfBonus,
+            data: {
+                sf_bonus_allocation: sfBonus,
+                date: selectedDate
+            }
          },
          success: function (response) {
             console.log(response);
@@ -927,15 +972,25 @@ jQuery(document).ready(function ($) {
    });
 
    $("#tsg-withdraw-sf-from-member-save-btn").on("click", function () {
+      const amount = $("input[name='withdraw-sf-from-member']").val();
+      const userId = $("#sf-withdraw-member-id").val();
       $.ajax({
          url: tsg_public_ajax.ajax_url,
          type: "POST",
          data: {
             action: "withdraw_sf_from_member",
-            data: withdrawedMember,
+            data: {
+               amount: amount,
+               user_id: userId
+            }
          },
          success: function (response) {
-            console.log(response);
+            // console.log(response);
+            if (response.success) {
+               console.log("Credit deducted successfully:", response.message);
+            } else {
+               console.error("Error:", response.data.message);
+            }
          },
          error: function () {
             alert("An error occurred.");
@@ -944,15 +999,23 @@ jQuery(document).ready(function ($) {
    });
 
    $("#tsg-remove-sf-from-circulation-save-btn").on("click", function () {
+      const amount = $("input[name='remove-sf-from-circulation']").val();
       $.ajax({
          url: tsg_public_ajax.ajax_url,
          type: "POST",
          data: {
             action: "remove_sf_from_circulation",
-            data: removedSf,
+            data: {
+               amount: amount
+            }
          },
          success: function (response) {
-            console.log(response);
+            // console.log(response);
+            if (response.success) {
+               console.log("Points deducted from admin successfully:", response.message);
+            } else {
+               console.error("Error:", response.data.message);
+            }
          },
          error: function () {
             alert("An error occurred.");
@@ -1116,7 +1179,145 @@ jQuery(document).ready(function ($) {
          var userId = $(this).data('id');
          $('#tsg-transaction-history-member').val(userId);
    });
+   // $('#tsg-history-transaction-type-list li').on('click', function(e) {
+   //    e.preventDefault();
+   //    var userId = $(this).data('id');
+   //    $('#tsg-history-transaction-type').val(userId);
+   // });
+   $('#tsg-sf-balance-range-list li.tsg-select-option').on('click', function(e) {
+      e.preventDefault();
+      var range = $(this).data('id');
+      $('#tsg-sf-balance-range').val(range);
+   });
+   $('#tsg-member-status-list li.tsg-select-option').on('click', function(e) {
+      e.preventDefault();
+      var status = $(this).data('id');
+      $('#tsg-member-status').val(status);
+   });
+   $('#tsg-member-member-list li').on('click', function(e) {
+      e.preventDefault();
+      var status = $(this).data('id');
+      $('#tsg-member-member').val(status);
+   });
+   $('#tsg-sf-adjust-member-list li').on('click', function(e) {
+      e.preventDefault();
+      var status = $(this).data('id');
+      $('#tsg-sf-adjust-member').val(status);
+   });
+   
  
+   $("#tsg-members-filter-btn").on("click", function () {
+      const data = {
+          action: "filter_members", 
+          sfRange: $('#tsg-sf-balance-range').val(),
+          userStatus: $('#tsg-member-status').val(),
+      };
   
+      $.ajax({
+          url: tsg_public_ajax.ajax_url,
+          type: "POST",
+          data: data,
+          success: function (response) {
+              console.log(response);
+              $('#tsg-members-filter-container-label').removeClass('tsg-entry-hidden');
+              $('#tsg-members-filter-container').html(response);
+          },
+          error: function () {
+              alert("An error occurred.");
+          },
+      });
+   });
+
+   $("#tsg-member-member-filter-btn").on("click", function () {
+      const data = {
+          action: "filter_member_transactions", 
+          member: $('#tsg-member-member').val(),
+      };
+  
+      $.ajax({
+          url: tsg_public_ajax.ajax_url,
+          type: "POST",
+          data: data,
+          success: function (response) {
+              console.log(response);
+              $('#tsg-member-details-container').html(response);
+          },
+          error: function () {
+              alert("An error occurred.");
+          },
+      });
+   });
+  
+   $('#tsg-adjust-affiliate-earning-container').hide();
+   $('#tsg-adjust-sf-container').hide();
+   $('#tsg-adjust-sf-btn').on("click", function () {
+      $('#tsg-adjust-sf-container').toggle();
+      $('#tsg-adjust-affiliate-earning-container').hide();
+   });
+   $('#tsg-adjust-affiliate-earning-btn').on("click", function () {
+      $('#tsg-adjust-affiliate-earning-container').toggle();
+      $('#tsg-adjust-sf-container').hide();
+   });
+  
+
+   $("#tsg-adjust-sf-save").on("click", function () {
+      const data = {
+         action: "adjust_sf_amount",
+         member: $('#tsg-sf-adjust-member').val(), 
+         newSf: $('#tsg-adjust-sf').val()
+     };
+     
+     if (!data.member) {
+         $('#tsg-adjust-msg-container').removeClass('tsg-entry-hidden');
+         $('#tsg-adjust-msg-container').css('color', 'red').html('Error: Please select a member.');
+     } else {
+
+         $.ajax({
+             url: tsg_public_ajax.ajax_url,
+             type: "POST",
+             data: data,
+             success: function (response) {
+                 console.log(response);
+                 $('#tsg-adjust-msg-container').removeClass('tsg-entry-hidden');
+                 $('#tsg-adjust-msg-container').css('color', '').html(response); 
+             },
+             error: function () {
+                 $('#tsg-adjust-msg-container').removeClass('tsg-entry-hidden');
+                 $('#tsg-adjust-msg-container').css('color', 'red').html('An error occurred.');
+             },
+         });
+     }     
+   });
+
+   $("#tsg-adjust-affiliate-earning-save").on("click", function () {
+
+      const data = {
+         action: "adjust_affiliate_earning", 
+         member: $('#tsg-sf-adjust-member').val(),
+         newAffiliateEarning: $('#tsg-adjust-affiliate-earning').val()
+     };
+     
+     if (!data.member) {
+         $('#tsg-adjust-msg-container').removeClass('tsg-entry-hidden');
+         $('#tsg-adjust-msg-container').css('color', 'red').html('Error: Please select a member.');
+     } else {
+     
+         $.ajax({
+             url: tsg_public_ajax.ajax_url,
+             type: "POST",
+             data: data,
+             success: function (response) {
+                 console.log(response);
+                 $('#tsg-adjust-msg-container').removeClass('tsg-entry-hidden');
+                 $('#tsg-adjust-msg-container').css('color', '').html(response); 
+             },
+             error: function () {
+                 $('#tsg-adjust-msg-container').removeClass('tsg-entry-hidden');
+                 $('#tsg-adjust-msg-container').css('color', 'red').html('An error occurred.');
+             },
+         });
+     }
+     
+   });
  
 });

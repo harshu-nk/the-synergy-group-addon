@@ -200,21 +200,35 @@ add_action('wp_head', 'test_bench');
 
 
 // Save Certificates Handler
-add_action('wp_ajax_save_certificates', 'save_certificates');
-function save_certificates() {
-    if (!empty($_POST['certificates']) && is_array($_POST['certificates'])) {
-        $user_id = get_current_user_id();
-        $certificates = array_map('wc_clean', $_POST['certificates']);
+add_action('wp_ajax_tsg_add_save_certificates', 'tsg_add_save_certificates');
+function tsg_add_save_certificates() {
 
-        // Save certificates as a single string or JSON encoded array
-        $certificates_str = json_encode($certificates);
-        xprofile_set_field_data('certificate', $user_id, $certificates_str);
+    if (!isset($_POST['certificates'])) {
+        echo '<p>Failed to send data</p>';
+        wp_die();
     }
-    $user_id = get_current_user_id();
-    $certificates_str = xprofile_get_field_data('certificate', $user_id);
 
-    $certificates = !empty($certificates_str) ? json_decode($certificates_str) : [];
-    wp_send_json_success(['certificates' => $certificates]);
+    $certificates = json_decode(stripslashes($_POST['certificates']), true);
+
+    if (is_array($certificates)) {
+        foreach ($certificates as $certificate) {
+            if (isset($certificate['id']) && isset($certificate['text'])) {
+                echo '<div class="item w2" id="' . esc_html($certificate['id']) . '">
+                        <div class="itemr">
+                            <div class="award-block tc">
+                                <a href="#" class="block-edit delete-certificate-btn" data-id="' . esc_html($certificate['id']) . '" data-text="' . esc_html($certificate['text']) . '"><img src="' . THE_SYNERGY_GROUP_URL . '/public/img/account/edit.svg" alt="edit icon"></a>
+                                <div class="award-icon">
+                                    <img src="' . THE_SYNERGY_GROUP_URL . '/public/img/account/award.svg" alt="award icon">
+                                </div>
+                                <p class="fs-20 mt18 tsg-certificate-name">' . esc_html($certificate['text']) . '</p>
+                            </div>
+                        </div>
+                    </div>';
+            }
+        }
+    } else {
+        echo '<p>No valid certificates found</p>';
+    }
     wp_die();
 }
 
@@ -291,16 +305,18 @@ function tsg_configure_subscription() {
         wp_send_json_error(['message' => 'Unauthorized request']);
         wp_die();
     } 
+    else{
+        $subscriptions = $_POST['data'];
+
+        foreach ($subscriptions as $product_id => $sf_allowance_value) {
+            $product_id = intval($product_id);
+            $sf_allowance_value = sanitize_text_field($sf_allowance_value);
     
-    $subscriptions = $_POST['data'];
-
-    foreach ($subscriptions as $product_id => $sf_allowance_value) {
-        $product_id = intval($product_id);
-        $sf_allowance_value = sanitize_text_field($sf_allowance_value);
-
-        update_field('sf_allowance', $sf_allowance_value, $product_id);
+            update_field('sf_allowance', $sf_allowance_value, $product_id);
+        }
+        wp_send_json_success(['message' => 'Subscription data saved successfully']);
     }
-    wp_send_json_success(['message' => 'Subscription data saved successfully']);
+    
     wp_die();
 }
 
@@ -313,13 +329,22 @@ function tsg_adjust_sf_bonus() {
         wp_send_json_error(['message' => 'Unauthorized request']);
         wp_die();
     } else {
-        
+
+        $sf_bonus_allocation = sanitize_text_field($_POST['data']['sf_bonus_allocation']);
+        $selected_date = sanitize_text_field($_POST['data']['date']);
+
+        update_option('sf_bonus_allocation', $sf_bonus_allocation);
+        update_option('selected_date', $selected_date);
+        wp_send_json_success([
+            'message' => 'SF Bonus allocation and date saved successfully',
+            'debug' => $_POST['data']
+        ]);
     }
     wp_die();
 }
 
 //Admin SF management - allocate SF to member
-add_action('wp_ajax_allocate_sf_to_member', 'tsg_allocate_sf_to_member');
+add_action('wp_ajax_+', 'tsg_allocate_sf_to_member');
 
 function tsg_allocate_sf_to_member() {
 
@@ -336,13 +361,27 @@ function tsg_allocate_sf_to_member() {
 add_action('wp_ajax_withdraw_sf_from_member', 'tsg_withdraw_sf_from_member');
 
 function tsg_withdraw_sf_from_member() {
-
-    if (!isset($_POST['data'])) {
-        wp_send_json_error(['message' => 'Unauthorized request']);
+    if (!isset($_POST['data']['amount']) || !isset($_POST['data']['user_id'])) {
+        wp_send_json_error(['message' => 'Missing required data']);
         wp_die();
-    } else {
-        
     }
+
+    $amount = absint($_POST['data']['amount']);
+    $user_id = intval($_POST['data']['user_id']);
+
+    if ($amount <= 0 || $user_id <= 0) {
+        wp_send_json_error(['message' => 'Invalid amount or user ID']);
+        wp_die();
+    }
+
+    $result = mycred_subtract('withdrawal', $user_id, -$amount, 'Points deduction for withdrawal');
+
+    if ($result) {
+        wp_send_json_success(['message' => 'Points deducted successfully']);
+    } else {
+        wp_send_json_error(['message' => 'Failed to deduct points']);
+    }
+
     wp_die();
 }
 
@@ -351,12 +390,32 @@ add_action('wp_ajax_remove_sf_from_circulation', 'tsg_remove_sf_from_circulation
 
 function tsg_remove_sf_from_circulation() {
 
-    if (!isset($_POST['data'])) {
-        wp_send_json_error(['message' => 'Unauthorized request']);
+    if (!isset($_POST['data']['amount'])) {
+        wp_send_json_error(['message' => 'Missing required data']);
         wp_die();
-    } else {
-        
     }
+
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => 'Unauthorized: Only admin can perform this action']);
+        wp_die();
+    }
+
+    $admin_id = get_current_user_id();
+    $amount = absint($_POST['data']['amount']);
+
+    if ($amount <= 0) {
+        wp_send_json_error(['message' => 'Invalid amount']);
+        wp_die();
+    }
+
+    $result = mycred_subtract('admin_deduction', $admin_id, -$amount, 'Points removed from circulation by admin');
+
+    if ($result) {
+        wp_send_json_success(['message' => 'Points deducted from admin successfully']);
+    } else {
+        wp_send_json_error(['message' => 'Failed to deduct points from admin']);
+    }
+
     wp_die();
 }
 
@@ -449,3 +508,214 @@ function tsg_display_all_transactions_history() {
 
     wp_die();
 }
+
+//Fiter SF balance by member
+add_action('wp_ajax_filter_members', 'tsg_filter_members');
+
+function tsg_filter_members() {
+  
+    $sfRange = isset($_POST['sfRange']) ? sanitize_text_field($_POST['sfRange']) : '';
+    $userStatus = isset($_POST['userStatus']) ? sanitize_text_field($_POST['userStatus']) : '';
+
+    $ranges = [
+        [1, 50],
+        [50, 100],
+        [100, 150]
+    ];
+
+    if (array_key_exists($sfRange, $ranges)) {
+        $selectedRange = $ranges[$sfRange];
+        $minBalance = $selectedRange[0];
+        $maxBalance = $selectedRange[1];
+    } else {
+        $minBalance = 0;
+        $maxBalance = PHP_INT_MAX;
+    }
+
+    $users_in_range = [];
+    $all_users = get_users();
+
+    foreach ($all_users as $user) {
+        $user_id = $user->ID;
+        $user_sf_balance = mycred_get_users_total_balance($user_id);
+        $user_status = get_user_meta($user_id, 'tsg_user_status', true);
+
+        if (
+            $user_sf_balance >= $minBalance && 
+            $user_sf_balance <= $maxBalance && 
+            $user_status == $userStatus
+        ) {
+            $users_in_range[] = [
+                'user_id' => $user_id,
+                'user_name' => $user->display_name,
+                'sf_balance' => $user_sf_balance,
+                'tsg_user_status' => $user_status,
+            ];
+        }
+    }
+
+    $member_count = 0;
+    echo '<div class="messages-sub-block last-bord" >'; 
+    if (!empty($users_in_range)) {
+        foreach ($users_in_range as $user) {
+            $member_count++;
+            if ($user['tsg_user_status'] == 0) {
+                $user_status_txt = "Inactive";
+            } elseif ($user['tsg_user_status'] == 1) {
+                $user_status_txt = "Active";
+            } else {
+                $user_status_txt = "Undefined";
+            }  
+            echo '<div class="message-block spb">
+                <div class="text-icon">';
+            echo '<img src="' . THE_SYNERGY_GROUP_URL . 'public/img/account/avatar_profile.svg" alt="avatar icon "/>
+                </div>
+                <div class="message-text">';
+            echo '<p><strong>ID: ' . esc_html($user['user_id']) . ' | Member: ' . esc_html($user['user_name']) . '</strong><br>';
+            echo '(SF Balance: ' . esc_html($user['sf_balance']) . ' - User Status: ' . $user_status_txt . ')
+                </p>
+                </div>
+                <div class="btn-block">
+                <a href="#" class="btn">read more</a>
+                </div>
+            </div>';       
+        }
+    } else {
+        echo '<p>No users found matching the selected balance range and status.</p>';
+    }
+    echo '</div>';
+
+    echo '<div class="block-lines2 big-p">
+        <div class="block-line spb first">
+        <div class="line-left">
+            <p>Member Count:</p>
+        </div>
+        <div class="line-right va" >
+            <p class="main-val2" >' . $member_count . '</p>
+        </div>
+        </div>
+    </div>';
+   
+    wp_die();
+}
+
+//Filter sf transaction details by member
+add_action('wp_ajax_filter_member_transactions', 'tsg_filter_member_transactions');
+
+function tsg_filter_member_transactions() {
+    $member = isset($_POST['member']) ? sanitize_text_field($_POST['member']) : '';
+
+    if( !empty($member) ){
+        $balance = mycred_get_users_total_balance( $member );
+        echo '<div class="block-line spb">
+                <div class="line-left">
+                    <p>Individual member SF balance</p>
+                </div>
+                <div class="line-right va">
+                    <p class="main-val2">SF ' . $balance . '</p>
+                </div>
+            </div>';
+
+        echo '<h6 class="borderb"><strong>Transaction history </strong></h6>';
+        echo '<div class="messages">
+                <div class="messages-sub-block last-bord">
+                    <div class="message-block spb">
+                        <div class="text-icon">
+                            <img src="' . THE_SYNERGY_GROUP_URL . 'public/img/account/transactions_blue.svg" alt="transaction progress line icon "/>
+                        </div>
+                        <div class="message-text">
+                            <p><strong>Transaction 001 (Sell)</strong><br>
+                            SF290 (affiliate partnership program)
+                            </p>
+                        </div>
+                        <div class="btn-block">
+                            <a href="#" class="btn">read more</a>
+                        </div>
+                    </div>
+                </div>
+            </div>';
+
+        echo '<div class="block-lines2 big-p">
+                <div class="block-line spb first">
+                    <div class="line-left">
+                    <p>Affiliate Earnings:</p>
+                    </div>
+                    <div class="line-right va">
+                    <p class="main-val2">CHF 400 + SF ' .$balance. '</p>
+                    </div>
+                </div>
+            </div>';
+
+        echo '<h6 class="borderb"><strong>Referred Members:</strong></h6>';
+        echo '<div class="messages">
+                <div class="messages-sub-block last-bord">
+                    <div class="message-block spb">
+                        <div class="text-icon">
+                            <img src="' . THE_SYNERGY_GROUP_URL . 'public/img/account/avatar.svg" alt="avatar icon "/>
+                        </div>
+                        <div class="message-text">
+                            <p><strong>Affiliate member: John Troomer</strong><br>
+                            Transaction fees SF290
+                            </p>
+                        </div>
+                        <div class="btn-block">
+                            <a href="#" class="btn">read more</a>
+                        </div>
+                    </div>
+                </div>
+            </div>';
+
+        echo '<h6 class="borderb"><strong>Referral Activity:</strong></h6>';
+        echo '<div class="messages">
+                <div class="messages-sub-block last-bord">
+                    <div class="message-block spb">
+                        <div class="text-icon">
+                            <img src="' . THE_SYNERGY_GROUP_URL . 'public/img/account/transactions_blue.svg" alt="transaction progress line icon "/>
+                        </div>
+                        <div class="message-text">
+                            <p><strong>Affiliate member: John Troomer</strong><br>
+                            SF290 (affiliate partnership program)
+                            </p>
+                        </div>
+                        <div class="btn-block">
+                            <a href="#" class="btn">read more</a>
+                        </div>
+                    </div>
+                </div>
+            </div>';
+    } else {
+        echo '<p>User is undefined.</p>';
+    }
+    wp_die();
+}
+
+//Adjust SF values
+//All transactions - Display all transactions.
+add_action('wp_ajax_adjust_sf_amount', 'tsg_adjust_sf_amount');
+
+function tsg_adjust_sf_amount() {
+
+    if (!isset($_POST['member']) || !isset($_POST['newSf'])) {
+        echo '<p>Fail to send data</p>';
+        wp_die();
+    } else {
+        echo '<p>' . $_POST['member'] . '</p>';
+        echo '<p>' . $_POST['newSf'] . '</p>';
+    }
+    wp_die();
+}
+
+add_action('wp_ajax_adjust_affiliate_earning', 'tsg_adjust_affiliate_earning');
+
+function tsg_adjust_affiliate_earning() {
+
+    if (!isset($_POST['member']) || !isset($_POST['newAffiliateEarning'])) {
+        echo '<p>Fail to send data</p>';
+        wp_die();
+    } else {
+        echo '<p>' . $_POST['member'] . '</p>';
+        echo '<p>' . $_POST['newAffiliateEarning'] . '</p>';
+    }
+    wp_die();
+}
+

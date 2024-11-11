@@ -25,18 +25,51 @@ class Notifier
                         </div>
                         <div class="line-right va btns-part">
                             <div class="btn-block">
-                                <a href="#" class="btn style2 minw2"><?php _e('Setup alert', 'the-synergy-group-addon'); ?></a>
+                                <a href="#" class="btn style2 minw2 tsg-item-toggle-btn" data-target="#tsg-notify-volume-container"><?php _e('Setup alert', 'the-synergy-group-addon'); ?></a>
                             </div>
                         </div>
                     </div>
-
+                    <div id="tsg-notify-volume-container" style="display: none;">
+                        <div class="block-line light-style small-line spb">
+                            <div class="line-left">
+                                <p>Volume: </p>
+                            </div>
+                            <div class="line-right input-field">
+                                <input type="text" id="" name="" data-position="bottom left" class="" placeholder="Select">
+                            </div>
+                        </div>
+                        <div class="block-line spb">
+                            <div class="line-right va btns-part">
+                                <div class="btn-block">
+                                    <a href="#" class="btn style2 minw2"><?php _e('Setup', 'the-synergy-group-addon'); ?></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="block-line spb">
                         <div class="line-left">
                             <p><?php _e('Member activities', 'the-synergy-group-addon'); ?></p>
                         </div>
                         <div class="line-right va btns-part">
                             <div class="btn-block">
-                                <a href="#" class="btn style2 minw2"><?php _e('Setup alert', 'the-synergy-group-addon'); ?></a>
+                                <a href="#" class="btn style2 minw2 tsg-item-toggle-btn" data-target="#tsg-notify-activity-container"><?php _e('Setup alert', 'the-synergy-group-addon'); ?></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tsg-notify-activity-container" style="display: none;">
+                        <div class="block-line light-style small-line spb">
+                            <div class="line-left">
+                                <p>Activities :</p>
+                            </div>
+                            <div class="line-right input-field">
+                                <input type="text" id="" name="" data-position="bottom left" class="" placeholder="Select ">
+                            </div>
+                        </div>
+                        <div class="block-line spb">
+                            <div class="line-right va btns-part">
+                                <div class="btn-block">
+                                    <a href="#" class="btn style2 minw2"><?php _e('Setup', 'the-synergy-group-addon'); ?></a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -50,7 +83,24 @@ class Notifier
                         </div>
                         <div class="line-right va btns-part">
                             <div class="btn-block">
-                                <a href="#" class="btn style2 minw2"><?php _e('Setup alert', 'the-synergy-group-addon'); ?></a>
+                                <a href="#" class="btn style2 minw2 tsg-item-toggle-btn" data-target="#tsg-notify-affiliates-earn-container"><?php _e('Setup alert', 'the-synergy-group-addon'); ?></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tsg-notify-affiliates-earn-container" style="display: none;">
+                        <div class="block-line light-style small-line spb">
+                            <div class="line-left">
+                                <p>Earn fees :</p>
+                            </div>
+                            <div class="line-right input-field">
+                                <input type="text" id="" name="" data-position="bottom left" class="" placeholder="Select ">
+                            </div>
+                        </div>
+                        <div class="block-line spb">
+                            <div class="line-right va btns-part">
+                                <div class="btn-block">
+                                    <a href="#" class="btn style2 minw2"><?php _e('Setup', 'the-synergy-group-addon'); ?></a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -61,7 +111,24 @@ class Notifier
                         </div>
                         <div class="line-right va btns-part">
                             <div class="btn-block">
-                                <a href="#" class="btn style2 minw2"><?php _e('Setup alert', 'the-synergy-group-addon'); ?></a>
+                                <a href="#" class="btn style2 minw2 tsg-item-toggle-btn" data-target="#tsg-notify-referred-members-container"><?php _e('Setup alert', 'the-synergy-group-addon'); ?></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tsg-notify-referred-members-container" style="display: none;">
+                        <div class="block-line light-style small-line spb">
+                            <div class="line-left">
+                                <p>Earn fees :</p>
+                            </div>
+                            <div class="line-right input-field">
+                                <input type="text" id="" name="" data-position="bottom left" class="" placeholder="Select ">
+                            </div>
+                        </div>
+                        <div class="block-line spb">
+                            <div class="line-right va btns-part">
+                                <div class="btn-block">
+                                    <a href="#" class="btn style2 minw2"><?php _e('Setup', 'the-synergy-group-addon'); ?></a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -72,7 +139,24 @@ class Notifier
                         </div>
                         <div class="line-right va btns-part">
                             <div class="btn-block">
-                                <a href="#" class="btn style2 minw2"><?php _e('Setup alert', 'the-synergy-group-addon'); ?></a>
+                                <a href="#" class="btn style2 minw2 tsg-item-toggle-btn" data-target="#tsg-notify-specific-milestones-container"><?php _e('Setup alert', 'the-synergy-group-addon'); ?></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tsg-notify-specific-milestones-container" style="display: none;">
+                        <div class="block-line light-style small-line spb">
+                            <div class="line-left">
+                                <p>Earn fees :</p>
+                            </div>
+                            <div class="line-right input-field">
+                                <input type="text" id="" name="" data-position="bottom left" class="" placeholder="Select ">
+                            </div>
+                        </div>
+                        <div class="block-line spb">
+                            <div class="line-right va btns-part">
+                                <div class="btn-block">
+                                    <a href="#" class="btn style2 minw2"><?php _e('Setup', 'the-synergy-group-addon'); ?></a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -119,7 +203,9 @@ class Notifier
                             <p><?php _e('Select Members', 'the-synergy-group-addon'); ?></p>
                         </div>
                         <div class="line-right input-field">
-                            <select id="select-members" name="members[]" multiple="multiple" required></select>
+                            <Select2 class="select2-list" id="select-members" name="members[]" multiple="multiple" required>
+                                <option value="Member 1">Member 1</option>
+                            </Select2>
                             <!-- <div class="select">
                         <p class="select-name"><span>Select</span></p>
                         <input type="hidden" id="number-members" name="number-members" value="" />

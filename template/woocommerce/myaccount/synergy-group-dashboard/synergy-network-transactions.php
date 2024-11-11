@@ -237,16 +237,17 @@
             global $wpdb;
             $results = $wpdb->get_results("SELECT DISTINCT user_id FROM {$wpdb->prefix}myCRED_log");
 
+            echo '<ul class="select-list hauto" id="tsg-transaction-history-member-list">';
+            echo '<li data-id="0">Any</li>';
             if ($results) {
-                echo '<ul class="select-list hauto" id="tsg-transaction-history-member-list">';
                 foreach ($results as $row) {
                     $user_info = get_userdata($row->user_id);
                     $user_name = $user_info ? $user_info->display_name : 'Unknown User';
 
                     echo '<li data-id="' . esc_attr($row->user_id) . '">' . esc_html($user_name) . '</li>';
                 }
-                echo '</ul>';
             } 
+            echo '</ul>';
           ?>
         </div>
       </div>
@@ -260,10 +261,19 @@
         <div class="select">
           <p class="select-name"><span>Select</span></p>
           <input type="hidden" id="tsg-history-transaction-type" name="transaction-type" value="" />
-          <ul class="select-list hauto">
-            <li>Transaction type 1</li>
-            <li>Transaction type 2</li>
-          </ul>
+          <?php
+            global $wpdb;
+            $results = $wpdb->get_results("SELECT DISTINCT ref FROM {$wpdb->prefix}myCRED_log");
+
+            echo '<ul class="select-list hauto" id="tsg-history-transaction-type-list">';
+            echo '<li data-id="0">Any</li>';
+            if ($results) {
+                foreach ($results as $row) {
+                    echo '<li data-id="">' . esc_html($row->ref) . '</li>';
+                }
+            }
+            echo '</ul>';
+          ?>
         </div>
       </div>
     </div>

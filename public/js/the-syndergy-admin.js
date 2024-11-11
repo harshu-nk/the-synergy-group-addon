@@ -1,27 +1,36 @@
 jQuery(document).ready(function ($) {
+   console.log('select2 function initialized');
    $("#select-members").select2({
       ajax: {
-         url: tsg_ajax.ajax_url,
+         url: tsg_public_ajax.ajax_url,
          type: "POST",
          dataType: "json",
          delay: 250,
          data: function (params) {
             return {
-               action: "search_users", // The action we will hook into
-               search: params.term, // The search query
+               action: "search_users", 
+               search: params.term, 
             };
          },
          processResults: function (data) {
+            console.log("AJAX request successful:", data);
             return {
-               results: data, // Parse the results into the format expected by Select2
+               results: data, 
             };
+            // return {
+            //    results: data.map(item => ({
+            //       id: item.id,  
+            //       text: item.text 
+            //    })),
+            // };
          },
          cache: true,
       },
       placeholder: "Select members",
-      minimumInputLength: 2, // Start searching after 2 characters
-      multiple: true, // Allow multiple selections
+      minimumInputLength: 1, 
+      multiple: true, 
    });
+   
 
    $("#communications-form").validate();
    $("#communications-form").submit(function (event) {

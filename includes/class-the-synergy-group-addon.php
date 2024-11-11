@@ -205,9 +205,10 @@ class The_Synergy_Group_Addon {
 
 		$this->loader->add_action('woocommerce_account_synergy-network-transactions_endpoint', $woo_customizations, 'tsg_synergy_network_dashboard_transactions_tab_content');
 		$this->loader->add_action('woocommerce_account_synergy-network-members_endpoint', $woo_customizations, 'tsg_synergy_network_dashboard_members_tab_content');
-		$this->loader->add_action('woocommerce_account_synergy-network-reports_endpoint', $woo_customizations, 'tsg_synergy_network_dashboard_reports_tab_content');
+		$this->loader->add_action('woocommerce_account_synergy-network-admin-withdrawals_endpoint', $woo_customizations, 'tsg_synergy_network_dashboard_admin_withdrawals_tab_content');
+		$this->loader->add_action('woocommerce_account_admin-help-support_endpoint', $woo_customizations, 'tsg_synergy_network_dashboard_admin_help_support_tab_content');
 
-
+		
 		// Activity Log on Messages / Activities Tab
 		// $this->loader->add_action('admin_head', $woo_customizations, 'tsg_simple_history_output');
 		// Force History Fetching for the Frontend
