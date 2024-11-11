@@ -1,5 +1,5 @@
-document.addEventListener('DOMContentLoaded', function(){ //document.ready
-
+jQuery(document).ready(function($){ //document.ready
+    
     /************FILES CLICK BEGIN**********************/
     var fileArr = [];
     $("#images").change(function(){

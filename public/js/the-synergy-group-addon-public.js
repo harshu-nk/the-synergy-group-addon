@@ -1319,5 +1319,65 @@ jQuery(document).ready(function ($) {
      }
      
    });
+
+   $('.approve-button').on('click', function(event) {
+      event.preventDefault();
+
+      
+      let postId = $(this).data('post-id');
+      console.log('Approve Button Clicked. Post ID:', postId);
+
+      if (!postId) {
+          alert("Post ID is undefined. Please check the HTML structure.");
+          return;
+      }
+
+      $.ajax({
+          url: tsg_public_ajax.ajax_url,
+          type: 'POST',
+          data: {
+              action: 'update_withdrawal_status',
+              post_id: postId,
+              status: 'Approved'
+          },
+          success: function(response) {
+              if (response.success) {
+                  alert('Withdrawal approved.');
+                  location.reload();
+              } else {
+                  alert('Failed to update status: ' + response.data);
+              }
+          }
+      });
+  });
+
+  $('.reject-button').on('click', function() {
+      event.preventDefault();
+      let postId = $(this).data('post-id');
+      console.log('Approve Button Clicked. Post ID:', postId);
+
+      if (!postId) {
+         alert("Post ID is undefined. Please check the HTML structure.");
+         return;
+      }
+
+      $.ajax({
+         url: tsg_public_ajax.ajax_url,
+         type: 'POST',
+         data: {
+               action: 'update_withdrawal_status',
+               post_id: postId,
+               status: 'Cancelled'
+         },
+         success: function(response) {
+               if (response.success) {
+                  alert('Withdrawal rejected.');
+                  location.reload();
+               } else {
+                  alert('Failed to update status: ' + response.data);
+               }
+         }
+      });
+});
  
 });

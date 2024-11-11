@@ -10,40 +10,63 @@
             </div>
         </div>
 
-        <div class="messages mt2">
+        <?php
+
+        $args = array(
+            'post_type' => 'cashcred_withdrawal',
+            'posts_per_page' => -1,
+            'meta_query' => array(
+                array(
+                    'key' => 'status',
+                    'value' => 'Pending',
+                    'compare' => '=',
+                ),
+            ),
+        );
+
+
+        $withdrawals = new WP_Query($args);
+
+        if ($withdrawals->have_posts()) :
+            while ($withdrawals->have_posts()) : $withdrawals->the_post();
+
+            $member_name = get_the_author_meta('display_name', get_the_author_meta('ID'));
+            $amount = get_the_title();
+            $date = get_the_date('d.m.Y');
+            $payment_currency = get_post_meta(get_the_ID(), 'currency', true);
+            $payment_method = get_post_meta(get_the_ID(), 'gateway', true); ?>
+
+        <div class="messages mt2" >
             <div class="messages-sub-block">
-                <div>
-                    <?php //echo do_shortcode('[mycred_cashcred]'); ?>
-                </div>
-                <div class="message-block message-media spb">
+                <div class="message-block message-media spb" data-post-id="<?php echo get_the_ID(); ?>">
                     <div class="message-icon">
                         <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/money2.svg" alt="money icon" />
                     </div>
                     <div class="message-text">
                         <div class="message-line spb">
                             <p class="message-line-name">Member:</p>
-                            <p class="message-line-value"><strong>John Troomer</strong><br></p>
+                            <p class="message-line-value"><strong><?php echo esc_html($member_name); ?></strong><br></p>
                         </div>
                         <div class="message-line spb">
                             <p class="message-line-name">Amount:</p>
-                            <p class="message-line-value"><strong>CHF 923</strong><br></p>
+                            <p class="message-line-value"><strong><?php echo esc_html($payment_currency); ?>  <?php echo esc_html($amount); ?></strong><br></p>
                         </div>
                         <div class="message-line spb">
                             <p class="message-line-name">Date:</p>
-                            <p class="message-line-value"><strong>21.10.2024</strong><br></p>
+                            <p class="message-line-value"><strong><?php echo esc_html($date); ?></strong><br></p>
                         </div>
                         <div class="message-line spb">
                             <p class="message-line-name">Payment method:</p>
-                            <p class="message-line-value"><strong>Bank Transfer</strong><br></p>
+                            <p class="message-line-value"><strong><?php echo esc_html($payment_method); ?></strong><br></p>
                         </div>
                     </div>
                     <div class="message-btns">
                         <div class="btns-first-line va">
                             <div class="btn-block">
-                            <a href="#" class="btn green-btn">approve</a>
+                                <a href="#" class="btn green-btn approve-button" data-post-id="<?php echo get_the_ID(); ?>">approve</a>
                             </div>
                             <div class="btn-block">
-                            <a href="#" class="btn red-btn">reject</a>
+                                <a href="#" class="btn red-btn reject-button" data-post-id="<?php echo get_the_ID(); ?>">reject</a>
                             </div>
                         </div>
                         <div class="btn-block">
@@ -51,80 +74,14 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="message-block message-media spb">
-                    <div class="message-icon">
-                        <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/money2.svg" alt="money icon" />
-                    </div>
-                    <div class="message-text">
-                        <div class="message-line spb">
-                            <p class="message-line-name">Member:</p>
-                            <p class="message-line-value"><strong>John Troomer</strong><br></p>
-                        </div>
-                        <div class="message-line spb">
-                            <p class="message-line-name">Amount:</p>
-                            <p class="message-line-value"><strong>CHF 923</strong><br></p>
-                        </div>
-                        <div class="message-line spb">
-                            <p class="message-line-name">Date:</p>
-                            <p class="message-line-value"><strong>21.10.2024</strong><br></p>
-                        </div>
-                        <div class="message-line spb">
-                            <p class="message-line-name">Payment method:</p>
-                            <p class="message-line-value"><strong>Bank Transfer</strong><br></p>
-                        </div>
-                    </div>
-                    <div class="message-btns">
-                        <div class="btns-first-line va">
-                            <div class="btn-block">
-                            <a href="#" class="btn green-btn">approve</a>
-                            </div>
-                            <div class="btn-block">
-                            <a href="#" class="btn red-btn">reject</a>
-                            </div>
-                        </div>
-                        <div class="btn-block">
-                            <a href="#" class="btn">Request Additional info</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="message-block message-media spb">
-                    <div class="message-icon">
-                        <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/money2.svg" alt="money icon" />
-                    </div>
-                    <div class="message-text">
-                        <div class="message-line spb">
-                            <p class="message-line-name">Member:</p>
-                            <p class="message-line-value"><strong>John Troomer</strong><br></p>
-                        </div>
-                        <div class="message-line spb">
-                            <p class="message-line-name">Amount:</p>
-                            <p class="message-line-value"><strong>CHF 923</strong><br></p>
-                        </div>
-                        <div class="message-line spb">
-                            <p class="message-line-name">Date:</p>
-                            <p class="message-line-value"><strong>21.10.2024</strong><br></p>
-                        </div>
-                        <div class="message-line spb">
-                            <p class="message-line-name">Payment method:</p>
-                            <p class="message-line-value"><strong>Bank Transfer</strong><br></p>
-                        </div>
-                    </div>
-                    <div class="message-btns">
-                        <div class="btns-first-line va">
-                            <div class="btn-block">
-                            <a href="#" class="btn green-btn">approve</a>
-                            </div>
-                            <div class="btn-block">
-                            <a href="#" class="btn red-btn">reject</a>
-                            </div>
-                        </div>
-                        <div class="btn-block">
-                            <a href="#" class="btn">Request Additional info</a>
-                        </div>
-                    </div>
-                </div>
+        
+                <?php
+                    endwhile;
+                    wp_reset_postdata();
+                else :
+                    echo "<p>No pending withdrawals found.</p>";
+                endif;
+                ?>
 
             </div>
         </div>
@@ -138,6 +95,33 @@
             </div>
         </div>
 
+        <?php
+
+        $args = array(
+            'post_type' => 'cashcred_withdrawal',
+            'posts_per_page' => -1,
+            'meta_query' => array(
+                array(
+                    'key' => 'status',
+                    'value' => 'Approved',
+                    'compare' => '=',
+                ),
+            ),
+        );
+
+
+        $approvedwithdrawals = new WP_Query($args);
+
+        if ($approvedwithdrawals->have_posts()) :
+            while ($approvedwithdrawals->have_posts()) : $approvedwithdrawals->the_post();
+
+            $member_name = get_the_author_meta('display_name', get_the_author_meta('ID'));
+            $amount = get_the_title();
+            $date = get_the_date('d.m.Y');
+            $payment_currency = get_post_meta(get_the_ID(), 'currency', true);
+            $approvedstatus = get_post_meta(get_the_ID(), 'status', true);
+            $payment_method = get_post_meta(get_the_ID(), 'gateway', true); ?>
+
     <div class="messages mt2">
         <div class="messages-sub-block">
 
@@ -149,19 +133,19 @@
                 <div class="message-text">
                     <div class="message-line spb">
                         <p class="message-line-name">Member:</p>
-                        <p class="message-line-value"><strong>John Troomer</strong><br></p>
+                        <p class="message-line-value"><strong><?php echo esc_html($member_name); ?></strong><br></p>
                     </div>
                     <div class="message-line spb">
                         <p class="message-line-name">Amount:</p>
-                        <p class="message-line-value"><strong>CHF 923</strong><br></p>
+                        <p class="message-line-value"><strong><?php echo esc_html($payment_currency); ?>  <?php echo esc_html($amount); ?></strong><br></p>
                     </div>
                     <div class="message-line spb">
                         <p class="message-line-name">Date:</p>
-                        <p class="message-line-value"><strong>21.10.2024</strong><br></p>
+                        <p class="message-line-value"><strong><?php echo esc_html($date); ?></strong><br></p>
                     </div>
                     <div class="message-line spb">
                         <p class="message-line-name">Payment method:</p>
-                        <p class="message-line-value"><strong>Bank Transfer</strong><br></p>
+                        <p class="message-line-value"><strong><?php echo esc_html($payment_method); ?></strong><br></p>
                     </div>
                 </div>
 
@@ -172,80 +156,18 @@
                         </div>
                     </div>
                     <div class="status">
-                        <p>Status: <span class="goldc">Processing</span></p>
+                        <p>Status: <span class="goldc"><?php echo esc_html($approvedstatus); ?></span></p>
                     </div>
                 </div>
             </div>
-
-            <div class="message-block message-media spb">
-                <div class="message-icon">
-                    <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/money2.svg" alt="money icon" />
-                </div>
-
-                <div class="message-text">
-                    <div class="message-line spb">
-                        <p class="message-line-name">Member:</p>
-                        <p class="message-line-value"><strong>John Troomer</strong><br></p>
-                    </div>
-                    <div class="message-line spb">
-                        <p class="message-line-name">Amount:</p>
-                        <p class="message-line-value"><strong>CHF 923</strong><br></p>
-                    </div>
-                    <div class="message-line spb">
-                        <p class="message-line-name">Date:</p>
-                        <p class="message-line-value"><strong>21.10.2024</strong><br></p>
-                    </div>
-                    <div class="message-line spb">
-                        <p class="message-line-name">Payment method:</p>
-                        <p class="message-line-value"><strong>Bank Transfer</strong><br></p>
-                    </div>
-                </div>
-
-                <div class="message-btns">
-                    <div class="btns-first-line fl-end">
-                        <div class="btn-block">
-                            <a href="#" class="btn green-btn">export</a>
-                        </div>
-                    </div>
-                    <div class="status">
-                        <p>Status: <span class="goldc">Processing</span></p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="message-block message-media spb">
-                <div class="message-icon">
-                    <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/money2.svg" alt="money icon" />
-                </div>
-                <div class="message-text">
-                    <div class="message-line spb">
-                        <p class="message-line-name">Member:</p>
-                        <p class="message-line-value"><strong>John Troomer</strong><br></p>
-                    </div>
-                    <div class="message-line spb">
-                        <p class="message-line-name">Amount:</p>
-                        <p class="message-line-value"><strong>CHF 923</strong><br></p>
-                    </div>
-                    <div class="message-line spb">
-                        <p class="message-line-name">Date:</p>
-                        <p class="message-line-value"><strong>21.10.2024</strong><br></p>
-                    </div>
-                    <div class="message-line spb">
-                        <p class="message-line-name">Payment method:</p>
-                        <p class="message-line-value"><strong>Bank Transfer</strong><br></p>
-                    </div>
-                </div>
-                <div class="message-btns">
-                    <div class="btns-first-line fl-end">
-                        <div class="btn-block">
-                        <a href="#" class="btn green-btn">export</a>
-                        </div>
-                    </div>
-                    <div class="status">
-                        <p>Status: <span class="goldc">Processing</span></p>
-                    </div>
-                </div>
-            </div>
+            
+            <?php
+            endwhile;
+                wp_reset_postdata();
+            else :
+                echo "<p>No pending withdrawals found.</p>";
+            endif;
+            ?>
 
         </div>
     </div>
