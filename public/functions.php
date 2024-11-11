@@ -719,3 +719,10 @@ function tsg_adjust_affiliate_earning() {
     wp_die();
 }
 
+//For testing perpose test
+function tsg_console_log($message, $data) {
+    $json_data = json_encode($data);
+    echo "<script>console.log('$message:', " . $json_data . ");</script>";
+}
+
+
