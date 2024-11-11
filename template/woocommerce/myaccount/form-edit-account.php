@@ -272,21 +272,21 @@ do_action('woocommerce_before_edit_account_form'); ?>
 			</p>
 
     		<!-- Sample Certificate Item -->
-			<div class="item w2">
+			<!-- <div class="item w2">
 				<div class="itemr">
 					<div class="award-block tc">
 						<a href="#" class="block-edit delete-certificate-btn" data-id="sample-certificate">
-							<img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" />
+							<img src="<?php //echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" />
 						</a>
 						<div class="award-icon">
-							<img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/award.svg" alt="award icon" />
+							<img src="<?php //echo THE_SYNERGY_GROUP_URL; ?>public/img/account/award.svg" alt="award icon" />
 						</div>
 						<p class="fs-20 mt18 tsg-certificate-name">
-							<?php esc_html_e('Microsoft Senior Professional Certificate', 'the-synergy-group-addon'); ?>
+							<?php //esc_html_e('Microsoft Senior Professional Certificate', 'the-synergy-group-addon'); ?>
 						</p>
 					</div>
 				</div>
-			</div>
+			</div> -->
 
     		<!-- Add New Certificate Button -->
 			<div class="item w2">
@@ -307,7 +307,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 				</div>
 			</div>
 		</div>
-		<div id="tsg-certificate-container"></div>
+		<div class="line-row icon-right va" id="tsg-certificate-container"></div>
 		<input type="hidden" id="tsg-certificate-input" value=""/>							
 	</div>
 
