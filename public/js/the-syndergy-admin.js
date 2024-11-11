@@ -30,36 +30,6 @@ jQuery(document).ready(function ($) {
       minimumInputLength: 2, 
       multiple: true, 
    });
-
-   $("#affiliate-profiles").select2({
-      ajax: {
-         url: tsg_public_ajax.ajax_url,
-         type: "POST",
-         dataType: "json",
-         delay: 250,
-         data: function (params) {
-            return {
-               action: "search_users", 
-               search: params.term, 
-            };
-         },
-         processResults: function (data) {
-            console.log("AJAX request successful:", data);
-            return {
-               results: data, 
-            };
-            // return {
-            //    results: data.map(item => ({
-            //       id: item.id,  
-            //       text: item.text 
-            //    })),
-            // };
-         },
-         cache: true,
-      },
-      placeholder: "Select members",
-      minimumInputLength: 2, 
-   });
    
 
    $("#communications-form").validate();
