@@ -719,10 +719,88 @@ function tsg_adjust_affiliate_earning() {
     wp_die();
 }
 
-//For testing perpose test
+//For testing perpose -> test
 function tsg_console_log($message, $data) {
     $json_data = json_encode($data);
     echo "<script>console.log('$message:', " . $json_data . ");</script>";
 }
+
+add_action('wp_ajax_load_affiliate_profiles', 'tsg_load_affiliate_profiles');
+
+function tsg_load_affiliate_profiles() {
+    $selectedProfile = isset($_POST['selectedProfile']) ? sanitize_text_field($_POST['selectedProfile']) : '';
+    $flipStatus = isset($_POST['flipStatus']) ? sanitize_text_field($_POST['flipStatus']) : '';
+
+    global $wpdb;
+    $referred_users_meta = $wpdb->get_var($wpdb->prepare(
+        "SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id = %d AND meta_key = 'referred_users'",
+        $selectedProfile
+    ));
+
+    $referral_code = $wpdb->get_var($wpdb->prepare(
+        "SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id = %d AND meta_key = 'referral_code'",
+        $selectedProfile
+    ));
+
+    $referred_users_count = 0;
+    if ($referred_users_meta) {
+        $referred_users = maybe_unserialize($referred_users_meta);
+        if (is_array($referred_users)) {
+            $referred_users_count = count($referred_users);
+        }
+    }
+
+    $current_status = get_user_meta($selectedProfile, 'referred_status', true);
+    if ($flipStatus === '1') {
+        $new_status = ($current_status === '1') ? '0' : '1';
+        update_user_meta($selectedProfile, 'referred_status', $new_status);
+    }
+    $status = ($current_status === '1') ? 'Active' : 'Inactive';
+
+    $sum_creds = $wpdb->get_var( $wpdb->prepare(
+        "SELECT SUM(creds) FROM {$wpdb->prefix}myCRED_log WHERE user_id = %d AND ref LIKE %s", $selectedProfile, '%ref_fee%'
+    ));
+     
+    // echo "Total creds for user $selectedProfile with ref containing 'ref_fee': " . $sum_creds;
+    // echo "Referral Code: " . esc_html($referral_code) . "<br>";
+    // echo "Referred Users Count: " . esc_html($referred_users_count);
+    // echo "Referred Status: " . esc_html($status);
+
+    echo '<div class="block-line spb media-full">
+        <div class="line-left">
+          <p>Affiliate ID</p>
+        </div>
+        <div class="line-right">
+          <p class="main-val2"><strong>' . esc_html($referral_code) . '</strong></p>
+        </div>
+      </div>
+      <div class="block-line spb media-full">
+        <div class="line-left">
+          <p>Total Number of Referrals</p>
+        </div>
+        <div class="line-right">
+          <p class="main-val2"><strong>' . esc_html($referred_users_count) . '</strong></p>
+        </div>
+      </div>
+      <div class="block-line spb media-full">
+        <div class="line-left">
+          <p>Earnings from Referrals</p>
+        </div>
+        <div class="line-right">
+          <p class="main-val2"><strong>' . $sum_creds . '</strong></p>
+        </div>
+      </div>
+      <div class="block-line spb media-full">
+        <div class="line-left">
+          <p>Affiliate Status</p>
+        </div>
+        <div class="line-right">
+          <p class="main-val2"><strong>' . esc_html($status) . '</strong></p>
+        </div>
+      </div>';
+
+    wp_die();
+}
+
 
 
