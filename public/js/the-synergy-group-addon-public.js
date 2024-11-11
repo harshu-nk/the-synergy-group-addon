@@ -1319,5 +1319,46 @@ jQuery(document).ready(function ($) {
      }
      
    });
+
+   
+   $("#affiliate-profiles").on("change", function() {
+      const data = {
+         action: "load_affiliate_profiles", 
+         selectedProfile: $(this).val(),
+         flipStatus: 0
+      };
+
+      loadAffiliateProfiles(data);
+
+   }); 
+
+   $("#tsg-affiliate-profiles-status-change").on("click", function() {
+      if (!$("#affiliate-profiles").val()) {
+         $('#tsg-affiliate-profiles-error-message').text("Please select a profile before submitting.").show();
+      } else {
+         $('#tsg-affiliate-profiles-error-message').text("").hide();
+         const data = {
+            action: "load_affiliate_profiles", 
+            selectedProfile: $("#affiliate-profiles").val(),
+            flipStatus: 1
+         };
+         loadAffiliateProfiles(data);
+      }
+   });
+
+   function loadAffiliateProfiles(data) {
+      $.ajax({
+         url: tsg_public_ajax.ajax_url,
+         type: "POST",
+         data: data,
+         success: function (response) {
+             console.log(response);
+             $('#tsg-affiliate-profiles-container').html(response);
+         },
+         error: function () {
+            alert("An error occurred.");
+         },
+     });
+   }
  
 });

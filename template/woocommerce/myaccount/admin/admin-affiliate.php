@@ -12,13 +12,13 @@
         </select>
       </div>
     </div>
-    <div class="block-lines mt2">
+    <div class="block-lines mt2" id="tsg-affiliate-profiles-container">
       <div class="block-line spb media-full">
         <div class="line-left">
           <p>Affiliate ID</p>
         </div>
         <div class="line-right">
-          <p class="main-val2"><strong>John00001</strong></p>
+          <p class="main-val2"><strong>.....</strong></p>
         </div>
       </div>
       <div class="block-line spb media-full">
@@ -26,7 +26,7 @@
           <p>Total Number of Referrals</p>
         </div>
         <div class="line-right">
-          <p class="main-val2"><strong>21</strong></p>
+          <p class="main-val2"><strong>.....</strong></p>
         </div>
       </div>
       <div class="block-line spb media-full">
@@ -34,7 +34,7 @@
           <p>Earnings from Referrals</p>
         </div>
         <div class="line-right">
-          <p class="main-val2"><strong>FS 120</strong></p>
+          <p class="main-val2"><strong>.....</strong></p>
         </div>
       </div>
       <div class="block-line spb media-full">
@@ -42,13 +42,14 @@
           <p>Affiliate Status</p>
         </div>
         <div class="line-right">
-          <p class="main-val2"><strong>Active</strong></p>
+          <p class="main-val2"><strong>.....</strong></p>
         </div>
       </div>
     </div>
     <div class="btn-block fl-end mt25">
-      <a href="#" class="btn btn-small minw">MAnage</a>
+      <a href="#" class="btn btn-small minw" id="tsg-affiliate-profiles-status-change">Change Status</a>
     </div>
+    <div class="" id="#tsg-affiliate-profiles-error-message" style="color: red;"></div>
   </div>
 
   <div class="account-text-block">
