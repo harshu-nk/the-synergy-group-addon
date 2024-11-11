@@ -30,6 +30,11 @@ jQuery(document).ready(function ($) {
       minimumInputLength: 1, 
       multiple: true, 
    });
+
+   $('#select-members').on('select2:select', function (e) {
+      var data = e.params.data;
+      console.log(data);
+   });
    
 
    $("#communications-form").validate();
