@@ -31,7 +31,7 @@ jQuery(document).ready(function ($) {
       multiple: true, 
    });
 
-   $("#affiliate-profiles").select2({
+   $("#affiliate-profiles, #admin-affiliate-member").select2({
       ajax: {
          url: tsg_public_ajax.ajax_url,
          type: "POST",
@@ -39,8 +39,8 @@ jQuery(document).ready(function ($) {
          delay: 250,
          data: function (params) {
             return {
-               action: "search_users", 
-               search: params.term, 
+               action: "search_affiliate_users", 
+               search: params.term || "", 
             };
          },
          processResults: function (data) {
@@ -52,7 +52,35 @@ jQuery(document).ready(function ($) {
          cache: true,
       },
       placeholder: "Select members",
-      minimumInputLength: 2, 
+      minimumInputLength: 0, 
+   });
+   
+   $("#admin-affiliate-transaction-type").select2({
+      ajax: {
+         url: tsg_public_ajax.ajax_url,
+         type: "POST",
+         dataType: "json",
+         delay: 250,
+         data: function (params) {
+            return {
+               action: "search_affiliate_transaction_type", 
+               search: params.term || "", 
+            };
+         },
+         processResults: function (data) {
+            console.log("AJAX request successful:", data);
+            return {
+               results: data, 
+            };
+         },
+         cache: true,
+      },
+      placeholder: "Select type",
+      minimumInputLength: 0, 
+   });
+
+   $("#affiliate-profiles, #admin-affiliate-member, #admin-affiliate-transaction-type").on("select2:open", function () {
+      $(this).select2("open");
    });
    
 

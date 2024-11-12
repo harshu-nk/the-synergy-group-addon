@@ -65,14 +65,22 @@
         </div>
         <div class="line-right input-field width3 from-to-block va">
           <div class="from-to">
-            <input type="text" id="date-from" name="date" data-position="bottom left" class="date-field" placeholder="Date From">
+            <input type="text" id="tsg-admin-transaction-history-date-from" name="tsg-admin-transaction-history-date-from" data-position="bottom left" class="date-field" placeholder="Date From">
           </div>
           <div class="from-to-divider-block">
             <div class="from-to-divider"></div>
           </div>
           <div class="from-to">
-            <input type="text" id="date-to" name="date" data-position="bottom left" class="date-field" placeholder="Date To">
+            <input type="text" id="tsg-admin-transaction-history-date-to" name="tsg-admin-transaction-history-date-to" data-position="bottom left" class="date-field" placeholder="Date To">
           </div>
+        </div>
+      </div>
+      <div class="block-line spb light-style">
+        <div class="line-left">
+          <p>Member:</p>
+        </div>
+        <div class="line-right input-field width3">
+          <select id="admin-affiliate-member" class="select2-list"></select>
         </div>
       </div>
       <div class="block-line spb">
@@ -80,75 +88,15 @@
           <p>Transaction Type</p>
         </div>
         <div class="line-right input-field width3">
-          <select id="transaction-type" multiple class="select2-list">
-            <option value="Type 1">Type 1</option>
-            <option value="Type 2">Type 2</option>
-            <option value="Type 3">Type 3</option>
-            <option value="Type 4">Type 4</option>
-            <option value="Type 5">Type 5</option>
-          </select>
+          <select id="admin-affiliate-transaction-type" class="select2-list"></select>
         </div>
       </div>
     </div>
 
     <h6 class="borderb"><strong>Cash Flow Reports</strong></h6>
-    <div class="messages">
-
-      <div class="message-block spb">
-        <div class="text-icon">
-          <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/transactions_blue.svg" alt="progress line icon"/>
-        </div>
-        <div class="message-text">
-          <p><strong>Transaction 02.09.2024 - 13:57</strong><br>
-          SF290 (affiliate partnership program)</p>
-        </div>
-        <div class="btn-block">
-          <a href="#" class="btn minw2">read more</a>
-        </div>
-      </div>
-
-      <div class="message-block spb">
-        <div class="text-icon">
-          <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/transactions_blue.svg" alt="progress line icon"/>
-        </div>
-        <div class="message-text">
-          <p><strong>Transaction 02.09.2024 - 13:57</strong><br>
-          SF290 (affiliate partnership program)</p>
-        </div>
-        <div class="btn-block">
-          <a href="#" class="btn minw2">read more</a>
-        </div>
-      </div>
-
-      <div class="message-block spb">
-        <div class="text-icon">
-          <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/transactions_blue.svg" alt="progress line icon"/>
-        </div>
-        <div class="message-text">
-          <p><strong>Transaction 02.09.2024 - 13:57</strong><br>
-          SF290 (affiliate partnership program)</p>
-        </div>
-        <div class="btn-block">
-          <a href="#" class="btn minw2">read more</a>
-        </div>
-      </div>
-
-      <div class="message-block spb">
-        <div class="text-icon">
-          <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/transactions_blue.svg" alt="progress line icon"/>
-        </div>
-        <div class="message-text">
-          <p><strong>Transaction 02.09.2024 - 13:57</strong><br>
-          SF290 (affiliate partnership program)</p>
-        </div>
-        <div class="btn-block">
-          <a href="#" class="btn minw2">read more</a>
-        </div>
-      </div>
-
-    </div>
+    <div class="messages tsg-display-transaction-history"></div>
     <div class="btn-block fl-end divide-top">
-      <a href="#" class="btn btn-small minw">All transactions</a>
+      <a href="#" class="btn btn-small minw" id="tsg-admin-transaction-filter-btn">Filter transactions</a>
     </div>
   </div>
 
@@ -176,41 +124,18 @@
           <p><strong>schedule: 12.10.2024</strong></p>
           <a href="#" class="icon-a"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon"></a>
         </div>
+        <div class="btn-block fl-end divide-top">
+          <a href="#" class="btn btn-small minw" id="tsg_save_payment_details">View payment history</a>
+        </div>
       </div>
     </div>
 
     <h6 class="borderb"><strong>Payout History</strong></h6>
-    <div class="messages">
-
-      <div class="message-block spb">
-        <div class="text-icon">
-          <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/avatar_profile.svg" alt="avatar icon" />
-        </div>
-        <div class="message-text">
-          <p><strong>Affiliate member: John Troomer</strong><br>
-            (Activity: 7 - Referrals Count: 12)</p>
-        </div>
-        <div class="btn-block">
-          <a href="#" class="btn minw2">view</a>
-        </div>
-      </div>
-
-      <div class="message-block spb">
-        <div class="text-icon">
-          <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/avatar_profile.svg" alt="avatar icon" />
-        </div>
-        <div class="message-text">
-          <p><strong>Affiliate member: Sarah Topler</strong><br>
-            (Activity: 5 - Referrals Count: 9)</p>
-        </div>
-        <div class="btn-block">
-          <a href="#" class="btn minw2">view</a>
-        </div>
-      </div>
+    <div class="messages" id="tsg_affiliate_payout_history">
 
     </div>
     <div class="btn-block fl-end divide-top">
-      <a href="#" class="btn btn-small minw">MAnage</a>
+      <a href="#" class="btn btn-small minw" id="tsg_view_payment_history">View payment history</a>
     </div>
 
   </div>
@@ -234,13 +159,39 @@
           <p>Adjust Fee Earnings</p>
         </div>
         <div class="line-right icon-right va light-style">
-          <p><strong id="tsg-commission-rate-display"><?php echo esc_html($commission_rate); ?> %</strong></p>
-          <p class="form-row">
-            <input type="number" min="0" max="100" class="woocommerce-Input woocommerce-Input--text input-text" name="tsg-commission-rate-input" id="tsg-commission-rate-input" autocomplete="given-name" value="" />
-          </p>
-          <a href="#" class="icon-a " id="tsg-adjust-fee-commission"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon"></a>
+          <p><strong id="tsg-commission-rate-display"><?php echo esc_html($commission_rate) . '%'; ?></strong></p>
+          <a href="#" class="icon-a tsg-item-toggle-btn" data-target="#tsg-commisson-rate-container" id="tsg-commisson-rate-toggle"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon"></a>
         </div>
       </div>
+
+      <div class="spb" id="tsg-commisson-rate-container" style="display: none;">
+        <div class="block-line">
+          <div class="line-left">
+            <p>Adjust Commission rate</p>
+          </div>
+          <div class="line-right icon-right va light-style">
+            <p class="form-row">
+              <input type="number" min="0" max="100" class="input-text" name="tsg-commission-rate-input" id="tsg-commission-rate-input" value="" />
+            </p>
+          </div>
+        </div>
+        <div class="block-line">
+          <div class="line-left">
+            <p>Reason</p>
+          </div>
+          <div class="line-right icon-right va light-style">
+            <p class="form-row">
+              <input type="text"  class="input-text" name="tsg-commission-reason" id="tsg-commission-reason" autocomplete="given-name" value="" />
+            </p>
+          </div>
+        </div>
+        <div class="block-line line-right va btns-part">
+          <div class="btn-block">
+            <a href="#" class="btn style2 minw" id="tsg-adjust-fee-commission">Change</a>
+          </div>
+        </div>
+      </div>
+
       <div id="tsg-commission-rate-error"></div>
       <div class="block-line spb small-line">
         <div class="line-left">
@@ -262,7 +213,7 @@
           </div>
         </div>
       </div>
-      <div class="block-line spb small-line" id="tsg-affiliate-audit-container"></div>
+      <div class="block-line spb small-line" id="tsg-affiliate-audit-container" ></div>
     </div>
 
   </div>
