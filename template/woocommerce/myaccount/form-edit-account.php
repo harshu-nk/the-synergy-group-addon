@@ -46,7 +46,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 			<h5><?php esc_html_e('Main', 'the-synergy-group-addon'); ?></h5>
 		</div>
 
-		<div class="fl mt25">
+		<div class="fl mt25 light-style">
 			<div class="profile-desc">
 				<div class="block-lines big-p">
 
@@ -115,7 +115,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 	do_action('woocommerce_edit_account_form_fields');
 	?>
 
-	<div class="account-text-block">
+	<div class="account-text-block light-style">
 		<div class="account-title-block spb">
 			<div class="title-content va">
 				<img width="42" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/message2.svg" alt="recent messages icon" />
@@ -180,7 +180,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 		</div>
 	</div>
 
-	<div class="account-text-block">
+	<div class="account-text-block light-style">
 		<div class="account-title-block spb">
 			<div class="title-content va">
 				<img width="47" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/social_media.svg" alt="social media icon" />
@@ -245,7 +245,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 		</div>
 	</div>
 
-	<div class="account-text-block">
+	<div class="account-text-block light-style">
 		<div class="account-title-block borderb spb">
 			<div class="title-content va">
 				<img width="55" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/certifications.svg" alt="certifications icon" />
@@ -311,7 +311,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 		<input type="hidden" id="tsg-certificate-input" value=""/>							
 	</div>
 
-	<div class="account-text-block">
+	<div class="account-text-block light-style">
 		<div class="account-title-block spb">
 			<div class="title-content va">
 				<img width="61" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/affiliate_status.svg" alt="affiliate status icon" />
@@ -354,7 +354,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 		</div>
 	</div>
 
-	<div class="account-text-block">
+	<div class="account-text-block light-style">
 		<div class="account-title-block spb">
 			<div class="title-content va">
 				<img width="55" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/members.svg" alt="referred members icon" />

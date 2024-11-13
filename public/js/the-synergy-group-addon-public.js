@@ -893,6 +893,26 @@ jQuery(document).ready(function ($) {
       },
    });
 
+   //Date picker
+   $("#tsg-admin-transaction-history-date-from").datepicker({
+      dateFormat: "dd-mm-yy",
+      showAnim: "slideDown",
+      position: {
+         my: "left top",
+         at: "left bottom",
+      },
+   });
+
+   //Date picker
+   $("#tsg-admin-transaction-history-date-to").datepicker({
+      dateFormat: "dd-mm-yy",
+      showAnim: "slideDown",
+      position: {
+         my: "left top",
+         at: "left bottom",
+      },
+   });
+
    $(".tsg-item-toggle-btn").on("click", function (e) {
       e.preventDefault();
 
@@ -1104,46 +1124,9 @@ jQuery(document).ready(function ($) {
       });
    }
 
-   //Transaction history display
+   //Transaction history display - Synergy manager
    $('#tsg-transaction-history-save').on('click', function(e) { 
       e.preventDefault(); 
-
-      if (transactionsHistoryValidate()) {
-         sendAllTransactionsHistory();
-      }
-   });
-
-   function transactionsHistoryValidate() {
-      let isValid = true;
-      let errorMsg = "";
-   
-      $('#tsg-all-transactions-error-msg').empty();
-      const currentDate = new Date().toISOString().split('T')[0];
-   
-      const dateFrom = $('#tsg-transaction-history-date-from').val();
-      const dateTo = $('#tsg-transaction-history-date-to').val();
-   
-      if (dateFrom > currentDate) {
-         errorMsg += "'Date From' cannot be in the future.<br>";
-         isValid = false;
-      }
-   
-      if (dateTo > currentDate) {
-         errorMsg += "'Date To' cannot be in the future.<br>";
-         isValid = false;
-      } else if (dateFrom && dateTo < dateFrom) {
-         errorMsg += "'Date To' cannot be earlier than 'Date From'.<br>";
-         isValid = false;
-      } 
-   
-      if (!isValid) {
-         $('#tsg-transaction-history-error-msg').html(errorMsg);
-      }
-   
-      return isValid;
-   }
-   
-   function sendAllTransactionsHistory() {
       const data = {
          dataSearch: $('#tsg-transaction-search-value').val(),
          dateFrom: $('#tsg-transaction-history-date-from').val(),
@@ -1152,7 +1135,62 @@ jQuery(document).ready(function ($) {
          member: $('#tsg-transaction-history-member').val(),
       };
 
+      $('#tsg-transaction-history-error-msg').empty();
+      const dateFrom = $('#tsg-transaction-history-date-from').val();
+      const dateTo = $('#tsg-transaction-history-date-to').val();
+      if (transactionsHistoryValidate(dateFrom, dateTo)) {
+         sendAllTransactionsHistory(data);
+      }
+   });
 
+   //Transaction history display - Admin
+   $('#tsg-admin-transaction-filter-btn').on('click', function(e) { 
+      e.preventDefault(); 
+      const data = {
+         dateFrom: $('#tsg-admin-transaction-history-date-from').val(),
+         dateTo: $('#tsg-admin-transaction-history-date-to').val(),
+         transactionType: $('#admin-affiliate-transaction-type').val(),
+         member: $('#admin-affiliate-member').val(),
+      };
+
+      $('#tsg-transaction-history-error-msg').empty();
+      const dateFrom = $('#tsg-admin-transaction-history-date-from').val();
+      const dateTo = $('#tsg-admin-transaction-history-date-to').val();
+      if (transactionsHistoryValidate(dateFrom, dateTo)) {
+         sendAllTransactionsHistory(data);
+      }
+   });
+
+   function transactionsHistoryValidate(dateFrom, dateTo) {
+      let isValid = true;
+      let errorMsg = "";
+     
+      const currentDate = new Date().toISOString().split('T')[0];
+     
+      if (dateFrom > currentDate) {
+          errorMsg += "'Date From' cannot be in the future.<br>";
+          isValid = false;
+      }
+     
+      if (dateTo > currentDate) {
+          errorMsg += "'Date To' cannot be in the future.<br>";
+          isValid = false;
+      }
+     
+      if (dateTo < dateFrom) {
+          errorMsg += "'Date To' cannot be earlier than 'Date From'.<br>";
+          isValid = false;
+      }
+     
+      if (!isValid) {
+          $('#tsg-transaction-history-error-msg').html(errorMsg);
+      }
+     
+      return isValid;
+  }
+  
+   
+   function sendAllTransactionsHistory(data) {
       $.ajax({
          url: tsg_public_ajax.ajax_url,
          type: "POST",
@@ -1162,10 +1200,10 @@ jQuery(document).ready(function ($) {
          },
          success: function (response) {
             console.log(response);
-            $('#tsg-display-transaction-history').html(response);
+            $('.tsg-display-transaction-history').html(response);
          },
          error: function () {
-            alert("An error occurred.");
+            $('.tsg-display-transaction-history').html("An error occurred.");
          },
       });
    }
@@ -1318,6 +1356,119 @@ jQuery(document).ready(function ($) {
          });
      }
      
+   });
+
+   
+   $("#affiliate-profiles").on("change", function() {
+      const data = {
+         action: "load_affiliate_profiles", 
+         selectedProfile: $(this).val(),
+         flipStatus: 0
+      };
+
+      loadAffiliateProfiles(data);
+
+   }); 
+
+   $("#tsg-affiliate-profiles-status-change").on("click", function() {
+      if (!$("#affiliate-profiles").val()) {
+         $('#tsg-affiliate-profiles-error-message').text("Please select a member before submitting.").show();
+      } else {
+         $('#tsg-affiliate-profiles-error-message').text("").hide();
+         const data = {
+            action: "load_affiliate_profiles", 
+            selectedProfile: $("#affiliate-profiles").val(),
+            flipStatus: 1
+         };
+         loadAffiliateProfiles(data);
+      }
+   });
+
+   function loadAffiliateProfiles(data) {
+      $.ajax({
+         url: tsg_public_ajax.ajax_url,
+         type: "POST",
+         data: data,
+         success: function (response) {
+             console.log(response);
+             $('#tsg-affiliate-profiles-container').html(response);
+         },
+         error: function () {
+            alert("An error occurred.");
+         },
+     });
+   }
+
+   $('#tsg-adjust-fee-commission').on('click', function(e) {
+      e.preventDefault();
+      var commissionRate = parseFloat($('#tsg-commission-rate-input').val());
+      var commissionReason = $('#tsg-commission-reason').val();
+
+      if (isNaN(commissionRate) || commissionRate < 0 || commissionRate > 100) {
+         $('#tsg-commission-rate-error').text("Please enter a value between 0 and 100.").show();
+      } else if (commissionReason === "") {
+         $('#tsg-commission-rate-error').text("Please enter a reason.").show();
+      } else {
+         $('#tsg-commission-rate-error').text("").hide();
+
+         const data = {
+            action: "save_affiliate_commission_rate", 
+            commission_rate: commissionRate,
+            commission_reason: commissionReason
+         };
+
+         $.ajax({
+            url: tsg_public_ajax.ajax_url,
+            type: 'POST',
+            data: data,
+            success: function(response) {
+               $('#tsg-commission-rate-display').html(response);
+               $('#tsg-commission-reason').val('');
+               $('#tsg-commission-rate-input').val('');
+               $('#tsg-commisson-rate-toggle').click();      
+            },
+            error: function() {
+               alert('An error occurred while saving the commission rate.');
+            }
+         });
+      }
+   });
+
+   $('#tsg-affiliate-audit-btn').on('click', function(e) {
+      e.preventDefault();
+
+      $.ajax({
+         url: tsg_public_ajax.ajax_url,
+         type: 'POST',
+         data: {
+            action: 'display_affiliate_commission_adjustment_history',
+         },
+         success: function(response) {
+            $('#tsg-affiliate-audit-container').html(response);
+         },
+         error: function() {
+            $('#tsg-affiliate-audit-container').html('An error occurred while saving the commission rate.');
+         }
+      });
+   });
+
+  
+   $('#tsg_view_payment_history').on('click', function(e) {
+      e.preventDefault();
+
+      $.ajax({
+         url: tsg_public_ajax.ajax_url,
+         type: 'POST',
+         data: {
+            action: 'display_affiliate_payout_details',
+         },
+         success: function(response) {
+            $('#tsg_affiliate_payout_history').html(response);
+         },
+         error: function() {
+            $('#tsg_affiliate_payout_history').html('An error occurred while saving the commission rate.');
+         }
+      });
    });
 
    $('.approve-button').on('click', function(event) {

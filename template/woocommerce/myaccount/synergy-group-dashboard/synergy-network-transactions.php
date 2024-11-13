@@ -288,7 +288,7 @@
   
   <h6 class="borderb" style="display: none;"><strong>Transaction History:</strong></h6>
   <div class="messages">
-    <div class="messages-sub-block last-bord" id="tsg-display-transaction-history">
+    <div class="messages-sub-block last-bord tsg-display-transaction-history" id="">
     </div>
   </div>
 

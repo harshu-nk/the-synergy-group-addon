@@ -719,7 +719,7 @@ function tsg_adjust_affiliate_earning() {
     wp_die();
 }
 
-//For testing perpose test
+//For testing perpose -> test
 function tsg_console_log($message, $data) {
     $json_data = json_encode($data);
     echo "<script>console.log('$message:', " . $json_data . ");</script>";
@@ -747,4 +747,302 @@ function update_withdrawal_status() {
 add_action('wp_ajax_update_withdrawal_status', 'update_withdrawal_status');
 add_action('wp_ajax_nopriv_update_withdrawal_status', 'update_withdrawal_status');
 
+function update_withdrawal_status() {
+    if (isset($_POST['post_id']) && isset($_POST['status'])) {
+        $post_id = intval($_POST['post_id']);
+        $status = sanitize_text_field($_POST['status']);
 
+        if (get_post($post_id) === null) {
+            wp_send_json_error('Invalid post ID');
+            return;
+        }
+
+        if (update_post_meta($post_id, 'status', $status)) {
+            wp_send_json_success('Status updated to ' . $status);
+        } else {
+            wp_send_json_error('Failed to update post meta');
+        }
+    } else {
+        wp_send_json_error('Missing parameters');
+    }
+}
+add_action('wp_ajax_update_withdrawal_status', 'update_withdrawal_status');
+add_action('wp_ajax_nopriv_update_withdrawal_status', 'update_withdrawal_status');
+
+add_action('wp_ajax_load_affiliate_profiles', 'tsg_load_affiliate_profiles');
+
+function tsg_load_affiliate_profiles() {
+    $selectedProfile = isset($_POST['selectedProfile']) ? sanitize_text_field($_POST['selectedProfile']) : '';
+    $flipStatus = isset($_POST['flipStatus']) ? sanitize_text_field($_POST['flipStatus']) : '';
+
+    global $wpdb;
+    $referred_users_meta = $wpdb->get_var($wpdb->prepare(
+        "SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id = %d AND meta_key = 'referred_users'",
+        $selectedProfile
+    ));
+
+    $referral_code = $wpdb->get_var($wpdb->prepare(
+        "SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id = %d AND meta_key = 'referral_code'",
+        $selectedProfile
+    ));
+
+    $referred_users_count = 0;
+    if ($referred_users_meta) {
+        $referred_users = maybe_unserialize($referred_users_meta);
+        if (is_array($referred_users)) {
+            $referred_users_count = count($referred_users);
+        }
+    }
+
+    $current_status = get_user_meta($selectedProfile, 'referred_status', true);
+    if ($flipStatus === '1') {
+        $new_status = ($current_status === '1') ? '0' : '1';
+        update_user_meta($selectedProfile, 'referred_status', $new_status);
+    }
+    $status = ($current_status === '1') ? 'Active' : 'Inactive';
+
+    $sum_creds = $wpdb->get_var( $wpdb->prepare(
+        "SELECT SUM(creds) FROM {$wpdb->prefix}myCRED_log WHERE user_id = %d AND ref LIKE %s", $selectedProfile, '%ref_fee%'
+    ));
+     
+    // echo "Total creds for user $selectedProfile with ref containing 'ref_fee': " . $sum_creds;
+    // echo "Referral Code: " . esc_html($referral_code) . "<br>";
+    // echo "Referred Users Count: " . esc_html($referred_users_count);
+    // echo "Referred Status: " . esc_html($status);
+
+    echo '<div class="block-line spb media-full">
+        <div class="line-left">
+          <p>Affiliate ID</p>
+        </div>
+        <div class="line-right">
+          <p class="main-val2"><strong>' . esc_html($referral_code) . '</strong></p>
+        </div>
+      </div>
+      <div class="block-line spb media-full">
+        <div class="line-left">
+          <p>Total Number of Referrals</p>
+        </div>
+        <div class="line-right">
+          <p class="main-val2"><strong>' . esc_html($referred_users_count) . '</strong></p>
+        </div>
+      </div>
+      <div class="block-line spb media-full">
+        <div class="line-left">
+          <p>Earnings from Referrals</p>
+        </div>
+        <div class="line-right">
+          <p class="main-val2"><strong>SF ' . $sum_creds . '</strong></p>
+        </div>
+      </div>
+      <div class="block-line spb media-full">
+        <div class="line-left">
+          <p>Affiliate Status</p>
+        </div>
+        <div class="line-right">
+          <p class="main-val2"><strong>' . esc_html($status) . '</strong></p>
+        </div>
+      </div>';
+
+    wp_die();
+}
+
+add_action('wp_ajax_save_affiliate_commission_rate', 'tsg_save_affiliate_commission_rate');
+
+function tsg_save_affiliate_commission_rate() {
+    $user_id = get_current_user_id();
+    $commission_rate = isset($_POST['commission_rate']) ? sanitize_text_field($_POST['commission_rate']) : '';
+    $commission_reason = isset($_POST['commission_reason']) ? sanitize_text_field($_POST['commission_reason']) : '';
+
+    $new_record = array(
+        'rate'   => $commission_rate,
+        'reason' => $commission_reason,
+        'date'   => current_time('Y-m-d'),
+        'time'   => current_time('H:i:s'),
+    );
+
+    $existing_records = get_user_meta($user_id, 'affiliate_commission_rate', true);
+    if (!is_array($existing_records)) {
+        $existing_records = array();
+    }
+
+    $existing_records[] = $new_record;
+    update_user_meta($user_id, 'affiliate_commission_rate', $existing_records);
+
+    echo $commission_rate . '%';
+    wp_die();
+}
+
+
+add_action('wp_ajax_search_affiliate_users', 'tsg_search_affiliate_users');
+
+function tsg_search_affiliate_users()
+{
+    global $wpdb;
+
+    $current_user_id = get_current_user_id();
+    $search = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
+
+    $referred_users_meta = get_user_meta($current_user_id, 'referred_users', true);
+
+    $referred_user_ids = !empty($referred_users_meta) ? maybe_unserialize($referred_users_meta) : [];
+
+    if (empty($referred_user_ids)) {
+        wp_send_json([]); 
+    }
+
+    $args = array(
+        'include'        => $referred_user_ids, 
+        'number'         => 10, 
+    );
+
+    if (!empty($search)) {
+        $args['search'] = '*' . esc_attr($search) . '*';
+        $args['search_columns'] = array('user_login', 'user_email', 'display_name');
+    }
+
+    $user_query = new WP_User_Query($args);
+
+    $results = array();
+    if (!empty($user_query->get_results())) {
+        foreach ($user_query->get_results() as $user) {
+            $results[] = array(
+                'id'   => $user->ID,
+                'text' => $user->display_name,
+            );
+        }
+    }
+
+    wp_send_json($results);
+}
+
+add_action('wp_ajax_display_affiliate_commission_adjustment_history', 'tsg_display_affiliate_commission_adjustment_history');
+
+function tsg_display_affiliate_commission_adjustment_history() {
+    
+    $user_id = get_current_user_id();
+    $affiliate_commission_meta = get_user_meta($user_id, 'affiliate_commission_rate', true);
+
+    if (!empty($affiliate_commission_meta) && is_array($affiliate_commission_meta)) {
+        $output = '';
+
+        foreach ($affiliate_commission_meta as $commission) {
+            $date = isset($commission['date']) ? $commission['date'] : '';
+            $time = isset($commission['time']) ? $commission['time'] : '';
+            $rate = isset($commission['rate']) ? $commission['rate'] : '';
+            $reason = isset($commission['reason']) ? $commission['reason'] : '';
+
+            $formatted_date = date('d.m.Y', strtotime($date));
+            $formatted_time = date('H:i', strtotime($time));
+
+            $output .= '
+            <div class="message-block spb">
+                <div class="text-icon">
+                    <img src="' . THE_SYNERGY_GROUP_URL . '/public/img/account/transactions_blue.svg" alt="progress line icon">
+                </div>
+                <div class="message-text">
+                    <p><strong>updated at: ' . esc_html($formatted_date) . ' - ' . esc_html($formatted_time) . '</strong><br>
+                    commission rate: ' . esc_html($rate) . '% (' . esc_html($reason) . ')</p>
+                </div>
+                <div class="btn-block">
+                    <a href="#" class="btn minw2">read more</a>
+                </div>
+            </div>';
+        }
+
+        echo $output;
+    } else {
+        echo 'No commission history available.';
+    }
+
+    wp_die();
+}
+
+
+add_action('wp_ajax_search_affiliate_transaction_type', 'tsg_search_affiliate_transaction_type');
+
+function tsg_search_affiliate_transaction_type() {
+    global $wpdb;
+
+    $results = $wpdb->get_results("SELECT DISTINCT ref FROM {$wpdb->prefix}myCRED_log");
+
+    $transaction_types = array();
+    if (!empty($results)) {
+        foreach ($results as $result) {
+            $transaction_types[] = array(
+                'id'   => $result->ref,
+                'text' => ucfirst(str_replace('_', ' ', $result->ref)),
+            );
+        }
+    }
+
+    wp_send_json($transaction_types);
+}
+
+add_action('wp_ajax_display_affiliate_payout_details', 'tsg_display_affiliate_payout_details');
+
+function tsg_display_affiliate_payout_details() {
+    global $wpdb;
+    $current_user_id = get_current_user_id();
+
+    $referred_users_meta = $wpdb->get_var($wpdb->prepare(
+        "SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id = %d AND meta_key = 'referred_users'",
+        $current_user_id
+    ));
+
+    $referred_users_count = 0;
+    $referred_user_ids = [];
+
+    if ($referred_users_meta) {
+        $referred_users = maybe_unserialize($referred_users_meta);
+        if (is_array($referred_users)) {
+            $referred_users_count = count($referred_users);
+            $referred_user_ids = $referred_users;
+        }
+    }
+
+    if (empty($referred_user_ids)) {
+        echo 'No referred users found.';
+        wp_die();
+    }
+
+    $referred_user_ids_placeholders = implode(', ', array_fill(0, count($referred_user_ids), '%d'));
+    
+    //change post type
+    $query = $wpdb->prepare(
+        "
+        SELECT p.post_content, p.post_date, u.display_name AS author_name
+        FROM {$wpdb->posts} AS p
+        INNER JOIN {$wpdb->users} AS u ON p.post_author = u.ID
+        WHERE p.post_type = %s
+        AND p.post_author IN ($referred_user_ids_placeholders)
+        ",
+        array_merge(['payout_method'], $referred_user_ids)
+    );
+
+    $results = $wpdb->get_results($query);
+
+    $output = '';
+    if ($results) {
+        foreach ($results as $row) {
+            $formatted_date = date('d.m.Y', strtotime($row->post_date));
+            $output .= '
+            <div class="message-block spb">
+                <div class="text-icon">
+                    <img src="' . THE_SYNERGY_GROUP_URL . '/public/img/account/avatar_profile.svg" alt="avatar icon">
+                </div>
+                <div class="message-text">
+                    <p><strong>Affiliate member: ' . esc_html($row->author_name) . '</strong><br>
+                        (' . esc_html($row->post_content) . ' - ' . esc_html($formatted_date) . ' - Referrals Count: ' . esc_html($referred_users_count) . ')</p>
+                </div>
+                <div class="btn-block">
+                    <a href="#" class="btn minw2">view</a>
+                </div>
+            </div>';
+        }
+    } else {
+        $output = '<p>No payout methods found for the referred users.</p>';
+    }
+
+    echo $output;
+    wp_die();
+}

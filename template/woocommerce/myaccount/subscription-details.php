@@ -460,15 +460,9 @@ $sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
 					<div class="btn-block">
 						<a href="#" class="btn style2 w100 user-withdraw-btn">Withdrawal</a>
 					</div>
-					<form class="user-withdraw-form" action="" method="POST">
-						<input type="hidden" name="form-type" value="withdraw-request" />
-						<p class="form-row">
-							<input type="number" class="woocommerce-Input woocommerce-Input--text input-text" name="withdraw_amount" id="withdraw_amount" value="<?php echo esc_attr($sf_balance); ?>" max="<?php echo esc_attr($sf_balance); ?>" />
-						</p>
-						<div class="btn-block">
-							<button type="submit" class="btn style2 w100">Submit</button>
-						</div>
-					</form>
+					<div class="user-withdraw-form" >
+						<?php echo do_shortcode( '[mycred_cashcred]' ) ?>
+					</div>
 				</div>
 			</div>
 
