@@ -200,18 +200,7 @@
                         <p>Member:</p>
                     </div>
                     <div class="line-right input-field width3">
-                        <select id="member" multiple class="select2-list" placeholder="Select">
-                        <option value="Member 1">Member 1</option>
-                        <option value="Member 2">Member 2</option>
-                        <option value="Member 3">Member 3</option>
-                        <option value="Member 4">Member 4</option>
-                        <option value="Member 5">Member 5</option>
-                        <option value="Member 6">Member 6</option>
-                        <option value="Member 7">Member 7</option>
-                        <option value="Member 8">Member 8</option>
-                        <option value="Member 9">Member 9</option>
-                        <option value="Member 10">Member 10</option>
-                        </select>
+                        <select id="withdrawals-member" multiple class="select2-list" placeholder="Select"></select>
                     </div>
                 </div>
 
@@ -224,10 +213,12 @@
                             <p class="select-name"><span>Select</span></p>
                             <input type="hidden" id="status" name="status" value="">
                             <ul class="select-list hauto">
-                                <li>Processing</li>
-                                <li>Pending</li>
-                                <li>Rejected</li>
-                                <li>completed</li>
+                                <?php
+                                $statuses = get_unique_statuses(); // Call the function to get unique statuses
+                                foreach ($statuses as $status) {
+                                    echo '<li>' . esc_html($status) . '</li>';
+                                }
+                                ?>
                             </ul>
                         </div>
                     </div>
@@ -239,7 +230,7 @@
             <div class="messages mt2">
                 <div class="messages-sub-block">
 
-                    <div class="message-block message-media spb">
+                    <!-- <div class="message-block message-media spb">
                         <div class="message-icon">
                             <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/money2.svg" alt="money icon" />
                         </div>
@@ -271,79 +262,13 @@
                                 <p>Status: <span class="goldc">Pending</span></p>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="message-block message-media spb">
-                        <div class="message-icon">
-                            <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/money2.svg" alt="money icon" />
-                        </div>
-                        <div class="message-text">
-                            <div class="message-line spb">
-                                <p class="message-line-name">Member:</p>
-                                <p class="message-line-value"><strong>John Troomer</strong><br></p>
-                            </div>
-                            <div class="message-line spb">
-                                <p class="message-line-name">Amount:</p>
-                                <p class="message-line-value"><strong>CHF 923</strong><br></p>
-                            </div>
-                            <div class="message-line spb">
-                                <p class="message-line-name">Date:</p>
-                                <p class="message-line-value"><strong>21.10.2024</strong><br></p>
-                            </div>
-                            <div class="message-line spb">
-                                <p class="message-line-name">Payment method:</p>
-                                <p class="message-line-value"><strong>Bank Transfer</strong><br></p>
-                            </div>
-                        </div>
-                        <div class="message-btns">
-                            <div class="btns-first-line fl-end">
-                                <div class="btn-block">
-                                    <a href="#" class="btn green-btn">export</a>
-                                </div>
-                            </div>
-                            <div class="status">
-                                <p>Status: <span class="redc">rejected</span></p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="message-block message-media spb">
-                        <div class="message-icon">
-                            <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/money2.svg" alt="money icon" />
-                        </div>
-                        <div class="message-text">
-                            <div class="message-line spb">
-                                <p class="message-line-name">Member:</p>
-                                <p class="message-line-value"><strong>John Troomer</strong><br></p>
-                            </div>
-                            <div class="message-line spb">
-                                <p class="message-line-name">Amount:</p>
-                                <p class="message-line-value"><strong>CHF 923</strong><br></p>
-                            </div>
-                            <div class="message-line spb">
-                                <p class="message-line-name">Date:</p>
-                                <p class="message-line-value"><strong>21.10.2024</strong><br></p>
-                            </div>
-                            <div class="message-line spb">
-                                <p class="message-line-name">Payment method:</p>
-                                <p class="message-line-value"><strong>Bank Transfer</strong><br></p>
-                            </div>
-                        </div>
-                        <div class="message-btns">
-                            <div class="btns-first-line fl-end">
-                                <div class="btn-block">
-                                    <a href="#" class="btn green-btn">export</a>
-                                </div>
-                            </div>
-                            <div class="status">
-                                <p>Status: <span class="greenc">completed</span></p>
-                            </div>
-                        </div>
-                    </div>
+                    </div> -->
 
                 </div>
             </div>
-
+            <div class="btn-block fl-end divide-top">
+                <a href="#" class="btn btn-small minw" id="tsg-admin-withdrawals-filter-btn">Filter withdrawals</a>
+            </div>
         </div>
 
         <div class="account-text-block">

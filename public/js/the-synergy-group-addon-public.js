@@ -1529,6 +1529,41 @@ jQuery(document).ready(function ($) {
                }
          }
       });
-});
+   });
  
+   $('.select-list li').on('click', function() {
+      const selectedStatus = $(this).text();
+      $('#status').val(selectedStatus); // Update hidden status input with selected value
+      $('.select-name span').text(selectedStatus); // Display selected status in the dropdown
+   });
+
+   $('#tsg-admin-withdrawals-filter-btn').on('click', function(event) {
+      event.preventDefault();
+
+      // Collect filter values
+      const dateFrom = $('#date-from').val();
+      const dateTo = $('#date-to').val();
+      const members = $('#withdrawals-member').val();
+      const status = $('#status').val();
+
+      // Send AJAX request with filter data
+      $.ajax({
+          url: tsg_public_ajax.ajax_url,
+          type: 'POST',
+          data: {
+              action: 'filter_withdrawal_history',
+              date_from: dateFrom,
+              date_to: dateTo,
+              members: members,
+              status: status
+          },
+          success: function(response) {
+              if (response.success) {
+                  $('.messages-sub-block').html(response.data.html);
+              } else {
+                  alert('Failed to fetch data: ' + response.data);
+              }
+          }
+      });
+   });
 });
