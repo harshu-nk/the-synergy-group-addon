@@ -92,12 +92,12 @@
         </div>
       </div>
     </div>
-
-    <h6 class="borderb"><strong>Cash Flow Reports</strong></h6>
-    <div class="messages tsg-display-transaction-history"></div>
-    <div class="btn-block fl-end divide-top">
+    <div class="btn-block fl-end">
       <a href="#" class="btn btn-small minw" id="tsg-admin-transaction-filter-btn">Filter transactions</a>
     </div>
+    <h6 class="borderb tsg-admin-cash-flow-title" style="display: none;"><strong>Cash Flow Reports</strong></h6>
+    <div class="messages tsg-display-transaction-history"></div>
+    
   </div>
 
   <div class="account-text-block">
@@ -111,16 +111,31 @@
         <div class="line-left">
           <p>Setup Payout Methods</p>
         </div>
+        <?php 
+          global $wpdb;
+          $current_user_id = get_current_user_id();
+          $payment_method = get_user_meta($current_user_id, 'payment_method', true);
+          $payment_schedule = get_user_meta($current_user_id, 'payment_schedule', true);
+          $payment_method = !empty($payment_method) ? esc_html($payment_method) : 'Not Set';
+          $payment_schedule = !empty($payment_schedule) ? esc_html($payment_schedule) : 'Not Set';
+        ?>
         <div class="line-right icon-right va">
-          <p><strong id="tsg-admin-setup-payment-method-display">bank transfer</strong></p>
+          <p><strong id="tsg-admin-setup-payment-method-display"><?php echo $payment_method; ?></strong></p>
           <a href="#" class="icon-a tsg-item-toggle-btn" data-target="#tsg-admin-setup-payment-method-container"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon"></a>
         </div>
       </div>
       <div class="block-line spb" id="tsg-admin-setup-payment-method-container" style="display: none;">
         <div class="line-left icon-right va">
-          <select id="tsg-admin-setup-payment-method" class="select2-list"></select>
+          <select id="tsg-admin-setup-payment-method" class="select2-list">
+            <option value="invoice">Invoice</option>
+            <option value="bank_transfer">Bank Transfer</option>
+            <option value="credit_card">Credit Card</option>
+            <option value="paypal">PayPal</option>
+            <option value="stripe">Stripe</option>
+            <option value="cash_on_delivery">Cash on Delivery</option>
+          </select>
         </div>
-        <div class="line-left fl-end divide-top">
+        <div class="line-left fl-end ">
           <a href="#" class="btn btn-small minw" id="tsg_save_payment_method">Save</a>
         </div>
       </div>
@@ -129,28 +144,26 @@
           <p>Processing Payouts</p>
         </div>
         <div class="line-right icon-right va">
-          <p><strong>schedule: <span id="tsg-admin-schedule-display">12.10.2024</span></strong></p>
+          <p><strong>schedule: <span id="tsg-admin-schedule-display"><?php echo $payment_schedule; ?></span></strong></p>
           <a href="#" class="icon-a tsg-item-toggle-btn" data-target="#tsg-admin-schedule-container"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon"></a>
         </div>
       </div>
       <div class="block-line spb" id="tsg-admin-schedule-container" style="display: none;">
         <div class="line-right icon-right va">
-          <select id="tsg-admin-setup-payment-method" class="select2-list"></select>
+          <input type="date" id="tsg-admin-schedule-date" name="" data-position="bottom left" class="date-field" placeholder="Date">
         </div>
-        <div class="line-left fl-end divide-top">
-          <a href="#" class="btn btn-small minw" id="tsg_save_schedule">Save</a>
+        <div class="line-left fl-end">
+          <a href="#" class="btn btn-small minw" id="tsg_admin_save_schedule">Save</a>
         </div>
       </div>
-      <div id="tsg-payment-method-save-error" style="color: red; display:none"></div>
+      <div id="tsg-payment-method-save-error" style="display:none"></div>
       
-    </div>
-
-    <h6 class="borderb"><strong>Payout History</strong></h6>
-    <div class="messages" id="tsg_affiliate_payout_history">
-
     </div>
     <div class="btn-block fl-end divide-top">
       <a href="#" class="btn btn-small minw" id="tsg_view_payment_history">View payment history</a>
+    </div>
+    <h6 class="borderb tsg-admin-payout-history-title" style="display: none;"><strong>Payout History</strong></h6>
+    <div class="messages" id="tsg_affiliate_payout_history">
     </div>
 
   </div>

@@ -893,6 +893,12 @@ jQuery(document).ready(function ($) {
       },
    });
 
+   //Date picker
+   $("#tsg-admin-schedule-date").datepicker({
+      dateFormat: "dd-mm-yy",
+      showAnim: "slideDown", 
+   });
+
 
    $(".tsg-item-toggle-btn").on("click", function (e) {
       e.preventDefault();
@@ -1182,10 +1188,12 @@ jQuery(document).ready(function ($) {
             data: data,
          },
          success: function (response) {
-            console.log(response);
+            // console.log(response);
+            $(".tsg-admin-cash-flow-title").show();
             $('.tsg-display-transaction-history').html(response);
          },
          error: function () {
+            $(".tsg-admin-cash-flow-title").show();
             $('.tsg-display-transaction-history').html("An error occurred.");
          },
       });
@@ -1446,9 +1454,11 @@ jQuery(document).ready(function ($) {
             action: 'display_affiliate_payout_details',
          },
          success: function(response) {
+            $(".tsg-admin-payout-history-title").show();
             $('#tsg_affiliate_payout_history').html(response);
          },
          error: function() {
+            $(".tsg-admin-payout-history-title").show();
             $('#tsg_affiliate_payout_history').html('An error occurred while saving the commission rate.');
          }
       });
@@ -1473,24 +1483,25 @@ jQuery(document).ready(function ($) {
             data: data,
             success: function(response) {
                $('#tsg-admin-setup-payment-method-display').html(response);
+               $("#tsg-payment-method-save-error").html('Payment method saved successfully.');
             },
             error: function() {
-               $("#tsg-payment-method-save-error").html('An error occurred.');
+               $("#tsg-payment-method-save-error").html('An error occurred.').css('color', 'red');;
             }
          });
       }
    });
 
-   ('#tsg_save_payment_method').on('click', function(e) {
+   ('#tsg_admin_save_schedule').on('click', function(e) {
       e.preventDefault();
-      payMethod = $("tsg-admin-setup-payment-method").val();
+      scheduleDate = $("tsg-admin-schedule-date").val();
 
-      if ( payMethod === "") {
-         $("#tsg-payment-method-save-error").html('Please select a payment method.');
+      if ( scheduleDate === "") {
+         $("#tsg-payment-method-save-error").html('Please select a schedule date.');
       } else {
          const data = {
-            action: "save_admin_payment_method", 
-            payment_method: payMethod,
+            action: "save_admin_schedule_date", 
+            schedule_date: scheduleDate,
          };
 
          $.ajax({
@@ -1498,10 +1509,11 @@ jQuery(document).ready(function ($) {
             type: 'POST',
             data: data,
             success: function(response) {
-               $('#tsg-admin-setup-payment-method-display').html(response);
+               $('#tsg-admin-schedule-display').html(response);
+               $("#tsg-payment-method-save-error").html('Payment schedule date saved successfully.');
             },
             error: function() {
-               $("#tsg-payment-method-save-error").html('An error occurred.');
+               $("#tsg-payment-method-save-error").html('An error occurred.').css('color', 'red');
             }
          });
       }
@@ -1565,6 +1577,8 @@ jQuery(document).ready(function ($) {
                }
          }
       });
-});
+   });
+
+   
  
 });

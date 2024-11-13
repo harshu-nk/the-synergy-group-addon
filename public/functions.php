@@ -745,25 +745,25 @@ function tsg_console_log($message, $data) {
     echo "<script>console.log('$message:', " . $json_data . ");</script>";
 }
 
-function update_withdrawal_status() {
-    if (isset($_POST['post_id']) && isset($_POST['status'])) {
-        $post_id = intval($_POST['post_id']);
-        $status = sanitize_text_field($_POST['status']);
+// function update_withdrawal_status() {
+//     if (isset($_POST['post_id']) && isset($_POST['status'])) {
+//         $post_id = intval($_POST['post_id']);
+//         $status = sanitize_text_field($_POST['status']);
 
-        if (get_post($post_id) === null) {
-            wp_send_json_error('Invalid post ID');
-            return;
-        }
+//         if (get_post($post_id) === null) {
+//             wp_send_json_error('Invalid post ID');
+//             return;
+//         }
 
-        if (update_post_meta($post_id, 'status', $status)) {
-            wp_send_json_success('Status updated to ' . $status);
-        } else {
-            wp_send_json_error('Failed to update post meta');
-        }
-    } else {
-        wp_send_json_error('Missing parameters');
-    }
-}
+//         if (update_post_meta($post_id, 'status', $status)) {
+//             wp_send_json_success('Status updated to ' . $status);
+//         } else {
+//             wp_send_json_error('Failed to update post meta');
+//         }
+//     } else {
+//         wp_send_json_error('Missing parameters');
+//     }
+// }
 add_action('wp_ajax_update_withdrawal_status', 'update_withdrawal_status');
 add_action('wp_ajax_nopriv_update_withdrawal_status', 'update_withdrawal_status');
 
@@ -1009,60 +1009,79 @@ function tsg_display_affiliate_payout_details() {
         $current_user_id
     ));
 
-    $referred_users_count = 0;
-    $referred_user_ids = [];
-
-    if ($referred_users_meta) {
-        $referred_users = maybe_unserialize($referred_users_meta);
-        if (is_array($referred_users)) {
-            $referred_users_count = count($referred_users);
-            $referred_user_ids = $referred_users;
-        }
-    }
-
-    if (empty($referred_user_ids)) {
-        echo 'No referred users found.';
-        wp_die();
-    }
-
-    $referred_user_ids_placeholders = implode(', ', array_fill(0, count($referred_user_ids), '%d'));
-    
-    //change post type
-    $query = $wpdb->prepare(
-        "
-        SELECT p.post_content, p.post_date, u.display_name AS author_name
-        FROM {$wpdb->posts} AS p
-        INNER JOIN {$wpdb->users} AS u ON p.post_author = u.ID
-        WHERE p.post_type = %s
-        AND p.post_author IN ($referred_user_ids_placeholders)
-        ",
-        array_merge(['payout_method'], $referred_user_ids)
-    );
-
-    $results = $wpdb->get_results($query);
+    $referred_user_ids = maybe_unserialize($referred_users_meta);
 
     $output = '';
-    if ($results) {
-        foreach ($results as $row) {
-            $formatted_date = date('d.m.Y', strtotime($row->post_date));
-            $output .= '
-            <div class="message-block spb">
-                <div class="text-icon">
-                    <img src="' . THE_SYNERGY_GROUP_URL . '/public/img/account/avatar_profile.svg" alt="avatar icon">
-                </div>
-                <div class="message-text">
-                    <p><strong>Affiliate member: ' . esc_html($row->author_name) . '</strong><br>
-                        (' . esc_html($row->post_content) . ' - ' . esc_html($formatted_date) . ' - Referrals Count: ' . esc_html($referred_users_count) . ')</p>
-                </div>
-                <div class="btn-block">
-                    <a href="#" class="btn minw2">view</a>
-                </div>
-            </div>';
+
+ 
+    if (!empty($referred_user_ids) && is_array($referred_user_ids)) {
+
+        foreach ($referred_user_ids as $referred_user_id) {
+            $results = $wpdb->get_results($wpdb->prepare(
+                "SELECT ID, post_author, post_date, post_title, post_content 
+                FROM {$wpdb->posts} 
+                WHERE post_author = %d AND post_type = 'cashcred_withdrawal'",
+                $referred_user_id
+            ));
+
+            if (!empty($results)) {
+                foreach ($results as $row) {
+                    $formatted_date = date('F j, Y', strtotime($row->post_date)); 
+                    $author_name = get_the_author_meta('display_name', $row->post_author);
+
+                    $referred_user_referred_users_meta = $wpdb->get_var($wpdb->prepare(
+                        "SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id = %d AND meta_key = 'referred_users'",
+                        $referred_user_id
+                    ));
+                
+                    $referred_user_referred_user_ids = maybe_unserialize($referred_user_referred_users_meta);
+                    $referred_users_count = count($referred_user_referred_user_ids); 
+
+                    $output .= '
+                        <div class="message-block spb">
+                            <div class="text-icon">
+                                <img src="' . THE_SYNERGY_GROUP_URL . '/public/img/account/avatar_profile.svg" alt="avatar icon">
+                            </div>
+                            <div class="message-text">
+                                <p><strong>Affiliate member: ' . esc_html($author_name) . '</strong><br>
+                                    (' . esc_html($row->post_title) . ' - ' . esc_html($formatted_date) . ' - Referrals Count: ' . esc_html($referred_users_count) . ')</p>
+                            </div>
+                            <div class="btn-block">
+                                <a href="#" class="btn minw2">view</a>
+                            </div>
+                        </div>';
+                }
+            }
         }
     } else {
-        $output = '<p>No payout methods found for the referred users.</p>';
+
+        $output .= '<p>No referred users with cashcred withdrawals found.</p>';
     }
 
     echo $output;
     wp_die();
 }
+
+add_action('wp_ajax_save_admin_payment_method', 'tsg_save_admin_payment_method');
+function tsg_save_admin_payment_method() {
+
+    $current_user_id = get_current_user_id();
+    $payment_method = sanitize_text_field($_POST['payment_method']);
+
+    update_user_meta($current_user_id, 'payment_method', $payment_method);
+
+    echo $payment_method;
+}
+
+add_action('wp_ajax_save_admin_schedule_date', 'tsg_save_admin_schedule_date');
+function tsg_save_admin_schedule_date() {
+
+    $current_user_id = get_current_user_id();
+    $schedule_date = sanitize_text_field($_POST['schedule_date']);
+
+    update_user_meta($current_user_id, 'payment_schedule', $schedule_date);
+
+    echo $schedule_date;
+}
+
+
