@@ -767,27 +767,6 @@ function tsg_console_log($message, $data) {
 add_action('wp_ajax_update_withdrawal_status', 'update_withdrawal_status');
 add_action('wp_ajax_nopriv_update_withdrawal_status', 'update_withdrawal_status');
 
-function update_withdrawal_status() {
-    if (isset($_POST['post_id']) && isset($_POST['status'])) {
-        $post_id = intval($_POST['post_id']);
-        $status = sanitize_text_field($_POST['status']);
-
-        if (get_post($post_id) === null) {
-            wp_send_json_error('Invalid post ID');
-            return;
-        }
-
-        if (update_post_meta($post_id, 'status', $status)) {
-            wp_send_json_success('Status updated to ' . $status);
-        } else {
-            wp_send_json_error('Failed to update post meta');
-        }
-    } else {
-        wp_send_json_error('Missing parameters');
-    }
-}
-add_action('wp_ajax_update_withdrawal_status', 'update_withdrawal_status');
-add_action('wp_ajax_nopriv_update_withdrawal_status', 'update_withdrawal_status');
 
 add_action('wp_ajax_load_affiliate_profiles', 'tsg_load_affiliate_profiles');
 
@@ -1083,5 +1062,151 @@ function tsg_save_admin_schedule_date() {
 
     echo $schedule_date;
 }
+
+
+
+function get_unique_statuses() {
+    global $wpdb;
+    $results = $wpdb->get_col("
+        SELECT DISTINCT meta_value 
+        FROM {$wpdb->postmeta} 
+        WHERE meta_key = 'status'
+    ");
+
+    return $results ? $results : ['Approved', 'Cancelled', 'Processing', 'Pending'];
+}
+
+function filter_withdrawal_history() {
+    $date_from = isset($_POST['date_from']) ? sanitize_text_field($_POST['date_from']) : '';
+    $date_to = isset($_POST['date_to']) ? sanitize_text_field($_POST['date_to']) : '';
+    $members = isset($_POST['members']) ? (array) $_POST['members'] : [];
+    $status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : '';
+
+    $args = array(
+        'post_type' => 'cashcred_withdrawal',
+        'posts_per_page' => -1,
+        'meta_query' => array(),
+    );
+
+    if (!empty($status)) {
+        $args['meta_query'][] = array(
+            'key' => 'status',
+            'value' => $status,
+            'compare' => '='
+        );
+    }
+
+    if (!empty($members)) {
+        $args['author__in'] = $members;
+    }
+
+    if (!empty($date_from) && !empty($date_to)) {
+        $args['date_query'] = array(
+            array(
+                'after' => $date_from,
+                'before' => $date_to,
+                'inclusive' => true,
+            ),
+        );
+    }
+
+    $query = new WP_Query($args);
+
+    ob_start();
+
+    if ($query->have_posts()) :
+        while ($query->have_posts()) : $query->the_post();
+
+            $member_name = get_the_author_meta('display_name', get_the_author_meta('ID'));
+            $amount = get_the_title();
+            $date = get_the_date('d.m.Y');
+            $payment_currency = get_post_meta(get_the_ID(), 'currency', true);
+            $status = get_post_meta(get_the_ID(), 'status', true);
+            $payment_method = get_post_meta(get_the_ID(), 'gateway', true);
+            ?>
+            <div class="message-block message-media spb">
+                <div class="message-icon">
+                    <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/money2.svg" alt="money icon" />
+                </div>
+                <div class="message-text">
+                    <div class="message-line spb">
+                        <p class="message-line-name">Member:</p>
+                        <p class="message-line-value"><strong><?php echo esc_html($member_name); ?></strong><br></p>
+                    </div>
+                    <div class="message-line spb">
+                        <p class="message-line-name">Amount:</p>
+                        <p class="message-line-value"><strong><?php echo esc_html($payment_currency); ?> <?php echo esc_html($amount); ?></strong><br></p>
+                    </div>
+                    <div class="message-line spb">
+                        <p class="message-line-name">Date:</p>
+                        <p class="message-line-value"><strong><?php echo esc_html($date); ?></strong><br></p>
+                    </div>
+                    <div class="message-line spb">
+                        <p class="message-line-name">Payment method:</p>
+                        <p class="message-line-value"><strong><?php echo esc_html($payment_method); ?></strong><br></p>
+                    </div>
+                </div>
+                <div class="message-btns">
+                    <div class="btns-first-line fl-end">
+                        <div class="btn-block">
+                            <a href="#" class="btn green-btn">export</a>
+                        </div>
+                    </div>
+                    <div class="status">
+                        <p>Status: <span class="goldc"><?php echo esc_html($status); ?></span></p>
+                    </div>
+                </div>
+            </div>
+            <?php
+        endwhile;
+        wp_reset_postdata();
+    else :
+        echo "<p>No withdrawals found for the selected criteria.</p>";
+    endif;
+
+    $html = ob_get_clean();
+    wp_send_json_success(['html' => $html]);
+}
+add_action('wp_ajax_filter_withdrawal_history', 'filter_withdrawal_history');
+add_action('wp_ajax_nopriv_filter_withdrawal_history', 'filter_withdrawal_history');
+
+function save_fee_structure() {
+    // Check if fees data is provided
+    if (isset($_POST['fees']) && is_array($_POST['fees'])) {
+        $fees = $_POST['fees'];
+
+        // Debug log for received data
+        error_log("Received Fees Data: " . print_r($fees, true));
+
+        $success = true;
+        foreach ($fees as $fee) {
+            // Validate each item has product_id and fee_structure
+            if (isset($fee['product_id']) && isset($fee['fee_structure'])) {
+                $product_id = intval($fee['product_id']);
+                $fee_structure = sanitize_text_field($fee['fee_structure']);
+
+                // Save the fee structure as post meta
+                if (!update_post_meta($product_id, 'fee_structure', $fee_structure)) {
+                    $success = false;
+                    error_log("Failed to save fee structure for product ID: $product_id");
+                }
+            } else {
+                $success = false;
+                error_log("Missing product ID or fee structure in item: " . print_r($fee, true));
+            }
+        }
+
+        // Send response based on success or failure
+        if ($success) {
+            wp_send_json_success('Fee structures saved successfully.');
+        } else {
+            wp_send_json_error('Failed to save one or more fee structures.');
+        }
+    } else {
+        wp_send_json_error('Invalid data provided.');
+    }
+}
+add_action('wp_ajax_save_fee_structure', 'save_fee_structure');
+add_action('wp_ajax_nopriv_save_fee_structure', 'save_fee_structure');
 
 

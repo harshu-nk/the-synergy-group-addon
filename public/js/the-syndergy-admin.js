@@ -1,6 +1,6 @@
 jQuery(document).ready(function ($) {
    //console.log('select2 function initialized');
-   $("#select-members").select2({
+   $("#select-members, #withdrawals-member").select2({
       ajax: {
          url: tsg_public_ajax.ajax_url,
          type: "POST",
