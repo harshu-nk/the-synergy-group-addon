@@ -745,6 +745,50 @@ function tsg_console_log($message, $data) {
     echo "<script>console.log('$message:', " . $json_data . ");</script>";
 }
 
+function update_withdrawal_status() {
+    if (isset($_POST['post_id']) && isset($_POST['status'])) {
+        $post_id = intval($_POST['post_id']);
+        $status = sanitize_text_field($_POST['status']);
+
+        if (get_post($post_id) === null) {
+            wp_send_json_error('Invalid post ID');
+            return;
+        }
+
+        if (update_post_meta($post_id, 'status', $status)) {
+            wp_send_json_success('Status updated to ' . $status);
+        } else {
+            wp_send_json_error('Failed to update post meta');
+        }
+    } else {
+        wp_send_json_error('Missing parameters');
+    }
+}
+add_action('wp_ajax_update_withdrawal_status', 'update_withdrawal_status');
+add_action('wp_ajax_nopriv_update_withdrawal_status', 'update_withdrawal_status');
+
+function update_withdrawal_status() {
+    if (isset($_POST['post_id']) && isset($_POST['status'])) {
+        $post_id = intval($_POST['post_id']);
+        $status = sanitize_text_field($_POST['status']);
+
+        if (get_post($post_id) === null) {
+            wp_send_json_error('Invalid post ID');
+            return;
+        }
+
+        if (update_post_meta($post_id, 'status', $status)) {
+            wp_send_json_success('Status updated to ' . $status);
+        } else {
+            wp_send_json_error('Failed to update post meta');
+        }
+    } else {
+        wp_send_json_error('Missing parameters');
+    }
+}
+add_action('wp_ajax_update_withdrawal_status', 'update_withdrawal_status');
+add_action('wp_ajax_nopriv_update_withdrawal_status', 'update_withdrawal_status');
+
 add_action('wp_ajax_load_affiliate_profiles', 'tsg_load_affiliate_profiles');
 
 function tsg_load_affiliate_profiles() {

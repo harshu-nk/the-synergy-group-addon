@@ -1,4 +1,4 @@
-$(document).ready(function(){
+jQuery(document).ready(function($){
     
     $('.date-field').datepicker({
         // multipleDates: 2,
