@@ -1464,17 +1464,17 @@ jQuery(document).ready(function ($) {
       });
    });
 
-   // ('#tsg_save_payment_method').on('click', function(e) {
-   //    e.preventDefault();
-   //    payMethod = $("tsg-admin-setup-payment-method").val();
+   ('#tsg_save_payment_method').on('click', function(e) {
+      e.preventDefault();
+      payMethod = $("tsg-admin-setup-payment-method").val();
 
-   //    if ( payMethod === "") {
-   //       $("#tsg-payment-method-save-error").html('Please select a payment method.');
-   //    } else {
-   //       const data = {
-   //          action: "save_admin_payment_method", 
-   //          payment_method: payMethod,
-   //       };
+      if ( payMethod === "") {
+         $("#tsg-payment-method-save-error").html('Please select a payment method.');
+      } else {
+         const data = {
+            action: "save_admin_payment_method", 
+            payment_method: payMethod,
+         };
 
          $.ajax({
             url: tsg_public_ajax.ajax_url,
