@@ -1150,6 +1150,25 @@ jQuery(document).ready(function ($) {
       }
    });
 
+   //All transaction history display - Admin
+   $('#tsg-admin-all-transaction-filter-btn').on('click', function(e) { 
+      e.preventDefault(); 
+      const data = {
+         dateFrom: $('#tsg-admin-all-transaction-history-date-from').val(),
+         dateTo: $('#tsg-admin-all-transaction-history-date-to').val(),
+         transactionType: $('#admin-all-affiliate-transaction-type').val(),
+         member: $('#admin-all-affiliate-member').val(),
+         filter: 0
+      };
+
+      $('#tsg-transaction-history-error-msg').empty();
+      const dateFrom = $('#tsg-admin-all-transaction-history-date-from').val();
+      const dateTo = $('#tsg-admin-all-transaction-history-date-to').val();
+      if (transactionsHistoryValidate(dateFrom, dateTo)) {
+         sendAllTransactionsHistory(data);
+      }
+   });
+
    function transactionsHistoryValidate(dateFrom, dateTo) {
       let isValid = true;
       let errorMsg = "";

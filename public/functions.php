@@ -989,15 +989,13 @@ function tsg_display_affiliate_payout_details() {
     ));
 
     $referred_user_ids = maybe_unserialize($referred_users_meta);
-
     $output = '';
 
- 
     if (!empty($referred_user_ids) && is_array($referred_user_ids)) {
 
         foreach ($referred_user_ids as $referred_user_id) {
             $results = $wpdb->get_results($wpdb->prepare(
-                "SELECT ID, post_author, post_date, post_title, post_content 
+                "SELECT ID, post_author, post_date, post_title 
                 FROM {$wpdb->posts} 
                 WHERE post_author = %d AND post_type = 'cashcred_withdrawal'",
                 $referred_user_id
@@ -1005,16 +1003,16 @@ function tsg_display_affiliate_payout_details() {
 
             if (!empty($results)) {
                 foreach ($results as $row) {
-                    $formatted_date = date('F j, Y', strtotime($row->post_date)); 
+                    $formatted_date = date('F j, Y', strtotime($row->post_date));
                     $author_name = get_the_author_meta('display_name', $row->post_author);
 
                     $referred_user_referred_users_meta = $wpdb->get_var($wpdb->prepare(
                         "SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id = %d AND meta_key = 'referred_users'",
                         $referred_user_id
                     ));
-                
+
                     $referred_user_referred_user_ids = maybe_unserialize($referred_user_referred_users_meta);
-                    $referred_users_count = count($referred_user_referred_user_ids); 
+                    $referred_users_count = !empty($referred_user_referred_user_ids) && is_array($referred_user_referred_user_ids) ? count($referred_user_referred_user_ids) : 0;
 
                     $output .= '
                         <div class="message-block spb">
@@ -1032,13 +1030,13 @@ function tsg_display_affiliate_payout_details() {
                 }
             }
         }
-    } else {
+    }
 
+    if (empty($output)) {
         $output .= '<p>No referred users with cashcred withdrawals found.</p>';
     }
 
     echo $output;
-    wp_die();
 }
 
 add_action('wp_ajax_save_admin_payment_method', 'tsg_save_admin_payment_method');
@@ -1062,8 +1060,6 @@ function tsg_save_admin_schedule_date() {
 
     echo $schedule_date;
 }
-
-
 
 function get_unique_statuses() {
     global $wpdb;
@@ -1167,6 +1163,7 @@ function filter_withdrawal_history() {
     $html = ob_get_clean();
     wp_send_json_success(['html' => $html]);
 }
+
 add_action('wp_ajax_filter_withdrawal_history', 'filter_withdrawal_history');
 add_action('wp_ajax_nopriv_filter_withdrawal_history', 'filter_withdrawal_history');
 

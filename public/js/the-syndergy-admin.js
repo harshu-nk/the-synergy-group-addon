@@ -54,8 +54,32 @@ jQuery(document).ready(function ($) {
       placeholder: "Select members",
       minimumInputLength: 0, 
    });
+
+   $("#admin-all-affiliate-member").select2({
+      ajax: {
+         url: tsg_public_ajax.ajax_url,
+         type: "POST",
+         dataType: "json",
+         delay: 250,
+         data: function (params) {
+            return {
+               action: "search_users", 
+               search: params.term || "", 
+            };
+         },
+         processResults: function (data) {
+            console.log("AJAX request successful:", data);
+            return {
+               results: data, 
+            };
+         },
+         cache: true,
+      },
+      placeholder: "Select members",
+      minimumInputLength: 0, 
+   });
    
-   $("#admin-affiliate-transaction-type").select2({
+   $("#admin-affiliate-transaction-type, #admin-all-affiliate-transaction-type").select2({
       ajax: {
          url: tsg_public_ajax.ajax_url,
          type: "POST",
@@ -79,7 +103,7 @@ jQuery(document).ready(function ($) {
       minimumInputLength: 0, 
    });
 
-   $("#affiliate-profiles, #admin-affiliate-member, #admin-affiliate-transaction-type").on("select2:open", function () {
+   $("#affiliate-profiles, #admin-affiliate-member, #admin-affiliate-transaction-type, #admin-all-affiliate-member, #admin-all-affiliate-transaction-type").on("select2:open", function () {
       $(this).select2("open");
    });
    
