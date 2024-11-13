@@ -17,7 +17,7 @@
         <div class="line-right input-field width2">
           <div class="select">
             <p class="select-name"><span>10%</span></p>
-            <input type="hidden" id="plan1" name="plan1" value="10%">
+            <input type="hidden" id="fee-setting-plan1" name="plan1" value="10%" data-product-id="239">
             <ul class="select-list">
               <li>0.5%</li>
               <li>1%</li>
@@ -51,7 +51,7 @@
         <div class="line-right input-field width2">
           <div class="select">
             <p class="select-name"><span>7.5%</span></p>
-            <input type="hidden" id="plan2" name="plan2" value="7.5%">
+            <input type="hidden" id="fee-setting-plan2" name="plan2" value="7.5%" data-product-id="212">
             <ul class="select-list">
               <li>0.5%</li>
               <li>1%</li>
@@ -85,7 +85,7 @@
         <div class="line-right input-field width2">
           <div class="select">
             <p class="select-name"><span>5%</span></p>
-            <input type="hidden" id="plan3" name="plan3" value="5%">
+            <input type="hidden" id="fee-setting-plan3" name="plan3" value="5%" data-product-id="235">
             <ul class="select-list">
               <li>0.5%</li>
               <li>1%</li>
@@ -111,7 +111,9 @@
           </div>
         </div>
       </div>
-
+      <div class="btn-block fl-end divide-top">
+        <a href="#" class="btn btn-small minw" id="tsg-admin-fee-structure-save-btn">Save</a>
+      </div>
     </div>
 
     <h6><strong>SF Benefit</strong></h6>
@@ -215,7 +217,9 @@
           </div>
         </div>
       </div>
-
+      <div class="btn-block fl-end divide-top">
+        <a href="#" class="btn btn-small minw" id="tsg-admin-sf-benefits-save-btn">Save</a>
+      </div>
     </div>
 
     <h6><strong>Number of Products listed</strong></h6>
@@ -295,7 +299,9 @@
           </div>
         </div>
       </div>
-
+      <div class="btn-block fl-end divide-top">
+        <a href="#" class="btn btn-small minw" id="tsg-admin-product-listed-save-btn">Save</a>
+      </div>
     </div>
 
   </div>

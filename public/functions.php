@@ -1150,3 +1150,44 @@ function filter_withdrawal_history() {
 }
 add_action('wp_ajax_filter_withdrawal_history', 'filter_withdrawal_history');
 add_action('wp_ajax_nopriv_filter_withdrawal_history', 'filter_withdrawal_history');
+
+function save_fee_structure() {
+    // Check if fees data is provided
+    if (isset($_POST['fees']) && is_array($_POST['fees'])) {
+        $fees = $_POST['fees'];
+
+        // Debug log for received data
+        error_log("Received Fees Data: " . print_r($fees, true));
+
+        $success = true;
+        foreach ($fees as $fee) {
+            // Validate each item has product_id and fee_structure
+            if (isset($fee['product_id']) && isset($fee['fee_structure'])) {
+                $product_id = intval($fee['product_id']);
+                $fee_structure = sanitize_text_field($fee['fee_structure']);
+
+                // Save the fee structure as post meta
+                if (!update_post_meta($product_id, 'fee_structure', $fee_structure)) {
+                    $success = false;
+                    error_log("Failed to save fee structure for product ID: $product_id");
+                }
+            } else {
+                $success = false;
+                error_log("Missing product ID or fee structure in item: " . print_r($fee, true));
+            }
+        }
+
+        // Send response based on success or failure
+        if ($success) {
+            wp_send_json_success('Fee structures saved successfully.');
+        } else {
+            wp_send_json_error('Failed to save one or more fee structures.');
+        }
+    } else {
+        wp_send_json_error('Invalid data provided.');
+    }
+}
+add_action('wp_ajax_save_fee_structure', 'save_fee_structure');
+add_action('wp_ajax_nopriv_save_fee_structure', 'save_fee_structure');
+
+

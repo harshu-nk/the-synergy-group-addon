@@ -1454,58 +1454,31 @@ jQuery(document).ready(function ($) {
       });
    });
 
-   
-   $('#tsg_save_payment_method').on('click', function(e) {
-      e.preventDefault();
-      payMethod = $("tsg-admin-setup-payment-method").val();
+   // ('#tsg_save_payment_method').on('click', function(e) {
+   //    e.preventDefault();
+   //    payMethod = $("tsg-admin-setup-payment-method").val();
 
-      if ( payMethod === "") {
-         $("#tsg-payment-method-save-error").html('Please select a payment method.');
-      } else {
-         const data = {
-            action: "save_admin_payment_method", 
-            payment_method: payMethod,
-         };
+   //    if ( payMethod === "") {
+   //       $("#tsg-payment-method-save-error").html('Please select a payment method.');
+   //    } else {
+   //       const data = {
+   //          action: "save_admin_payment_method", 
+   //          payment_method: payMethod,
+   //       };
 
-         $.ajax({
-            url: tsg_public_ajax.ajax_url,
-            type: 'POST',
-            data: data,
-            success: function(response) {
-               $('#tsg-admin-setup-payment-method-display').html(response);
-            },
-            error: function() {
-               $("#tsg-payment-method-save-error").html('An error occurred.');
-            }
-         });
-      }
-   });
-
-   ('#tsg_save_payment_method').on('click', function(e) {
-      e.preventDefault();
-      payMethod = $("tsg-admin-setup-payment-method").val();
-
-      if ( payMethod === "") {
-         $("#tsg-payment-method-save-error").html('Please select a payment method.');
-      } else {
-         const data = {
-            action: "save_admin_payment_method", 
-            payment_method: payMethod,
-         };
-
-         $.ajax({
-            url: tsg_public_ajax.ajax_url,
-            type: 'POST',
-            data: data,
-            success: function(response) {
-               $('#tsg-admin-setup-payment-method-display').html(response);
-            },
-            error: function() {
-               $("#tsg-payment-method-save-error").html('An error occurred.');
-            }
-         });
-      }
-   });
+   //       $.ajax({
+   //          url: tsg_public_ajax.ajax_url,
+   //          type: 'POST',
+   //          data: data,
+   //          success: function(response) {
+   //             $('#tsg-admin-setup-payment-method-display').html(response);
+   //          },
+   //          error: function() {
+   //             $("#tsg-payment-method-save-error").html('An error occurred.');
+   //          }
+   //       });
+   //    }
+   // });
 
    $('.approve-button').on('click', function(event) {
       event.preventDefault();
@@ -1602,4 +1575,69 @@ jQuery(document).ready(function ($) {
           }
       });
    });
+
+
+   //Fee Structure in Fee Settings Page
+   $('#fee-setting-plan1 .select-list li').on('click', function() {
+      const selectedFee = $(this).text();
+      $('#fee-setting-plan1').val(selectedFee);
+      console.log("Selected Fee for Plan 1:", selectedFee);
+   });
+
+   $('#fee-setting-plan2 .select-list li').on('click', function() {
+         const selectedFee = $(this).text();
+         $('#fee-setting-plan2').val(selectedFee);
+         console.log("Selected Fee for Plan 2:", selectedFee);
+   });
+
+   $('#fee-setting-plan3 .select-list li').on('click', function() {
+         const selectedFee = $(this).text();
+         $('#fee-setting-plan3').val(selectedFee);
+         console.log("Selected Fee for Plan 3:", selectedFee);
+   });
+
+   $('#tsg-admin-fee-structure-save-btn').on('click', function(event) {
+         event.preventDefault();
+
+         const dataToSave = [];
+
+         $('input[type="hidden"][id^="fee-setting-plan"]').each(function() {
+            const selectedFee = $(this).val();
+            const productID = $(this).data('product-id');
+
+            if (selectedFee) {
+               dataToSave.push({ product_id: productID, fee_structure: selectedFee });
+            }
+         });
+
+         console.log("Data to save:", dataToSave);
+
+         if (dataToSave.length === 0) {
+            alert("Please select a fee structure for at least one plan before saving.");
+            return;
+         }
+         $.ajax({
+            url: tsg_public_ajax.ajax_url,
+            type: 'POST',
+            data: {
+               action: 'save_fee_structure',
+               fees: dataToSave
+            },
+            success: function(response) {
+               console.log("AJAX Response:", response);
+               if (response.success) {
+                     alert('Fee structures saved successfully!');
+               } else {
+                     alert('Failed to save fee structures: ' + response.data);
+               }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+               console.error("AJAX Error:", textStatus, errorThrown);
+            }
+         });
+   });       
+   
+
+   //SF Benefits in Fee Settings Page
+   
 });
