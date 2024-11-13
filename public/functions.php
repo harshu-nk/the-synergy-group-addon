@@ -439,12 +439,21 @@ add_action('wp_ajax_display_all_transactions_history', 'tsg_display_all_transact
 function tsg_display_all_transactions_history() {
 
     global $wpdb;
+    $current_user_id = get_current_user_id();
 
     $dataSearch = isset($_POST['data']['dataSearch']) ? sanitize_text_field($_POST['data']['dataSearch']) : '';
     $dateFrom = isset($_POST['data']['dateFrom']) ? sanitize_text_field($_POST['data']['dateFrom']) : '';
     $dateTo = isset($_POST['data']['dateTo']) ? sanitize_text_field($_POST['data']['dateTo']) : '';
     $transactionType = isset($_POST['data']['transactionType']) ? sanitize_text_field($_POST['data']['transactionType']) : '';
     $member = isset($_POST['data']['member']) ? intval($_POST['data']['member']) : 0;
+    $filter = isset($_POST['data']['filter']) ? intval($_POST['data']['filter']) : 0;
+
+    if (!empty($dateFrom)) {
+        $dateFrom = DateTime::createFromFormat('m/d/Y', $dateFrom)->format('Y-m-d');
+    }
+    if (!empty($dateTo)) {
+        $dateTo = DateTime::createFromFormat('m/d/Y', $dateTo)->format('Y-m-d');
+    }
 
     $query = "SELECT * FROM {$wpdb->prefix}myCRED_log WHERE 1=1";
     $params = [];
@@ -469,9 +478,20 @@ function tsg_display_all_transactions_history() {
         $params[] = $transactionType;
     }
 
-    if ($member > 0) {
+    if ( $member > 0 ) {
         $query .= " AND user_id = %d";
         $params[] = $member;
+    } elseif (empty($transactionType) && $filter === 1) {
+        $referred_users_meta = get_user_meta($current_user_id, 'referred_users', true);
+        $referred_user_ids = !empty($referred_users_meta) ? maybe_unserialize($referred_users_meta) : [];
+
+        if (!empty($referred_user_ids)) {
+            $placeholders = implode(',', array_fill(0, count($referred_user_ids), '%d'));
+            $query .= " AND user_id IN ($placeholders)";
+            $params = array_merge($params, $referred_user_ids);
+        } else {
+            $query .= " AND user_id = 0";
+        }
     }
 
     if (!empty($params)) {

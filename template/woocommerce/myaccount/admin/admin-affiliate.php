@@ -65,7 +65,7 @@
         </div>
         <div class="line-right input-field width3 from-to-block va">
           <div class="from-to">
-            <input type="text" id="tsg-admin-transaction-history-date-from" name="tsg-admin-transaction-history-date-from" data-position="bottom left" class="date-field" placeholder="Date From">
+            <input type="text" id="tsg-admin-transaction-history-date-from" name="" data-position="bottom left" class="date-field" placeholder="Date From">
           </div>
           <div class="from-to-divider-block">
             <div class="from-to-divider"></div>
@@ -112,8 +112,16 @@
           <p>Setup Payout Methods</p>
         </div>
         <div class="line-right icon-right va">
-          <p><strong>bank transfer</strong></p>
-          <a href="#" class="icon-a"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon"></a>
+          <p><strong id="tsg-admin-setup-payment-method-display">bank transfer</strong></p>
+          <a href="#" class="icon-a tsg-item-toggle-btn" data-target="#tsg-admin-setup-payment-method-container"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon"></a>
+        </div>
+      </div>
+      <div class="block-line spb" id="tsg-admin-setup-payment-method-container" style="display: none;">
+        <div class="line-left icon-right va">
+          <select id="tsg-admin-setup-payment-method" class="select2-list"></select>
+        </div>
+        <div class="line-left fl-end divide-top">
+          <a href="#" class="btn btn-small minw" id="tsg_save_payment_method">Save</a>
         </div>
       </div>
       <div class="block-line spb">
@@ -121,13 +129,20 @@
           <p>Processing Payouts</p>
         </div>
         <div class="line-right icon-right va">
-          <p><strong>schedule: 12.10.2024</strong></p>
-          <a href="#" class="icon-a"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon"></a>
-        </div>
-        <div class="btn-block fl-end divide-top">
-          <a href="#" class="btn btn-small minw" id="tsg_save_payment_details">View payment history</a>
+          <p><strong>schedule: <span id="tsg-admin-schedule-display">12.10.2024</span></strong></p>
+          <a href="#" class="icon-a tsg-item-toggle-btn" data-target="#tsg-admin-schedule-container"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon"></a>
         </div>
       </div>
+      <div class="block-line spb" id="tsg-admin-schedule-container" style="display: none;">
+        <div class="line-right icon-right va">
+          <select id="tsg-admin-setup-payment-method" class="select2-list"></select>
+        </div>
+        <div class="line-left fl-end divide-top">
+          <a href="#" class="btn btn-small minw" id="tsg_save_schedule">Save</a>
+        </div>
+      </div>
+      <div id="tsg-payment-method-save-error" style="color: red; display:none"></div>
+      
     </div>
 
     <h6 class="borderb"><strong>Payout History</strong></h6>

@@ -893,25 +893,6 @@ jQuery(document).ready(function ($) {
       },
    });
 
-   //Date picker
-   $("#tsg-admin-transaction-history-date-from").datepicker({
-      dateFormat: "dd-mm-yy",
-      showAnim: "slideDown",
-      position: {
-         my: "left top",
-         at: "left bottom",
-      },
-   });
-
-   //Date picker
-   $("#tsg-admin-transaction-history-date-to").datepicker({
-      dateFormat: "dd-mm-yy",
-      showAnim: "slideDown",
-      position: {
-         my: "left top",
-         at: "left bottom",
-      },
-   });
 
    $(".tsg-item-toggle-btn").on("click", function (e) {
       e.preventDefault();
@@ -1133,6 +1114,7 @@ jQuery(document).ready(function ($) {
          dateTo: $('#tsg-transaction-history-date-to').val(),
          transactionType: $('#tsg-history-transaction-type').val(),
          member: $('#tsg-transaction-history-member').val(),
+         filter: 0
       };
 
       $('#tsg-transaction-history-error-msg').empty();
@@ -1151,6 +1133,7 @@ jQuery(document).ready(function ($) {
          dateTo: $('#tsg-admin-transaction-history-date-to').val(),
          transactionType: $('#admin-affiliate-transaction-type').val(),
          member: $('#admin-affiliate-member').val(),
+         filter: 1
       };
 
       $('#tsg-transaction-history-error-msg').empty();
@@ -1469,6 +1452,59 @@ jQuery(document).ready(function ($) {
             $('#tsg_affiliate_payout_history').html('An error occurred while saving the commission rate.');
          }
       });
+   });
+
+   
+   $('#tsg_save_payment_method').on('click', function(e) {
+      e.preventDefault();
+      payMethod = $("tsg-admin-setup-payment-method").val();
+
+      if ( payMethod === "") {
+         $("#tsg-payment-method-save-error").html('Please select a payment method.');
+      } else {
+         const data = {
+            action: "save_admin_payment_method", 
+            payment_method: payMethod,
+         };
+
+         $.ajax({
+            url: tsg_public_ajax.ajax_url,
+            type: 'POST',
+            data: data,
+            success: function(response) {
+               $('#tsg-admin-setup-payment-method-display').html(response);
+            },
+            error: function() {
+               $("#tsg-payment-method-save-error").html('An error occurred.');
+            }
+         });
+      }
+   });
+
+   ('#tsg_save_payment_method').on('click', function(e) {
+      e.preventDefault();
+      payMethod = $("tsg-admin-setup-payment-method").val();
+
+      if ( payMethod === "") {
+         $("#tsg-payment-method-save-error").html('Please select a payment method.');
+      } else {
+         const data = {
+            action: "save_admin_payment_method", 
+            payment_method: payMethod,
+         };
+
+         $.ajax({
+            url: tsg_public_ajax.ajax_url,
+            type: 'POST',
+            data: data,
+            success: function(response) {
+               $('#tsg-admin-setup-payment-method-display').html(response);
+            },
+            error: function() {
+               $("#tsg-payment-method-save-error").html('An error occurred.');
+            }
+         });
+      }
    });
  
 });
