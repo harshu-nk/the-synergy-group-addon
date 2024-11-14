@@ -288,7 +288,7 @@
                         <div class="select">
                             <p class="select-name"><span>Bank transfer</span></p>
                             <input type="hidden" id="payment-methods" name="payment-methods" value="Bank transfer">
-                            <ul class="select-list hauto">
+                            <ul class="select-list hauto available-payment-methods">
                                 <li>Bank transfer</li>
                                 <li>Payment method 2</li>
                                 <li>Payment method 3</li>
@@ -305,7 +305,7 @@
                         <div class="select">
                             <p class="select-name"><span>Select</span></p>
                             <input type="hidden" id="payment-details" name="payment-details" value="">
-                            <ul class="select-list hauto">
+                            <ul class="select-list hauto payment-processing-details">
                                 <li>Option 1</li>
                                 <li>Option 2</li>
                                 <li>Option 3</li>
@@ -321,7 +321,7 @@
                     </div>
                     <div class="line-right va btns-part">
                         <div class="btn-block">
-                            <a href="#" class="btn style2 minw2">Configure</a>
+                            <a href="#" class="btn style2 minw2" id="configure-save-payment-securitysettings">Configure</a>
                         </div>
                     </div>
                 </div>

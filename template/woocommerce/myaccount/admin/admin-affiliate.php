@@ -114,6 +114,7 @@
         <?php 
           global $wpdb;
           $current_user_id = get_current_user_id();
+
           $payment_method = get_user_meta($current_user_id, 'payment_method', true);
           $payment_schedule = get_user_meta($current_user_id, 'payment_schedule', true);
           $payment_method = !empty($payment_method) ? esc_html($payment_method) : 'Not Set';

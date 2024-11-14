@@ -893,12 +893,6 @@ jQuery(document).ready(function ($) {
       },
    });
 
-   //Date picker
-   $("#tsg-admin-schedule-date").datepicker({
-      dateFormat: "dd-mm-yy",
-      showAnim: "slideDown", 
-   });
-
 
    $(".tsg-item-toggle-btn").on("click", function (e) {
       e.preventDefault();
@@ -1150,25 +1144,6 @@ jQuery(document).ready(function ($) {
       }
    });
 
-   //All transaction history display - Admin
-   $('#tsg-admin-all-transaction-filter-btn').on('click', function(e) { 
-      e.preventDefault(); 
-      const data = {
-         dateFrom: $('#tsg-admin-all-transaction-history-date-from').val(),
-         dateTo: $('#tsg-admin-all-transaction-history-date-to').val(),
-         transactionType: $('#admin-all-affiliate-transaction-type').val(),
-         member: $('#admin-all-affiliate-member').val(),
-         filter: 0
-      };
-
-      $('#tsg-transaction-history-error-msg').empty();
-      const dateFrom = $('#tsg-admin-all-transaction-history-date-from').val();
-      const dateTo = $('#tsg-admin-all-transaction-history-date-to').val();
-      if (transactionsHistoryValidate(dateFrom, dateTo)) {
-         sendAllTransactionsHistory(data);
-      }
-   });
-
    function transactionsHistoryValidate(dateFrom, dateTo) {
       let isValid = true;
       let errorMsg = "";
@@ -1207,12 +1182,10 @@ jQuery(document).ready(function ($) {
             data: data,
          },
          success: function (response) {
-            // console.log(response);
-            $(".tsg-admin-cash-flow-title").show();
+            console.log(response);
             $('.tsg-display-transaction-history').html(response);
          },
          error: function () {
-            $(".tsg-admin-cash-flow-title").show();
             $('.tsg-display-transaction-history').html("An error occurred.");
          },
       });
@@ -1473,69 +1446,39 @@ jQuery(document).ready(function ($) {
             action: 'display_affiliate_payout_details',
          },
          success: function(response) {
-            $(".tsg-admin-payout-history-title").show();
             $('#tsg_affiliate_payout_history').html(response);
          },
          error: function() {
-            $(".tsg-admin-payout-history-title").show();
             $('#tsg_affiliate_payout_history').html('An error occurred while saving the commission rate.');
          }
       });
    });
 
-   ('#tsg_save_payment_method').on('click', function(e) {
-      e.preventDefault();
-      payMethod = $("tsg-admin-setup-payment-method").val();
+   // ('#tsg_save_payment_method').on('click', function(e) {
+   //    e.preventDefault();
+   //    payMethod = $("tsg-admin-setup-payment-method").val();
 
-      if ( payMethod === "") {
-         $("#tsg-payment-method-save-error").html('Please select a payment method.');
-      } else {
-         const data = {
-            action: "save_admin_payment_method", 
-            payment_method: payMethod,
-         };
+   //    if ( payMethod === "") {
+   //       $("#tsg-payment-method-save-error").html('Please select a payment method.');
+   //    } else {
+   //       const data = {
+   //          action: "save_admin_payment_method", 
+   //          payment_method: payMethod,
+   //       };
 
-         $.ajax({
-            url: tsg_public_ajax.ajax_url,
-            type: 'POST',
-            data: data,
-            success: function(response) {
-               $('#tsg-admin-setup-payment-method-display').html(response);
-               $("#tsg-payment-method-save-error").html('Payment method saved successfully.');
-            },
-            error: function() {
-               $("#tsg-payment-method-save-error").html('An error occurred.').css('color', 'red');;
-            }
-         });
-      }
-   });
-
-   ('#tsg_admin_save_schedule').on('click', function(e) {
-      e.preventDefault();
-      scheduleDate = $("tsg-admin-schedule-date").val();
-
-      if ( scheduleDate === "") {
-         $("#tsg-payment-method-save-error").html('Please select a schedule date.');
-      } else {
-         const data = {
-            action: "save_admin_schedule_date", 
-            schedule_date: scheduleDate,
-         };
-
-         $.ajax({
-            url: tsg_public_ajax.ajax_url,
-            type: 'POST',
-            data: data,
-            success: function(response) {
-               $('#tsg-admin-schedule-display').html(response);
-               $("#tsg-payment-method-save-error").html('Payment schedule date saved successfully.');
-            },
-            error: function() {
-               $("#tsg-payment-method-save-error").html('An error occurred.').css('color', 'red');
-            }
-         });
-      }
-   });
+   //       $.ajax({
+   //          url: tsg_public_ajax.ajax_url,
+   //          type: 'POST',
+   //          data: data,
+   //          success: function(response) {
+   //             $('#tsg-admin-setup-payment-method-display').html(response);
+   //          },
+   //          error: function() {
+   //             $("#tsg-payment-method-save-error").html('An error occurred.');
+   //          }
+   //       });
+   //    }
+   // });
 
    $('.approve-button').on('click', function(event) {
       event.preventDefault();
@@ -1595,6 +1538,157 @@ jQuery(document).ready(function ($) {
                }
          }
       });
-});
+   });
  
+   // $('.select-list li').on('click', function() {
+   //    const selectedStatus = $(this).text();
+   //    $('#status').val(selectedStatus); // Update hidden status input with selected value
+   //    $('.select-name span').text(selectedStatus); // Display selected status in the dropdown
+   // });
+
+   $('.select-list li').on('click', function() {
+      const selectedStatus = $(this).text();
+      const dropdownContainer = $(this).closest('.select'); // Find the closest dropdown container
+
+      dropdownContainer.find('input[type="hidden"]').val(selectedStatus); // Update the hidden input within the specific dropdown
+      dropdownContainer.find('.select-name span').text(selectedStatus); // Display selected status only within the specific dropdown
+  });
+
+   $('#tsg-admin-withdrawals-filter-btn').on('click', function(event) {
+      event.preventDefault();
+
+      // Collect filter values
+      const dateFrom = $('#date-from').val();
+      const dateTo = $('#date-to').val();
+      const members = $('#withdrawals-member').val();
+      const status = $('#status').val();
+
+      // Send AJAX request with filter data
+      $.ajax({
+          url: tsg_public_ajax.ajax_url,
+          type: 'POST',
+          data: {
+              action: 'filter_withdrawal_history',
+              date_from: dateFrom,
+              date_to: dateTo,
+              members: members,
+              status: status
+          },
+          success: function(response) {
+              if (response.success) {
+                  $('.messages-sub-block').html(response.data.html);
+              } else {
+                  alert('Failed to fetch data: ' + response.data);
+              }
+          }
+      });
+   });
+
+   $('.available-payment-methods li').on('click', function() {
+      const selectedValue = $(this).text();
+      const dropdownContainer = $(this).closest('.select');
+      
+      dropdownContainer.find('input[type="hidden"]').val(selectedValue); // Update hidden input
+      dropdownContainer.find('.select-name span').text(selectedValue); // Update displayed value
+      console.log("Selected Payment Method:", selectedValue); // Debug log
+   });
+
+   $('.payment-processing-details li').on('click', function() {
+      const selectedValue = $(this).text();
+      const dropdownContainer = $(this).closest('.select');
+
+      dropdownContainer.find('input[type="hidden"]').val(selectedValue); // Update hidden input
+      dropdownContainer.find('.select-name span').text(selectedValue); // Update displayed value
+      console.log("Selected Payment Details:", selectedValue); // Debug log
+   });
+
+   $('#configure-save-payment-securitysettings').on('click', function(event) {
+      event.preventDefault();
+
+      // Get values from hidden inputs
+      const paymentMethod = $('#payment-methods').val();
+      const paymentDetails = $('#payment-details').val();
+
+      // Send AJAX request to save values as options
+      $.ajax({
+          url: tsg_public_ajax.ajax_url,
+          type: 'POST',
+          data: {
+              action: 'save_payment_settings',
+              payment_method: paymentMethod,
+              payment_details: paymentDetails
+          },
+          success: function(response) {
+              console.log("AJAX Response:", response);
+              if (response.success) {
+                  alert('Payment settings saved successfully!');
+              } else {
+                  alert('Failed to save payment settings: ' + response.data);
+              }
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+              console.error("AJAX Error:", textStatus, errorThrown);
+          }
+      });
+   });
+
+
+   $('.select-list li').on('click', function() {
+      const selectedFee = $(this).text(); // Get the selected value
+      const hiddenInput = $(this).closest('.select-list').prev('input[type="hidden"]'); // Find the related hidden input
+      hiddenInput.val(selectedFee); // Set the selected value in the hidden input
+      console.log("Selected Fee for", hiddenInput.attr('id'), ":", selectedFee); // Debug log
+   });
+
+  // Save button click handler
+  $('#tsg-admin-fee-structure-save-btn').on('click', function(event) {
+      event.preventDefault();
+
+      // Gather only the selected values with product IDs
+      const dataToSave = [];
+
+      // Loop through each hidden input with a value set
+      $('input[type="hidden"][id^="fee-setting-plan"]').each(function() {
+          const selectedFee = $(this).val();
+          const productID = $(this).data('product-id');
+
+          // Only add to dataToSave if a value was selected
+          if (selectedFee) {
+              dataToSave.push({ product_id: productID, fee_structure: selectedFee });
+          }
+      });
+
+      console.log("Data to save:", dataToSave); // Debug log for data to save
+
+      // Check if any data to save
+      if (dataToSave.length === 0) {
+          alert("Please select a fee structure for at least one plan before saving.");
+          return;
+      }
+
+      // Send AJAX request to save all selected values
+      $.ajax({
+          url: tsg_public_ajax.ajax_url,
+          type: 'POST',
+          data: {
+              action: 'save_fee_structure',
+              fees: dataToSave
+          },
+          success: function(response) {
+              console.log("AJAX Response:", response); // Debug response
+              if (response.success) {
+                  alert('Fee structures saved successfully!');
+              } else {
+                  alert('Failed to save fee structures: ' + response.data);
+              }
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+              console.error("AJAX Error:", textStatus, errorThrown); // Debug error
+          }
+      });
+  });    
+   
+
+   //SF Benefits in Fee Settings Page
+   
 });

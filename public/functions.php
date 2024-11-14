@@ -1167,6 +1167,32 @@ function filter_withdrawal_history() {
 add_action('wp_ajax_filter_withdrawal_history', 'filter_withdrawal_history');
 add_action('wp_ajax_nopriv_filter_withdrawal_history', 'filter_withdrawal_history');
 
+
+function save_payment_settings() {
+    // Check for payment method and details in the AJAX request
+    if (isset($_POST['payment_method']) && isset($_POST['payment_details'])) {
+        $payment_method = sanitize_text_field($_POST['payment_method']);
+        $payment_details = sanitize_text_field($_POST['payment_details']);
+
+        // Save values as options in WordPress
+        $method_saved = update_option('payment_method_option', $payment_method);
+        $details_saved = update_option('payment_details_option', $payment_details);
+
+        // Check if both options saved successfully
+        if ($method_saved && $details_saved) {
+            wp_send_json_success('Payment settings saved successfully.');
+        } else {
+            wp_send_json_error('Failed to save payment settings.');
+        }
+    } else {
+        wp_send_json_error('Missing payment method or payment details.');
+    }
+}
+add_action('wp_ajax_save_payment_settings', 'save_payment_settings');
+add_action('wp_ajax_nopriv_save_payment_settings', 'save_payment_settings');
+
+
+
 function save_fee_structure() {
     // Check if fees data is provided
     if (isset($_POST['fees']) && is_array($_POST['fees'])) {
@@ -1205,5 +1231,7 @@ function save_fee_structure() {
 }
 add_action('wp_ajax_save_fee_structure', 'save_fee_structure');
 add_action('wp_ajax_nopriv_save_fee_structure', 'save_fee_structure');
+
+
 
 
