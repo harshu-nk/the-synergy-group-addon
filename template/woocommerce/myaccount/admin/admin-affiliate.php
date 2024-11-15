@@ -137,7 +137,7 @@
           </select>
         </div>
         <div class="line-left fl-end ">
-          <a href="#" class="btn btn-small minw" id="tsg_save_payment_method">Save</a>
+          <a href="#" class="btn btn-small minw" id="tsg-save-payment-method">Save</a>
         </div>
       </div>
       <div class="block-line spb">

@@ -1330,3 +1330,214 @@ function save_user_limits_and_notification() {
     }
 }
 add_action('wp_ajax_save_user_limits_and_notification', 'save_user_limits_and_notification');
+
+
+add_action('wp_ajax_admin_fee_overview_add_services', 'tsg_admin_fee_overview_add_services');
+function tsg_admin_fee_overview_add_services() {
+    $member = sanitize_text_field($_POST['member']);
+    global $wpdb;
+
+    $order_ids = $wpdb->get_col($wpdb->prepare(
+        "SELECT ref_id FROM {$wpdb->prefix}myCRED_log WHERE user_id = %d",
+        $member
+    ));
+
+    $options = '';
+
+    if (empty($order_ids)) {
+        $options = '<option value="">No Services</option>';
+    } else {
+        $unique_product_ids = [];
+
+        foreach ($order_ids as $order_id) {
+            $order_items = $wpdb->get_results($wpdb->prepare(
+                "SELECT order_item_id, order_item_name FROM {$wpdb->prefix}woocommerce_order_items 
+                WHERE order_id = %d AND order_item_type = 'line_item'",
+                $order_id
+            ));
+
+            foreach ($order_items as $item) {
+                $product_id = $wpdb->get_var($wpdb->prepare(
+                    "SELECT meta_value FROM {$wpdb->prefix}woocommerce_order_itemmeta 
+                    WHERE order_item_id = %d AND meta_key = '_product_id'",
+                    $item->order_item_id
+                ));
+
+                if ($product_id && !in_array($product_id, $unique_product_ids)) {
+                    $unique_product_ids[] = $product_id;
+                    $options .= '<option value="' . esc_attr($product_id) . '">' . esc_html($item->order_item_name) . '</option>';
+                }
+            }
+        }
+
+        // If no unique products were found, set a default option
+        if (empty($options)) {
+            $options = '<option value="">No Services</option>';
+        }
+    }
+
+    echo $options;
+}
+
+add_action('wp_ajax_admin_filter_fee_overview', 'tsg_admin_filter_fee_overview');
+
+function tsg_admin_filter_fee_overview() {
+    global $wpdb;
+
+    $member = sanitize_text_field($_POST['member']);
+    $date_from = sanitize_text_field($_POST['date_from']);
+    $date_to = sanitize_text_field($_POST['date_to']);
+    $service_type = sanitize_text_field($_POST['service_type']);
+    $transaction_type = sanitize_text_field($_POST['transaction_type']);
+    $affiliate_fees = sanitize_text_field($_POST['affiliate_fees']);
+
+    if (!empty($date_from)) {
+        $date_from = DateTime::createFromFormat('m/d/Y', $date_from)->format('Y-m-d');
+    }
+    if (!empty($date_to)) {
+        $date_to = DateTime::createFromFormat('m/d/Y', $date_to)->format('Y-m-d');
+    }
+
+
+    $date_condition = "";
+    if (!empty($date_from) && !empty($date_to)) {
+        $date_condition = "AND time BETWEEN %d AND %d";
+    }
+
+    $query = "SELECT * FROM {$wpdb->prefix}myCRED_log WHERE user_id = %d ";
+
+    $query_conditions = [$member];
+
+    if (!empty($date_from) && !empty($date_to)) {
+        $query_conditions[] = strtotime($date_from);
+        $query_conditions[] = strtotime($date_to);
+    }
+
+    $logs = $wpdb->get_results($wpdb->prepare($query . $date_condition, ...$query_conditions));
+
+    $filtered_results = [];
+    $total_creds = 0; 
+
+    foreach ($logs as $log) {
+        $order_id = $log->ref_id;
+
+        if (!empty($service_type)) {
+            $product_check = $wpdb->get_var($wpdb->prepare(
+                "SELECT order_item_id FROM {$wpdb->prefix}woocommerce_order_items 
+                WHERE order_id = %d AND order_item_type = 'line_item'",
+                $order_id
+            ));
+            
+            if ($product_check) {
+                $product_id = $wpdb->get_var($wpdb->prepare(
+                    "SELECT meta_value FROM {$wpdb->prefix}woocommerce_order_itemmeta 
+                    WHERE order_item_id = %d AND meta_key = '_product_id'",
+                    $product_check
+                ));
+
+                if ($product_id != $service_type) {
+                    continue;
+                }
+            }
+        }
+
+        if (!empty($transaction_type) && $log->ref != $transaction_type) {
+            continue;
+        }
+        
+        if (!empty($affiliate_fees) && trim(strtolower($log->ref)) != trim(strtolower($affiliate_fees))) {
+            continue;
+        }
+
+        $total_creds += $log->creds; 
+
+        $filtered_results[] = $log;
+    }
+
+    echo !empty($filtered_results) ? esc_html($total_creds) : '0';
+    wp_die(); 
+}
+
+//Adimn - Fee management page
+function tsg_get_unique_services_with_ref_id() {
+    global $wpdb;
+
+    $results = $wpdb->get_results("
+        SELECT DISTINCT ref, ref_id
+        FROM {$wpdb->prefix}myCRED_log
+        WHERE ref IN ('buy_service', 'sale_of_service', 'buyer_ref_fee', 'seller_ref_fee')
+    ");
+
+    if (empty($results)) {
+        return '<option value="">No services</option>';
+    }
+
+    $options = '';
+
+    foreach ($results as $result) {
+        $ref = esc_attr($result->ref);
+        $ref_id = esc_attr($result->ref_id);
+        $value = $ref_id . '|' . $ref;
+        $options .= '<option value="' . $value . '">' . ucfirst(str_replace('_', ' ', $ref)) . ' (ID: ' . $ref_id . ')</option>';
+    }
+
+    return $options;
+}
+
+
+add_action('wp_ajax_admin_reverse_transaction', 'tsg_admin_reverse_transaction');
+
+function tsg_admin_reverse_transaction() {
+    global $wpdb;
+
+    $ref_id = sanitize_text_field($_POST['ref_id']);
+    $ref = sanitize_text_field($_POST['ref']);
+    $reason = sanitize_text_field($_POST['reason']);
+
+    $transaction = $wpdb->get_row($wpdb->prepare(
+        "SELECT user_id, creds FROM {$wpdb->prefix}myCRED_log WHERE ref = %s AND ref_id = %d",
+        $ref,
+        $ref_id
+    ));
+
+    if ($transaction) {
+        $user_id = $transaction->user_id;
+        $amount = abs($transaction->creds); 
+
+        mycred_subtract('penalty_reversal', $user_id, $amount, $reason);
+
+        echo 'Transaction reversed successfully for user ID ' . esc_html($user_id) . ' with amount: ' . esc_html($amount) . '.';
+    } else {
+        echo 'Error: Transaction not found.';
+    }
+
+    wp_die(); 
+}
+
+
+add_action('wp_ajax_admin_manual_fee_adjustment', 'tsg_admin_manual_fee_adjustment');
+
+function tsg_admin_manual_fee_adjustment() {
+
+    $member = sanitize_text_field($_POST['rmember']);
+    $manual_fee = floatval($_POST['manual_fee']); 
+
+    if (empty($member) || !is_numeric($manual_fee)) {
+        echo 'Error: Please provide a valid member and fee amount.';
+        wp_die();
+    }
+
+    $result = mycred_add('manual_fee_adjustment', $member, $manual_fee, 'Manual fee adjustment');
+
+    if ($result) {
+        $operation = $manual_fee > 0 ? 'added' : 'deducted';
+        echo 'Manual fee adjustment successfully ' . $operation . ' for user ID ' . esc_html($member) . ' with amount: ' . esc_html($manual_fee) . '.';
+    } else {
+        echo 'Error: Could not complete the transaction.';
+    }
+
+    wp_die(); 
+}
+
+
+

@@ -1454,31 +1454,31 @@ jQuery(document).ready(function ($) {
       });
    });
 
-   // ('#tsg_save_payment_method').on('click', function(e) {
-   //    e.preventDefault();
-   //    payMethod = $("tsg-admin-setup-payment-method").val();
+   $("#tsg-save-payment-method").on('click', function(e) {
+      e.preventDefault();
+      payMethod = $("tsg-admin-setup-payment-method").val();
 
-   //    if ( payMethod === "") {
-   //       $("#tsg-payment-method-save-error").html('Please select a payment method.');
-   //    } else {
-   //       const data = {
-   //          action: "save_admin_payment_method", 
-   //          payment_method: payMethod,
-   //       };
+      if ( payMethod === "") {
+         $("#tsg-payment-method-save-error").html('Please select a payment method.');
+      } else {
+         const data = {
+            action: "save_admin_payment_method", 
+            payment_method: payMethod,
+         };
 
-   //       $.ajax({
-   //          url: tsg_public_ajax.ajax_url,
-   //          type: 'POST',
-   //          data: data,
-   //          success: function(response) {
-   //             $('#tsg-admin-setup-payment-method-display').html(response);
-   //          },
-   //          error: function() {
-   //             $("#tsg-payment-method-save-error").html('An error occurred.');
-   //          }
-   //       });
-   //    }
-   // });
+         $.ajax({
+            url: tsg_public_ajax.ajax_url,
+            type: 'POST',
+            data: data,
+            success: function(response) {
+               $('#tsg-admin-setup-payment-method-display').html(response);
+            },
+            error: function() {
+               $("#tsg-payment-method-save-error").html('An error occurred.');
+            }
+         });
+      }
+   });
 
    $('.approve-button').on('click', function(event) {
       event.preventDefault();
@@ -1876,5 +1876,129 @@ jQuery(document).ready(function ($) {
        }
    });
    });
+
+   $("#admin-fee-overview-member").on("select2:select", function(){
+      const data = {
+         action: "admin_fee_overview_add_services", 
+         member: $(this).val(),
+      }
+      $.ajax({
+         url: tsg_public_ajax.ajax_url,
+         type: 'POST',
+         data: data,
+         success: function(response) {
+            console.log(response);
+            $("#tsg-admin-fee-overview-service-type").html(response);
+         },
+         error: function(xhr, status, error) {
+            console.error("AJAX error:", error);
+        }
+      });
+   });
+
+   $("#tsg-fee-overview-filter-btn").on("click", function(e) {
+      e.preventDefault();
+  
+      const member = $("#admin-fee-overview-member").val();
+      const date_from = $("#tsg-admin-fee-overview-date-from").val();
+      const date_to = $("#tsg-admin-fee-overview-date-to").val();
+      const service_type = $("#tsg-admin-fee-overview-service-type").val();
+      const transaction_type = $("#tsg-admin-fee-overview-transaction-type").val();
+      const affiliate_fees = $("#tsg-admin-fee-overview-affiliate-fees").val();
+  
+      if (!member || member.trim().length === 0) {
+          $("#tsg-admin-fee-overview-error").show().html("Please, select a member").css("color", "red");
+          return; 
+      } else {
+          $("#tsg-admin-fee-overview-error").hide(); 
+      }
+  
+      const data = {
+          action: "admin_filter_fee_overview",
+          member: member,
+          date_from: date_from,
+          date_to: date_to,
+          service_type: service_type,
+          transaction_type: transaction_type,
+          affiliate_fees: affiliate_fees,
+      };
+  
+      $.ajax({
+          url: tsg_public_ajax.ajax_url,
+          type: 'POST',
+          data: data,
+          success: function(response) {
+              $(".tsg-fee-overview-sf").html(response); 
+          },
+          error: function(jqXHR, textStatus, error) {
+              $("#tsg-admin-fee-overview-error").show().html("An error occurred: " + error).css("color", "red");
+          }
+      });
+   });
+   
+   $("#tsg-admin-reverse-transaction-btn").on("click", function(){
+      const [ref_id, ref] = $("#tsg-admin-reverse-transaction").val().split("|");
+      const reason = $("#tsg-admin-reverse-transaction-reason").val();
+      const data = {
+         action: "admin_reverse_transaction", 
+         ref_id: ref_id,
+         ref: ref,
+         reason: reason,
+      }
+
+      if ( !reason || reason.trim() === "" ) {
+         $("#tsg-admin-reverse-transaction-msg").show();
+         $("#tsg-admin-reverse-transaction-msg").html("Please, add a reason.").css("color", "red");
+      } else {
+         $("#tsg-admin-reverse-transaction-msg").hide();
+         $.ajax({
+            url: tsg_public_ajax.ajax_url,
+            type: 'POST',
+            data: data,
+            success: function(response) {
+               // console.log(response);
+               $("#tsg-admin-reverse-transaction-msg").show();
+               $("#tsg-admin-reverse-transaction-msg").html(response + 'updated!');
+            },
+            error: function(xhr, status, error) {
+               console.error("AJAX error:", error);
+         }
+         });
+      }
+   });
+   
+   $("#tsg-admin-manual-fee-btn").on("click", function(){
+      const member = $("#admin-manual-fee-member").val();
+      const manualFee = $("#tsg-admin-manual-fee").val();
+      const data = {
+         action: "admin_manual_fee_adjustment", 
+         rmember: member,
+         manual_fee: manualFee,
+      }
+
+      if (!member || member.trim() === "") {
+         $("#tsg-admin-manual-fee-msg").show();
+         $("#tsg-admin-manual-fee-msg").html("Please, select a member.").css("color", "red");
+      } else if (!manualFee || manualFee.trim() === "") {
+         $("#tsg-admin-manual-fee-msg").show();
+         $("#tsg-admin-manual-fee-msg").html("Please, add a fee amount.").css("color", "red");
+      } else {
+         $("#tsg-admin-manual-fee-msg").hide();
+         $.ajax({
+            url: tsg_public_ajax.ajax_url,
+            type: 'POST',
+            data: data,
+            success: function(response) {
+               // console.log(response);
+               $("#tsg-admin-manual-fee-msg").show();
+               $("#tsg-admin-manual-fee-msg").html(response + 'updated!');
+            },
+            error: function(xhr, status, error) {
+               console.error("AJAX error:", error);
+         }
+         });
+      }
+   });
+
     
 });

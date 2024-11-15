@@ -55,7 +55,7 @@ jQuery(document).ready(function ($) {
       minimumInputLength: 0, 
    });
 
-   $("#admin-all-affiliate-member").select2({
+   $("#admin-all-affiliate-member, #admin-fee-overview-member, #admin-manual-fee-member").select2({
       ajax: {
          url: tsg_public_ajax.ajax_url,
          type: "POST",
@@ -103,7 +103,8 @@ jQuery(document).ready(function ($) {
       minimumInputLength: 0, 
    });
 
-   $("#affiliate-profiles, #admin-affiliate-member, #admin-affiliate-transaction-type, #admin-all-affiliate-member, #admin-all-affiliate-transaction-type").on("select2:open", function () {
+
+   $("#affiliate-profiles, #admin-affiliate-member, #admin-affiliate-transaction-type, #admin-all-affiliate-member, #admin-all-affiliate-transaction-type, #admin-fee-overview-member").on("select2:open", function () {
       $(this).select2("open");
    });
    

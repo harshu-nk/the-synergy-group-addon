@@ -14,13 +14,13 @@
         </div>
         <div class="line-right input-field width3 from-to-block va">
           <div class="from-to">
-            <input type="text" id="date-from" name="date" data-position="bottom left" class="date-field" placeholder="Date From">
+          <input type="text" id="tsg-admin-fee-overview-date-from" name="" data-position="bottom left" class="date-field" placeholder="Date From">
           </div>
           <div class="from-to-divider-block">
             <div class="from-to-divider"></div>
           </div>
           <div class="from-to">
-            <input type="text" id="date-to" name="date" data-position="bottom left" class="date-field" placeholder="Date To">
+          <input type="text" id="tsg-admin-fee-overview-date-to" name="tsg-admin-fee-overview-date-to" data-position="bottom left" class="date-field" placeholder="Date To">
           </div>
         </div>
       </div>
@@ -29,18 +29,7 @@
           <p>Member</p>
         </div>
         <div class="line-right input-field width3">
-          <select id="member" multiple class="select2-list" placeholder="Select">
-            <option value="Member 1">Member 1</option>
-            <option value="Member 2">Member 2</option>
-            <option value="Member 3">Member 3</option>
-            <option value="Member 4">Member 4</option>
-            <option value="Member 5">Member 5</option>
-            <option value="Member 6">Member 6</option>
-            <option value="Member 7">Member 7</option>
-            <option value="Member 8">Member 8</option>
-            <option value="Member 9">Member 9</option>
-            <option value="Member 10">Member 10</option>
-          </select>
+          <select id="admin-fee-overview-member" class="select2-list"></select>
         </div>
       </div>
       <div class="block-line small-line spb">
@@ -49,14 +38,11 @@
         </div>
         <div class="line-right input-field width3">
           <div class="select">
-            <p class="select-name"><span>Select</span></p>
-            <input type="hidden" id="transaction-type" name="transaction-type" value="">
-            <ul class="select-list hauto">
-              <li>Transaction Type 1</li>
-              <li>Transaction Type 2</li>
-              <li>Transaction Type 3</li>
-              <li>Transaction Type 4</li>
-            </ul>
+            <select id="tsg-admin-fee-overview-transaction-type" class="select2-list">
+              <option value="" disabled selected>Select transaction type</option>
+              <option value="buy_service">Buy service</option>
+              <option value="sale_of_service">Sale of service</option>
+            </select>
           </div>
         </div>
       </div>
@@ -66,14 +52,8 @@
         </div>
         <div class="line-right input-field width3">
           <div class="select">
-            <p class="select-name"><span>Select</span></p>
-            <input type="hidden" id="service-type" name="service-type" value="">
-            <ul class="select-list hauto">
-              <li>Service Type 1</li>
-              <li>Service Type 2</li>
-              <li>Service Type 3</li>
-              <li>Service Type 4</li>
-            </ul>
+            <select id="tsg-admin-fee-overview-service-type" class="select2-list">
+            </select>
           </div>
         </div>
       </div>
@@ -82,19 +62,16 @@
           <p>Affiliate</p>
         </div>
         <div class="line-right input-field width3">
-          <select id="affiliate" class="select2-list">
-            <option value="Option 1">Option 1</option>
-            <option value="Option 2">Option 2</option>
-            <option value="Option 3">Option 3</option>
-            <option value="Option 4">Option 4</option>
-            <option value="Option 5">Option 5</option>
-            <option value="Option 6">Option 6</option>
-            <option value="Option 7">Option 7</option>
-            <option value="Option 7">Option 8</option>
-            <option value="Option 7">Option 9</option>
-            <option value="Option 7">Option 10</option>
-        </select>
+          <select id="tsg-admin-fee-overview-affiliate-fees" class="select2-list">
+            <option value="" disabled selected>Affiliate fee</option>
+            <option value="buyer_ref_fee">Buyer ref fee</option>
+            <option value="seller_ref_fee">Seller ref fee</option>
+          </select>
         </div>
+      </div>
+      <div class="block-line spb" id="tsg-admin-fee-overview-error" style="display: none;"></div>
+      <div class="block-line fl-end mt25">
+        <a href="#" class="btn btn-small minw" id="tsg-fee-overview-filter-btn">Filter</a>
       </div>
 
       <div class="block-line media-full spb">
@@ -102,7 +79,7 @@
           <p><strong>Total Fees Collected</strong></p>
         </div>
         <div class="line-right">
-          <p class="main-val">SF 1,525 + CHF 590</p>
+          <p class="main-val">SF <span class="tsg-fee-overview-sf">0</span> + CHF 0</p>
         </div>
       </div>
 
@@ -111,7 +88,7 @@
           <p>Synergy Franc (SF)</p>
         </div>
         <div class="line-right">
-          <p class="main-val2">SF 1,525</p>
+          <p class="main-val2">SF <span class="tsg-fee-overview-sf">0</span></p>
         </div>
       </div>
 
@@ -120,7 +97,7 @@
           <p>Cash (CHF)</p>
         </div>
         <div class="line-right">
-          <p class="main-val2">CHF 590</p>
+          <p class="main-val2">CHF 0</p>
         </div>
       </div>
     </div>
@@ -251,25 +228,21 @@
         </div>
         <div class="line-right input-field width2">
           <div class="select">
-            <p class="select-name"><span>Select</span></p>
-            <input type="hidden" id="transaction-to-reverse" name="transaction-to-reverse" value="">
-            <ul class="select-list hauto">
-              <li>Option 1</li>
-              <li>Option 2</li>
-              <li>Option 3</li>
-              <li>Option 4</li>
-            </ul>
+          <select id="tsg-admin-reverse-transaction" class="select2-list">
+              <option value="" disabled selected>Select a service</option>
+              <?php echo tsg_get_unique_services_with_ref_id(); ?>
+          </select>
           </div>
         </div>
       </div>
     </div>
     
     <p>Enter reason for reversal (required for audit)</p>
-    <textarea id="greeting" class="mt20" placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt  consectetur adipiscing elit,"></textarea>
+    <textarea id="tsg-admin-reverse-transaction-reason" class="mt20" placeholder=""></textarea>
     <div class="btn-block fl-end mt25">
-      <a href="#" class="btn btn-small minw">Reverse Fees</a>
+      <a href="#" class="btn btn-small minw" id="tsg-admin-reverse-transaction-btn">Reverse Fees</a>
     </div>
-
+    <div class="block-line spb" id="tsg-admin-reverse-transaction-msg" style="display: none;"></div>
   </div>
 
   <div class="account-text-block">
@@ -286,18 +259,7 @@
           <p>Select member or transaction</p>
         </div>
         <div class="line-right input-field width4">
-          <select id="manual-fees-members" multiple class="select2-list" placeholder="Select">
-            <option value="Member 1">Member 1</option>
-            <option value="Member 2">Member 2</option>
-            <option value="Member 3">Member 3</option>
-            <option value="Member 4">Member 4</option>
-            <option value="Member 5">Member 5</option>
-            <option value="Member 6">Member 6</option>
-            <option value="Member 7">Member 7</option>
-            <option value="Member 8">Member 8</option>
-            <option value="Member 9">Member 9</option>
-            <option value="Member 10">Member 10</option>
-          </select>
+          <select id="admin-manual-fee-member" class="select2-list"></select>
         </div>
       </div>
 
@@ -306,15 +268,15 @@
           <p>Adjust transaction</p>
         </div>
         <div class="line-right input-field width4">
-          <input type="text" id="adjust-transaction" name="adjust-transaction">
+          <input type="number" id="tsg-admin-manual-fee" name="">
         </div>
       </div>
     </div>
     
     <div class="btn-block fl-end mt25">
-      <a href="#" class="btn btn-small minw">Assign fee</a>
+      <a href="#" class="btn btn-small minw" id="tsg-admin-manual-fee-btn">Assign fee</a>
     </div>
-
+    <div class="block-line spb" id="tsg-admin-manual-fee-msg" style="display: none;"></div>
   </div>
 
 </form>
