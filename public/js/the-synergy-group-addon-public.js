@@ -1834,7 +1834,47 @@ jQuery(document).ready(function ($) {
               console.error("AJAX Error:", textStatus, errorThrown);
           }
       });
+   });
+
+
+   $('.fee-collection-limit li, .withdrawal-limit li, .exceeding-thresholds-notification li').on('click', function() {
+      const selectedValue = $(this).text();
+      const hiddenInput = $(this).closest('.select-list').prev('input[type="hidden"]');
+
+      hiddenInput.val(selectedValue); // Update hidden input with selected value
+      console.log("Selected Value for", hiddenInput.attr('id'), ":", selectedValue); // Debug log
   });
 
+  $('#threshold-and-limit-save-button').on('click', function(event) {
+   event.preventDefault();
+
+   // Gather the selected values from hidden inputs
+   const feeCollectionLimit = $('#fee-collection-limit').val();
+   const withdrawalLimit = $('#withdrawal-limit').val();
+   const notificationSetting = $('#notification').val();
+
+   // Send AJAX request to save values as user meta
+   $.ajax({
+       url: tsg_public_ajax.ajax_url,
+       type: 'POST',
+       data: {
+           action: 'save_user_limits_and_notification',
+           fee_collection_limit: feeCollectionLimit,
+           withdrawal_limit: withdrawalLimit,
+           notification: notificationSetting
+       },
+       success: function(response) {
+           console.log("AJAX Response:", response);
+           if (response.success) {
+               alert('Settings saved successfully!');
+           } else {
+               alert('Failed to save settings: ' + response.data);
+           }
+       },
+       error: function(jqXHR, textStatus, errorThrown) {
+           console.error("AJAX Error:", textStatus, errorThrown);
+       }
+   });
+   });
     
 });

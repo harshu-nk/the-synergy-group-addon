@@ -324,7 +324,7 @@
           <div class="select">
             <p class="select-name"><span>SF 1,500</span></p>
             <input type="hidden" id="fee-collection-limit" name="fee-collection-limit" value="SF 1,500">
-            <ul class="select-list">
+            <ul class="select-list fee-collection-limit">
               <li>SF 500</li>
               <li>SF 1,500</li>
               <li>SF 1,000</li>
@@ -352,7 +352,7 @@
           <div class="select">
             <p class="select-name"><span>CHF 1,000</span></p>
             <input type="hidden" id="withdrawal-limit" name="withdrawal-limit" value="CHF 1,000">
-            <ul class="select-list">
+            <ul class="select-list withdrawal-limit">
               <li>CHF 500</li>
               <li>CHF 1,500</li>
               <li>CHF 1,000</li>
@@ -380,7 +380,7 @@
           <div class="select">
             <p class="select-name"><span>Enable</span></p>
             <input type="hidden" id="notification" name="notification" value="Enable">
-            <ul class="select-list">
+            <ul class="select-list exceeding-thresholds-notification">
               <li>Enable</li>
               <li>Disable</li>
             </ul>
@@ -392,7 +392,7 @@
   </div>
 
   <div class="btn-block fl-end mt25">
-    <a href="#" class="btn btn-small minw">SAVE</a>
+    <a href="#" class="btn btn-small minw" id="threshold-and-limit-save-button">SAVE</a>
   </div>
 </form>
         

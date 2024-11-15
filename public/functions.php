@@ -1298,8 +1298,35 @@ function save_number_of_products() {
 add_action('wp_ajax_save_number_of_products', 'save_number_of_products');
 add_action('wp_ajax_nopriv_save_number_of_products', 'save_number_of_products');
 
+function save_user_limits_and_notification() {
+    // Check if the user is logged in
+    if (!is_user_logged_in()) {
+        wp_send_json_error('User not logged in.');
+        return;
+    }
 
+    // Get the current user ID
+    $user_id = get_current_user_id();
 
+    // Check for data in the AJAX request
+    if (isset($_POST['fee_collection_limit']) && isset($_POST['withdrawal_limit']) && isset($_POST['notification'])) {
+        $fee_collection_limit = sanitize_text_field($_POST['fee_collection_limit']);
+        $withdrawal_limit = sanitize_text_field($_POST['withdrawal_limit']);
+        $notification_setting = sanitize_text_field($_POST['notification']);
 
+        // Save each setting as user meta
+        $fee_saved = update_user_meta($user_id, 'fee_collection_limit', $fee_collection_limit);
+        $withdrawal_saved = update_user_meta($user_id, 'withdrawal_limit', $withdrawal_limit);
+        $notification_saved = update_user_meta($user_id, 'notification', $notification_setting);
 
-
+        // Check if all settings saved successfully
+        if ($fee_saved && $withdrawal_saved && $notification_saved) {
+            wp_send_json_success('Settings saved successfully.');
+        } else {
+            wp_send_json_error('Failed to save one or more settings.');
+        }
+    } else {
+        wp_send_json_error('Missing data.');
+    }
+}
+add_action('wp_ajax_save_user_limits_and_notification', 'save_user_limits_and_notification');
