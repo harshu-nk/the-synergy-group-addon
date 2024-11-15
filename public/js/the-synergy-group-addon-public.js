@@ -1588,28 +1588,26 @@ jQuery(document).ready(function ($) {
       const selectedValue = $(this).text();
       const dropdownContainer = $(this).closest('.select');
       
-      dropdownContainer.find('input[type="hidden"]').val(selectedValue); // Update hidden input
-      dropdownContainer.find('.select-name span').text(selectedValue); // Update displayed value
-      console.log("Selected Payment Method:", selectedValue); // Debug log
+      dropdownContainer.find('input[type="hidden"]').val(selectedValue);
+      dropdownContainer.find('.select-name span').text(selectedValue);
+      // console.log("Selected Payment Method:", selectedValue);
    });
 
    $('.payment-processing-details li').on('click', function() {
       const selectedValue = $(this).text();
       const dropdownContainer = $(this).closest('.select');
 
-      dropdownContainer.find('input[type="hidden"]').val(selectedValue); // Update hidden input
-      dropdownContainer.find('.select-name span').text(selectedValue); // Update displayed value
-      console.log("Selected Payment Details:", selectedValue); // Debug log
+      dropdownContainer.find('input[type="hidden"]').val(selectedValue); 
+      dropdownContainer.find('.select-name span').text(selectedValue);
+      // console.log("Selected Payment Details:", selectedValue);
    });
 
    $('#configure-save-payment-securitysettings').on('click', function(event) {
       event.preventDefault();
 
-      // Get values from hidden inputs
       const paymentMethod = $('#payment-methods').val();
       const paymentDetails = $('#payment-details').val();
 
-      // Send AJAX request to save values as options
       $.ajax({
           url: tsg_public_ajax.ajax_url,
           type: 'POST',
@@ -1634,39 +1632,33 @@ jQuery(document).ready(function ($) {
 
 
    $('.select-list li').on('click', function() {
-      const selectedFee = $(this).text(); // Get the selected value
-      const hiddenInput = $(this).closest('.select-list').prev('input[type="hidden"]'); // Find the related hidden input
-      hiddenInput.val(selectedFee); // Set the selected value in the hidden input
-      console.log("Selected Fee for", hiddenInput.attr('id'), ":", selectedFee); // Debug log
+      const selectedFee = $(this).text();
+      const hiddenInput = $(this).closest('.select-list').prev('input[type="hidden"]');
+      hiddenInput.val(selectedFee);
+      // console.log("Selected Fee for", hiddenInput.attr('id'), ":", selectedFee);
    });
 
-  // Save button click handler
   $('#tsg-admin-fee-structure-save-btn').on('click', function(event) {
       event.preventDefault();
 
-      // Gather only the selected values with product IDs
       const dataToSave = [];
 
-      // Loop through each hidden input with a value set
       $('input[type="hidden"][id^="fee-setting-plan"]').each(function() {
           const selectedFee = $(this).val();
           const productID = $(this).data('product-id');
 
-          // Only add to dataToSave if a value was selected
           if (selectedFee) {
               dataToSave.push({ product_id: productID, fee_structure: selectedFee });
           }
       });
 
-      console.log("Data to save:", dataToSave); // Debug log for data to save
+      console.log("Data to save:", dataToSave);
 
-      // Check if any data to save
       if (dataToSave.length === 0) {
           alert("Please select a fee structure for at least one plan before saving.");
           return;
       }
 
-      // Send AJAX request to save all selected values
       $.ajax({
           url: tsg_public_ajax.ajax_url,
           type: 'POST',
@@ -1675,7 +1667,7 @@ jQuery(document).ready(function ($) {
               fees: dataToSave
           },
           success: function(response) {
-              console.log("AJAX Response:", response); // Debug response
+              console.log("AJAX Response:", response);
               if (response.success) {
                   alert('Fee structures saved successfully!');
               } else {
@@ -1683,12 +1675,166 @@ jQuery(document).ready(function ($) {
               }
           },
           error: function(jqXHR, textStatus, errorThrown) {
-              console.error("AJAX Error:", textStatus, errorThrown); // Debug error
+              console.error("AJAX Error:", textStatus, errorThrown);
           }
       });
-  });    
-   
+   });    
 
-   //SF Benefits in Fee Settings Page
-   
+   $('.sf-starting-out li, .sf-increase-reach li, .sf-maximize-impact li').on('click', function() {
+      const selectedMultiplier = $(this).text();
+      const hiddenInput = $(this).closest('.select-list').prev('input[type="hidden"]');
+      
+      hiddenInput.val(selectedMultiplier); // Update hidden input with selected value
+      console.log("Selected Multiplier for", hiddenInput.attr('id'), ":", selectedMultiplier); // Debug log
+  });
+
+  $('#tsg-admin-sf-benefits-save-btn').on('click', function(event) {
+   event.preventDefault();
+
+   const dataToSave = [];
+
+   // Loop through each hidden input with a selected multiplier value
+   $('input[type="hidden"][id^="sf-multiplier-plan"]').each(function() {
+       const selectedMultiplier = $(this).val();
+       const productID = $(this).data('product-id');
+
+       if (selectedMultiplier) { // Only add if a multiplier was selected
+           dataToSave.push({ product_id: productID, sf_multiplier: selectedMultiplier });
+       }
+   });
+
+   console.log("Data to save:", dataToSave); // Debug log
+
+   if (dataToSave.length === 0) {
+       alert("Please select an SF multiplier for at least one plan before saving.");
+       return;
+   }
+
+   // Send AJAX request to save all selected values
+   $.ajax({
+       url: tsg_public_ajax.ajax_url,
+       type: 'POST',
+       data: {
+           action: 'save_sf_multiplier',
+           multipliers: dataToSave
+       },
+       success: function(response) {
+           console.log("AJAX Response:", response);
+           if (response.success) {
+               alert('SF multipliers saved successfully!');
+           } else {
+               alert('Failed to save SF multipliers: ' + response.data);
+           }
+       },
+       error: function(jqXHR, textStatus, errorThrown) {
+           console.error("AJAX Error:", textStatus, errorThrown);
+       }
+      });
+   });
+
+   // $('.select-npl-starting-out li, .select-npl-increase-reach li, .select-npl-maximize-impact li').on('click', function() {
+   //    const selectedProductCount = $(this).text();
+   //    const hiddenInput = $(this).closest('.select-list').prev('input[type="hidden"]');
+      
+   //    hiddenInput.val(selectedProductCount); // Update hidden input with selected value
+   //    console.log("Selected Product Count for", hiddenInput.attr('id'), ":", selectedProductCount); // Debug log
+   // });
+   // $('#tsg-admin-product-listed-save-btn').on('click', function(event) {
+   //      event.preventDefault();
+
+   //      const dataToSave = [];
+
+   //      // Loop through each hidden input with a selected product count
+   //      $('input[type="hidden"][id^="number-products-plan"]').each(function() {
+   //          const selectedProductCount = $(this).val();
+   //          const productID = $(this).data('product-id'); // Assuming there's a product ID if needed
+
+   //          if (selectedProductCount) { // Only add if a product count was selected
+   //              dataToSave.push({ product_id: productID, number_of_products: selectedProductCount });
+   //          }
+   //      });
+
+   //      console.log("Data to save:", dataToSave); // Debug log
+
+   //      if (dataToSave.length === 0) {
+   //          alert("Please select a product count for at least one plan before saving.");
+   //          return;
+   //      }
+
+   //      // Send AJAX request to save all selected values
+   //      $.ajax({
+   //          url: tsg_public_ajax.ajax_url,
+   //          type: 'POST',
+   //          data: {
+   //              action: 'save_number_of_products',
+   //              product_counts: dataToSave
+   //          },
+   //          success: function(response) {
+   //              console.log("AJAX Response:", response);
+   //              if (response.success) {
+   //                  alert('Product counts saved successfully!');
+   //              } else {
+   //                  alert('Failed to save product counts: ' + response.data);
+   //              }
+   //          },
+   //          error: function(jqXHR, textStatus, errorThrown) {
+   //              console.error("AJAX Error:", textStatus, errorThrown);
+   //          }
+   //      });
+   // });
+
+
+   $('.select-npl-starting-out li, .select-npl-increase-reach li, .select-npl-maximize-impact li').on('click', function() {
+      const selectedProductCount = $(this).text();
+      const hiddenInput = $(this).closest('.select-list').prev('input[type="hidden"]'); // Find the related hidden input
+
+      hiddenInput.val(selectedProductCount); // Update hidden input with selected value
+      console.log("Selected Product Count for", hiddenInput.attr('id'), ":", selectedProductCount); // Debug log
+   });
+
+   $('#tsg-admin-product-listed-save-btn').on('click', function(event) {
+      event.preventDefault();
+
+      const dataToSave = [];
+
+      // Loop through each hidden input with a selected product count
+      $('input[type="hidden"][id^="number-products-plan"]').each(function() {
+          const selectedProductCount = $(this).val();
+          const productID = $(this).data('product-id'); // Ensure the product ID is retrieved
+
+          if (selectedProductCount && productID) { // Only add if both product count and product ID are present
+              dataToSave.push({ product_id: productID, number_of_products: selectedProductCount });
+          }
+      });
+
+      console.log("Data to save:", dataToSave); // Debug log
+
+      if (dataToSave.length === 0) {
+          alert("Please select a product count for at least one plan before saving.");
+          return;
+      }
+
+      // Send AJAX request to save all selected values
+      $.ajax({
+          url: tsg_public_ajax.ajax_url,
+          type: 'POST',
+          data: {
+              action: 'save_number_of_products',
+              product_counts: dataToSave
+          },
+          success: function(response) {
+              console.log("AJAX Response:", response);
+              if (response.success) {
+                  alert('Product counts saved successfully!');
+              } else {
+                  alert('Failed to save product counts: ' + response.data);
+              }
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+              console.error("AJAX Error:", textStatus, errorThrown);
+          }
+      });
+  });
+
+    
 });

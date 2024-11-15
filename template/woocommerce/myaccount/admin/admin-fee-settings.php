@@ -126,8 +126,8 @@
         <div class="line-right input-field width2">
           <div class="select">
             <p class="select-name"><span>10x</span></p>
-            <input type="hidden" id="sf-multiplier-plan1" name="sf-multiplier-plan1" value="10x">
-            <ul class="select-list">
+            <input type="hidden" id="sf-multiplier-plan1" name="sf-multiplier-plan1" value="10x" data-product-id="239">
+            <ul class="select-list sf-starting-out">
               <li>1x</li>
               <li>1.5x</li>
               <li>2x</li>
@@ -159,8 +159,8 @@
         <div class="line-right input-field width2">
           <div class="select">
             <p class="select-name"><span>10x</span></p>
-            <input type="hidden" id="sf-multiplier-plan2" name="sf-multiplier-plan2" value="10x">
-            <ul class="select-list">
+            <input type="hidden" id="sf-multiplier-plan2" name="sf-multiplier-plan2" value="10x" data-product-id="212">
+            <ul class="select-list sf-increase-reach">
               <li>1x</li>
               <li>1.5x</li>
               <li>2x</li>
@@ -192,8 +192,8 @@
         <div class="line-right input-field width2">
           <div class="select">
             <p class="select-name"><span>10x</span></p>
-            <input type="hidden" id="sf-multiplier-plan3" name="sf-multiplier-plan3" value="10x">
-            <ul class="select-list">
+            <input type="hidden" id="sf-multiplier-plan3" name="sf-multiplier-plan3" value="10x" data-product-id="235">
+            <ul class="select-list sf-maximize-impact">
               <li>1x</li>
               <li>1.5x</li>
               <li>2x</li>
@@ -232,8 +232,8 @@
         <div class="line-right input-field width2">
           <div class="select">
             <p class="select-name"><span>1 Product</span></p>
-            <input type="hidden" id="number-products-plan1" name="number-products-plan1" value="1 Product">
-            <ul class="select-list">
+            <input type="hidden" id="number-products-plan1" name="number-products-plan1" value="1 Product" data-product-id="239">
+            <ul class="select-list select-npl-starting-out">
               <li>1 Product</li>
               <li>2 Products</li>
               <li>3 Products</li>
@@ -257,8 +257,8 @@
         <div class="line-right input-field width2">
           <div class="select">
             <p class="select-name"><span>3 Products</span></p>
-            <input type="hidden" id="number-products-plan2" name="number-productsplan2" value="3 Products">
-            <ul class="select-list">
+            <input type="hidden" id="number-products-plan2" name="number-productsplan2" value="3 Products" data-product-id="212">
+            <ul class="select-list select-npl-increase-reach">
               <li>1 Product</li>
               <li>2 Products</li>
               <li>3 Products</li>
@@ -282,8 +282,8 @@
         <div class="line-right input-field width2">
           <div class="select">
             <p class="select-name"><span>5 Products</span></p>
-            <input type="hidden" id="number-products-plan3" name="number-products-plan3" value="5 Products">
-            <ul class="select-list">
+            <input type="hidden" id="number-products-plan3" name="number-products-plan3" value="5 Products" data-product-id="235">
+            <ul class="select-list select-npl-maximize-impact">
               <li>1 Product</li>
               <li>2 Products</li>
               <li>3 Products</li>

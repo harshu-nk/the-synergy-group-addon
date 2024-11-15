@@ -1233,5 +1233,73 @@ add_action('wp_ajax_save_fee_structure', 'save_fee_structure');
 add_action('wp_ajax_nopriv_save_fee_structure', 'save_fee_structure');
 
 
+function save_sf_multiplier() {
+    // Check if multipliers data is provided
+    if (isset($_POST['multipliers']) && is_array($_POST['multipliers'])) {
+        $multipliers = $_POST['multipliers'];
+        $errors = [];
+
+        foreach ($multipliers as $multiplier) {
+            if (isset($multiplier['product_id']) && isset($multiplier['sf_multiplier'])) {
+                $product_id = intval($multiplier['product_id']);
+                $sf_multiplier = sanitize_text_field($multiplier['sf_multiplier']);
+
+                // Save the multiplier as post meta
+                if (!update_post_meta($product_id, 'sf_multiplier', $sf_multiplier)) {
+                    $errors[] = "Failed to save SF multiplier for product ID: $product_id";
+                }
+            } else {
+                $errors[] = "Invalid data format for item: " . print_r($multiplier, true);
+            }
+        }
+
+        if (empty($errors)) {
+            wp_send_json_success('SF multipliers saved successfully.');
+        } else {
+            wp_send_json_error(['Failed to save SF multipliers:', 'errors' => $errors]);
+        }
+    } else {
+        wp_send_json_error('Invalid data provided.');
+    }
+}
+add_action('wp_ajax_save_sf_multiplier', 'save_sf_multiplier');
+add_action('wp_ajax_nopriv_save_sf_multiplier', 'save_sf_multiplier');
+
+
+function save_number_of_products() {
+    // Check if product counts data is provided
+    if (isset($_POST['product_counts']) && is_array($_POST['product_counts'])) {
+        $product_counts = $_POST['product_counts'];
+        $errors = [];
+
+        foreach ($product_counts as $count) {
+            if (isset($count['product_id']) && isset($count['number_of_products'])) {
+                $product_id = intval($count['product_id']);
+                $number_of_products = sanitize_text_field($count['number_of_products']);
+
+                // Save the number of products as post meta
+                if (!update_post_meta($product_id, 'number_of_products', $number_of_products)) {
+                    $errors[] = "Failed to save product count for product ID: $product_id";
+                }
+            } else {
+                $errors[] = "Invalid data format for item: " . print_r($count, true);
+            }
+        }
+
+        if (empty($errors)) {
+            wp_send_json_success('Product counts saved successfully.');
+        } else {
+            wp_send_json_error(['Failed to save product counts:', 'errors' => $errors]);
+        }
+    } else {
+        wp_send_json_error('Invalid data provided.');
+    }
+}
+add_action('wp_ajax_save_number_of_products', 'save_number_of_products');
+add_action('wp_ajax_nopriv_save_number_of_products', 'save_number_of_products');
+
+
+
+
 
 
