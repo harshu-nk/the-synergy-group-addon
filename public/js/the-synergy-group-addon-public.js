@@ -3,7 +3,9 @@ jQuery(document).ready(function ($) {
       e.preventDefault();
       $(this).toggleClass("active");
       const parentRow = $(this).closest(".line-row");
+      const parentDiv = $(this).closest(".block-line");
 
+      parentDiv.toggleClass("active");
       parentRow.find(".form-curr-value").toggleClass("tsg-entry-hidden");
       parentRow.find(".form-row").toggleClass("tsg-entry-hidden");
    });
@@ -11,11 +13,14 @@ jQuery(document).ready(function ($) {
    $(".bio-edit-pencil").click(function (e) {
       e.preventDefault();
       if ($(".bio").find(".form-curr-value").is(":visible")) {
+         $(this).addClass("active");
          $(".bio").find(".form-curr-value").hide();
-
+         $(".bio").find(".form-row").removeClass("tsg-entry-hidden");
          $(".bio").find(".form-row").show().addClass("active");
       } else {
+         $(this).removeClass("active");
          $(".bio").find(".form-curr-value").show();
+         $(".bio").find(".form-row").addClass("tsg-entry-hidden");
          $(".bio").find(".form-row").hide().removeClass("active");
       }
    });

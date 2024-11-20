@@ -59,7 +59,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 							<p class="form-row tsg-entry-hidden">
 								<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="account_first_name" id="account_first_name" autocomplete="given-name" value="<?php echo esc_attr($amend_user->first_name); ?>" />
 							</p>
-							<a href="#" class="icon-a edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
+							<a href="#" class="icon-a edit-pencil tsg-save-profile"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
 						</div>
 					</div>
 
@@ -72,7 +72,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 							<p class="form-row tsg-entry-hidden">
 								<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="account_last_name" id="account_last_name" autocomplete="family-name" value="<?php echo esc_attr($amend_user->last_name); ?>" />
 							</p>
-							<a href="#" class="icon-a edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
+							<a href="#" class="icon-a edit-pencil tsg-save-profile"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
 						</div>
 					</div>
 
@@ -81,13 +81,13 @@ do_action('woocommerce_before_edit_account_form'); ?>
 							<p><strong><?php esc_html_e('Bio', 'the-synergy-group-addon') ?></strong></p>
 						</div>
 						<div class="line-right line-row icon-right va">
-							<a href="#" class="icon-a bio-edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
+							<a href="#" class="icon-a bio-edit-pencil tsg-save-profile"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
 						</div>
 					</div>
 					<input type="hidden" class="woocommerce-Input woocommerce-Input--text input-text" name="account_display_name" id="account_display_name" value="<?php echo esc_attr($amend_user->display_name); ?>" />
 				</div>
 
-				<div class="bio mt25">
+				<div class="bio">
 					<p class="form-curr-value"><?php echo $user_info->description; ?></p>
 					<p class="form-row tsg-entry-hidden">
 						<textarea class="woocommerce-Input woocommerce-Input--text input-text" name="account_bio" id="account_bio"><?php echo esc_attr($user_info->description); ?></textarea>
@@ -104,6 +104,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 				</div>
 			</div>
 		</div>
+		<div class="tsg-error-msg"></div>
 	</div>
 
 	<?php
@@ -134,7 +135,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 					<p class="form-row tsg-entry-hidden">
 						<input type="email" class="woocommerce-Input woocommerce-Input--email input-text" name="account_email" id="account_email" autocomplete="email" value="<?php echo esc_attr($amend_user->user_email); ?>" />
 					</p>
-					<a href="#" class="icon-a edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
+					<a href="#" class="icon-a edit-pencil tsg-save-profile"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
 				</div>
 			</div>
 
@@ -147,7 +148,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 					<p class="form-row tsg-entry-hidden">
 						<input type="tel" class="woocommerce-Input woocommerce-Input--text input-text" name="mobile" id="mobile" autocomplete="mobile" value="<?php echo esc_attr($amend_user->mobile); ?>" />
 					</p>
-					<a href="#" class="icon-a edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
+					<a href="#" class="icon-a edit-pencil tsg-save-profile"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
 				</div>
 			</div>
 
@@ -160,7 +161,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 					<p class="form-row tsg-entry-hidden">
 						<input type="tel" class="woocommerce-Input woocommerce-Input--text input-text" name="whatsapp" id="whatsapp" autocomplete="whatsapp" value="<?php echo esc_attr($amend_user->whatsapp); ?>" />
 					</p>
-					<a href="#" class="icon-a edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
+					<a href="#" class="icon-a edit-pencil tsg-save-profile"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
 				</div>
 			</div>
 
@@ -173,11 +174,12 @@ do_action('woocommerce_before_edit_account_form'); ?>
 					<p class="form-row tsg-entry-hidden">
 						<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="other_tel" id="other_tel" autocomplete="other_tel" value="<?php echo esc_attr($amend_user->other_tel); ?>" />
 					</p>
-					<a href="#" class="icon-a edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
+					<a href="#" class="icon-a edit-pencil tsg-save-profile"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
 				</div>
 			</div>
 
 		</div>
+		<div class="tsg-error-msg"></div>
 	</div>
 
 	<div class="account-text-block light-style">
@@ -199,7 +201,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 					<p class="form-row tsg-entry-hidden">
 						<input type="url" class="woocommerce-Input woocommerce-Input--text input-text" name="linkedin" id="linkedin" autocomplete="linkedin" value="<?php echo esc_attr($amend_user->linkedin); ?>" />
 					</p>
-					<a href="#" class="icon-a edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
+					<a href="#" class="icon-a edit-pencil tsg-save-profile"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
 				</div>
 			</div>
 
@@ -212,7 +214,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 					<p class="form-row tsg-entry-hidden">
 						<input type="url" class="woocommerce-Input woocommerce-Input--text input-text" name="twitter" id="twitter" autocomplete="twitter" value="<?php echo esc_attr($amend_user->twitter); ?>" />
 					</p>
-					<a href="#" class="icon-a edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
+					<a href="#" class="icon-a edit-pencil tsg-save-profile"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
 				</div>
 			</div>
 
@@ -225,7 +227,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 					<p class="form-row tsg-entry-hidden">
 						<input type="url" class="woocommerce-Input woocommerce-Input--text input-text" name="facebook" id="facebook" autocomplete="facebook" value="<?php echo esc_attr($amend_user->facebook); ?>" />
 					</p>
-					<a href="#" class="icon-a edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
+					<a href="#" class="icon-a edit-pencil tsg-save-profile"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
 				</div>
 			</div>
 
@@ -238,15 +240,16 @@ do_action('woocommerce_before_edit_account_form'); ?>
 					<p class="form-row tsg-entry-hidden">
 						<input type="url" class="woocommerce-Input woocommerce-Input--text input-text" name="instagram" id="instagram" autocomplete="instagram" value="<?php echo esc_attr($amend_user->instagram); ?>" />
 					</p>
-					<a href="#" class="icon-a edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
+					<a href="#" class="icon-a edit-pencil tsg-save-profile"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
 				</div>
 			</div>
 
 		</div>
+		<div class="tsg-error-msg"></div>
 	</div>
 
 	<div class="account-text-block light-style">
-		<div class="account-title-block borderb spb">
+		<div class="account-title-block borderb spb" style="margin-bottom: 20px;">
 			<div class="title-content va">
 				<img width="55" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/certifications.svg" alt="certifications icon" />
 				<h5><?php esc_html_e('Certifications and Awards', 'the-synergy-group-addon'); ?></h5>
@@ -256,7 +259,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 		<div class="items equal pt25">
 
 			<!-- Input Field for Adding Certificate -->
-			<div class="line-right line-row icon-right va tsg-certificate-wrapper tsg-entry-hidden">
+			<div class="line-right line-row icon-right va tsg-certificate-wrapper tsg-entry-hidden" style="width: 100%;">
 				<p class="">
 					<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" 
 						name="certificate-input" id="certificate-input" autocomplete="off" 
@@ -265,32 +268,14 @@ do_action('woocommerce_before_edit_account_form'); ?>
 				<a href="#" class="icon-a edit-certificate" id="tsg-user-add-certificate-btn">
 					<img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" />
 				</a>
-				<!-- Error Message for Empty Input -->
 			</div>
 			<p class="va" id="tsg-certificate-error-message" style="color: red; display: none; width: 100%;">
 				Please enter a certificate name.
 			</p>
 
-    		<!-- Sample Certificate Item -->
-			<!-- <div class="item w2">
-				<div class="itemr">
-					<div class="award-block tc">
-						<a href="#" class="block-edit delete-certificate-btn" data-id="sample-certificate">
-							<img src="<?php //echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" />
-						</a>
-						<div class="award-icon">
-							<img src="<?php //echo THE_SYNERGY_GROUP_URL; ?>public/img/account/award.svg" alt="award icon" />
-						</div>
-						<p class="fs-20 mt18 tsg-certificate-name">
-							<?php //esc_html_e('Microsoft Senior Professional Certificate', 'the-synergy-group-addon'); ?>
-						</p>
-					</div>
-				</div>
-			</div> -->
-
     		<!-- Add New Certificate Button -->
 			<div class="item w2">
-				<div class="itemr">
+				<div class="itemr" style="margin-right: 22px;">
 					<a href="#" class="award-block add-block va jc" id="tsg-add-certificate">
 						<svg id="plus" width="55" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 66.52 67.04">
 							<defs>
@@ -327,7 +312,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 				</div>
 				<div class="line-right icon-right va">
 					<p><?php esc_html_e('Active', ''); ?></p>
-					<a href="#" class="icon-a edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/check_small.svg" alt="small check icon" /></a>
+					<a href="#" class="icon-a edit-pencil tsg-save-profile"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/check_small.svg" alt="small check icon" /></a>
 				</div>
 			</div>
 
@@ -337,7 +322,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 				</div>
 				<div class="line-right icon-right va">
 					<p><?php echo esc_attr($referral_code); ?></p>
-					<a href="#" class="icon-a edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/check_small.svg" alt="small check icon" /></a>
+					<a href="#" class="icon-a edit-pencil tsg-save-profile"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/check_small.svg" alt="small check icon" /></a>
 				</div>
 			</div>
 
@@ -347,7 +332,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 				</div>
 				<div class="line-right icon-right va">
 					<p><a href="<?php echo esc_attr($referral_url); ?>" target="_blank"><?php echo esc_attr($referral_url); ?></a></p>
-					<a href="#" class="icon-a edit-pencil"><img width="23" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/copy.svg" alt="copy icon" /></a>
+					<a href="#" class="icon-a edit-pencil tsg-save-profile"><img width="23" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/copy.svg" alt="copy icon" /></a>
 				</div>
 			</div>
 

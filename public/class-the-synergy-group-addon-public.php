@@ -73,7 +73,7 @@ class The_Synergy_Group_Addon_Public
 			
 		}
 		if (is_account_page()) {
-			wp_enqueue_style($this->plugin_name . '-my-account', plugin_dir_url(__FILE__) . 'css/myaccount.css', array(), '1.0.0', 'all');
+			wp_enqueue_style($this->plugin_name . '-my-account', plugin_dir_url(__FILE__) . 'css/myaccount.css', array(), '1.0.2', 'all');
 			wp_enqueue_style($this->plugin_name . '-my-account-faq', plugin_dir_url(__FILE__) . 'css/faq.css', array(), $this->version, 'all');
 			wp_enqueue_style($this->plugin_name . '-checkboxes', plugin_dir_url(__FILE__) . 'css/checkboxes.css', array(), $this->version, 'all');
 			wp_enqueue_style($this->plugin_name . '-form', plugin_dir_url(__FILE__) . 'css/form.css', array(), $this->version, 'all');

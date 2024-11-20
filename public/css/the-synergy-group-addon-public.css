@@ -52,3 +52,23 @@ p.form-row.active {
    z-index: 999;
    top: 50px;
 }
+
+.woocommerce-account .form-row {
+   margin-bottom: 0 !important;
+}
+
+.block-line.active {
+   padding: 7px 0 !important;
+}
+
+.btn-small {
+   font-size: 25px !important;
+   padding: 16px 30px 15px 30px !important;
+}
+
+.style2:hover {
+   color: #fff !important;
+   border-color: #179ab3 !important;
+   background-color: #179ab3 !important;
+   transition: .3s !important;
+ }

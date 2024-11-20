@@ -1027,8 +1027,8 @@
 }
 
 .btn.w100 {
-	padding-left: 15px;
-	padding-right: 15px;
+	padding-left: 15px !important;
+	padding-right: 15px !important;
 }
 
 .analytics-block .btn-block {
@@ -1104,7 +1104,7 @@ a.add-block:hover svg {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 185px;
+	width: 100%;
 	height: 222px;
 	background-size: cover;
 	background-position: center;
