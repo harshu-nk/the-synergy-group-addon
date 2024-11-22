@@ -209,25 +209,35 @@ function tsg_add_save_certificates() {
     }
 
     $certificates = json_decode(stripslashes($_POST['certificates']), true);
+    $user_id = get_current_user_id(); 
 
     if (is_array($certificates)) {
-        foreach ($certificates as $certificate) {
-            if (isset($certificate['id']) && isset($certificate['text'])) {
-                echo '<div class="item w2" id="' . esc_html($certificate['id']) . '">
-                        <div class="itemr">
-                            <div class="award-block tc">
-                                <a href="#" class="block-edit delete-certificate-btn" data-id="' . esc_html($certificate['id']) . '" data-text="' . esc_html($certificate['text']) . '"><img src="' . THE_SYNERGY_GROUP_URL . '/public/img/account/edit.svg" alt="edit icon"></a>
-                                <div class="award-icon">
-                                    <img src="' . THE_SYNERGY_GROUP_URL . '/public/img/account/award.svg" alt="award icon">
+        update_user_meta($user_id, 'user_certificates', $certificates);
+        $saved_certificates = get_user_meta($user_id, 'user_certificates', true);
+
+        if (!empty($saved_certificates)) {
+            foreach ($saved_certificates as $index => $certificate) {
+                if (isset($certificate['text'])) {
+                    echo '<div class="item w2" id="certificate-' . $index . '">
+                            <div class="itemr">
+                                <div class="award-block tc">
+                                    <a href="#" class="block-edit delete-certificate-btn" data-id="' . $index . '" data-text="' . esc_html($certificate['text']) . '">
+                                        <img src="' . THE_SYNERGY_GROUP_URL . '/public/img/account/trash-can.png" alt="edit icon">
+                                    </a>
+                                    <div class="award-icon">
+                                        <img src="' . THE_SYNERGY_GROUP_URL . '/public/img/account/award.svg" alt="award icon">
+                                    </div>
+                                    <p class="fs-20 mt18 tsg-certificate-name">' . esc_html($certificate['text']) . '</p>
                                 </div>
-                                <p class="fs-20 mt18 tsg-certificate-name">' . esc_html($certificate['text']) . '</p>
                             </div>
-                        </div>
-                    </div>';
+                        </div>';
+                }
             }
+        } else {
+            echo '<p>No valid certificates found</p>';
         }
     } else {
-        echo '<p>No valid certificates found</p>';
+        echo '<p>Invalid certificates data</p>';
     }
     wp_die();
 }
@@ -1556,6 +1566,35 @@ function tsg_onchange_update_user_profile() {
 
     wp_die(); 
 }
+
+add_action('wp_ajax_update_profile_image', 'tsg_update_profile_image');
+function tsg_update_profile_image() {
+    
+    if (empty($_FILES['bp_avatar_upload']) || $_FILES['bp_avatar_upload']['error'] != 0) {
+        wp_send_json_error(['message' => __('Invalid file upload.', 'the-synergy-group-addon')]);
+    }
+
+    require_once ABSPATH . 'wp-admin/includes/file.php';
+    $file = $_FILES['bp_avatar_upload'];
+    $uploaded = wp_handle_upload($file, ['test_form' => false]);
+
+    if (isset($uploaded['file'])) {
+        $user_id = get_current_user_id();
+        bp_core_delete_existing_avatar(['item_id' => $user_id, 'type' => 'full']);
+        bp_core_avatar_handle_upload(
+            [
+                'item_id' => $user_id,
+                'type'    => 'full',
+                'file'    => $uploaded['file']
+            ]
+        );
+
+        wp_send_json_success(['new_image_url' => $uploaded['url']]);
+    } else {
+        wp_send_json_error(['message' => __('File upload failed.', 'the-synergy-group-addon')]);
+    }
+}
+
 
 
 
