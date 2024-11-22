@@ -40,7 +40,7 @@ do_action('woocommerce_before_edit_account_form'); ?>
 
 	<?php do_action('woocommerce_edit_account_form_start'); ?>
 
-	<div class="account-text-block">
+	<div class="tsg-entry-block-wrapper account-text-block">
 		<div class="account-title-block va">
 			<img width="45" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/avatar_profile.svg" class="mr2" alt="avatar icon" />
 			<h5><?php esc_html_e('Main', 'the-synergy-group-addon'); ?></h5>
@@ -54,12 +54,13 @@ do_action('woocommerce_before_edit_account_form'); ?>
 						<div class="line-left">
 							<p><strong><?php esc_html_e('First Name', 'the-synergy-group-addon') ?></strong></p>
 						</div>
-						<div class="line-right line-row icon-right va">
+						<div class="tsg-entry-block line-right line-row icon-right va">
 							<p class="name-block form-curr-value"><?php echo $user_info->first_name; ?></p>
 							<p class="form-row tsg-entry-hidden">
-								<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="account_first_name" id="account_first_name" autocomplete="given-name" value="<?php echo esc_attr($amend_user->first_name); ?>" />
+								<input type="text" class="tsg-input-field woocommerce-Input woocommerce-Input--text input-text" name="first_name" id="first_name" autocomplete="given-name" value="<?php echo esc_attr($amend_user->first_name); ?>" />
 							</p>
-							<a href="#" class="icon-a edit-pencil tsg-save-profile"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
+							<a href="#" class="icon-a edit-pencil"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
+							<a href="#" class="icon-a tsg-save-profile tsg-entry-hidden"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
 						</div>
 					</div>
 
@@ -67,42 +68,48 @@ do_action('woocommerce_before_edit_account_form'); ?>
 						<div class="line-left">
 							<p><strong><?php esc_html_e('Surname', 'the-synergy-group-addon'); ?></strong></p>
 						</div>
-						<div class="line-right line-row icon-right va">
+						<div class="tsg-entry-block line-right line-row icon-right va">
 							<p class="name-block form-curr-value"><?php echo $user_info->last_name; ?></p>
 							<p class="form-row tsg-entry-hidden">
-								<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="account_last_name" id="account_last_name" autocomplete="family-name" value="<?php echo esc_attr($amend_user->last_name); ?>" />
+								<input type="text" class="tsg-input-field woocommerce-Input woocommerce-Input--text input-text" name="last_name" id="last_name" autocomplete="family-name" value="<?php echo esc_attr($amend_user->last_name); ?>" />
 							</p>
 							<a href="#" class="icon-a edit-pencil tsg-save-profile"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
 						</div>
 					</div>
 
-					<div class="block-line spb">
-						<div class="line-left">
-							<p><strong><?php esc_html_e('Bio', 'the-synergy-group-addon') ?></strong></p>
+					<div class="tsg-entry-block">
+						<div class="block-line spb">
+							<div class="line-left">
+								<p><strong><?php esc_html_e('Bio', 'the-synergy-group-addon') ?></strong></p>
+							</div>
+							<div class="line-right line-row icon-right va">
+								<a href="#" class="icon-a bio-edit-pencil tsg-save-profile"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
+							</div>
 						</div>
-						<div class="line-right line-row icon-right va">
-							<a href="#" class="icon-a bio-edit-pencil tsg-save-profile"><img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/edit.svg" alt="edit icon" /></a>
+						<input type="hidden" class="woocommerce-Input woocommerce-Input--text input-text" name="account_display_name" id="account_display_name" value="<?php echo esc_attr($amend_user->display_name); ?>" />
+
+						<div class="bio">
+							<p class="form-curr-value"><?php echo $user_info->description; ?></p>
+							<p class="form-row tsg-entry-hidden">
+								<textarea class="tsg-input-field woocommerce-Input woocommerce-Input--text input-text" name="description" id="description"><?php echo esc_attr($user_info->description); ?></textarea>
+							</p>
 						</div>
 					</div>
-					<input type="hidden" class="woocommerce-Input woocommerce-Input--text input-text" name="account_display_name" id="account_display_name" value="<?php echo esc_attr($amend_user->display_name); ?>" />
+					
 				</div>
 
-				<div class="bio">
-					<p class="form-curr-value"><?php echo $user_info->description; ?></p>
-					<p class="form-row tsg-entry-hidden">
-						<textarea class="woocommerce-Input woocommerce-Input--text input-text" name="account_bio" id="account_bio"><?php echo esc_attr($user_info->description); ?></textarea>
-					</p>
-				</div>
+				
 			</div>
 			<div class="profile-photo-block">
 				<div class="profile-photo">
-					<img src="<?php echo esc_url(bp_core_fetch_avatar(array('item_id' => get_current_user_id(), 'type' => 'full', 'width' => '150', 'html' => false))); ?>" class="mr2" alt="" id="tsg-profile-img-preview">
+					<img src="<?php echo esc_url(bp_core_fetch_avatar(['item_id' => get_current_user_id(), 'type' => 'full', 'width' => '240', 'html' => false])); ?>" class="mr2" alt="" id="tsg-profile-img-preview" style="max-width: 240px;">
 				</div>
 				<div class="btn-block jc mt20">
 					<input type="file" name="bp-avatar-upload" accept="image/*" id="tsg-avatar-upload-input" style="display: none;">
 					<a href="#" class="btn style2 btn-small w100 tsg-avatar-upload-btn"><?php esc_html_e('ADD PIC', 'the-synergy-group-addon'); ?></a>
 				</div>
 			</div>
+
 		</div>
 		<div class="tsg-error-msg"></div>
 	</div>

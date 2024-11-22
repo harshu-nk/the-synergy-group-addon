@@ -2,6 +2,8 @@ jQuery(document).ready(function ($) {
    $(".edit-pencil:not(.bio-edit-pencil)").click(function (e) {
       e.preventDefault();
       $(this).toggleClass("active");
+      $(this).addClass("tsg-entry-hidden");
+      $(this).closest(".tsg-save-profile").toggleClass("tsg-entry-hidden");
       const parentRow = $(this).closest(".line-row");
       const parentDiv = $(this).closest(".block-line");
 
@@ -2004,6 +2006,45 @@ jQuery(document).ready(function ($) {
          });
       }
    });
+
+   //Profile data upload
+   $('.tsg-save-profile').on('click', function (e) {
+      e.preventDefault();
+
+      var $wrapper = $(this).closest('.tsg-entry-block-wrapper');
+      var $parent = $(this).closest('.tsg-entry-block');
+      var $input = $parent.find('.tsg-input-field');
+      
+      var fieldName = $input.attr('name');
+      var fieldValue = $input.val();
+      console.log(fieldName);
+      $wrapper.find('.tsg-error-msg').html('<div id="tsg-saving-text">Saving<span class="tsg-saving-text-dots"></span></div>');
+      $.ajax({
+          url: tsg_public_ajax.ajax_url, 
+          type: 'POST',
+          data: {
+              action: 'onchange_update_user_profile', 
+              field_name: fieldName,
+              field_value: fieldValue,
+          },
+          success: function (response) {
+            console.log(response);
+            $(this).toggleClass("tsg-entry-hidden");
+            $(this).closest(".edit-pencil").removeClass("tsg-entry-hidden");
+            $parent.find('.form-curr-value').text(response);
+            //   if (response.success) {
+            //       $parent.find('.form-curr-value').text(fieldValue);
+            //   } else {
+            //       alert('An error occurred:.');
+            //   }
+            $wrapper.find('.tsg-error-msg').html('<div id="tsg-saving-text">Saved.</div>');
+          },
+          error: function () {
+              $wrapper.find('.tsg-error-msg').html('<div id="tsg-saving-text">Failed to save changes. Please try again.</div>');
+          },
+      });
+   });
+  
 
     
 });

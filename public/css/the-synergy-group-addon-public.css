@@ -72,3 +72,29 @@ p.form-row.active {
    background-color: #179ab3 !important;
    transition: .3s !important;
  }
+
+ #tsg-saving-text {
+   font-size: 18px;
+   font-weight: bold;
+}
+
+#tsg-saving-text .tsg-saving-text-dots::after {
+   content: "";
+   display: inline-block;
+   animation: dots 1.5s steps(3, end) infinite;
+}
+
+@keyframes dots {
+   0% {
+       content: "";
+   }
+   33% {
+       content: ".";
+   }
+   66% {
+       content: "..";
+   }
+   100% {
+       content: "...";
+   }
+}

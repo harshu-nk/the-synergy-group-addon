@@ -1539,5 +1539,23 @@ function tsg_admin_manual_fee_adjustment() {
     wp_die(); 
 }
 
+add_action('wp_ajax_onchange_update_user_profile', 'tsg_onchange_update_user_profile');
+
+function tsg_onchange_update_user_profile() {
+
+    $field_name = sanitize_text_field($_POST['field_name']);
+    $field_value = sanitize_text_field($_POST['field_value']);
+    $user_id = get_current_user_id();
+
+    if (update_user_meta($user_id, $field_name, $field_value)) {
+        echo ( $field_value );
+    } else {
+        // wp_send_json_error(['message' => 'Failed to update profile.']);
+        echo "Failed.";
+    }
+
+    wp_die(); 
+}
+
 
 

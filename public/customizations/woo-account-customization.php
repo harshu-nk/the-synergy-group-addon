@@ -458,6 +458,7 @@ class WooAccountCustomizations
 
     function tsg_save_custom_fields_my_account($user_id)
     {
+        wc_get_logger('notice', "Save function triggered for user ID: $user_id");
         $account_bio = ! empty($_POST['account_bio']) ? wc_clean(wp_unslash($_POST['account_bio'])) : '';
         if ($account_bio) {
             update_user_meta($user_id, 'description', $account_bio);
@@ -518,23 +519,48 @@ class WooAccountCustomizations
                 update_user_meta($user_id, 'twitter', $instagram);
             }
         }
+
+        $this->bp_handle_avatar_upload_in_wc_account($user_id);
     }
 
     /**
      * Handle BuddyPress avatar upload on WooCommerce Edit Account form submission.
      */
+    // function bp_handle_avatar_upload_in_wc_account($user_id): void
+    // {
+    //     if (isset($_POST['bp-avatar-delete']) && 1 == $_POST['bp-avatar-delete']) {
+    //         bp_core_delete_existing_avatar(array('item_id' => $user_id));
+    //     }
+
+    //     if (! empty($_FILES['bp-avatar-upload']['name'])) {
+    //         if (bp_core_avatar_handle_upload(array('item_id' => $user_id, 'object' => 'user'))) {
+    //             bp_core_fetch_avatar(array('item_id' => $user_id, 'type' => 'full', 'html' => true));
+    //         }
+    //     }
+    // }
     function bp_handle_avatar_upload_in_wc_account($user_id): void
     {
+        wc_get_logger('notice', "Avatar upload function triggered for user ID: $user_id");
         if (isset($_POST['bp-avatar-delete']) && 1 == $_POST['bp-avatar-delete']) {
-            bp_core_delete_existing_avatar(array('item_id' => $user_id));
+            bp_core_delete_existing_avatar(['item_id' => $user_id]);
         }
 
-        if (! empty($_FILES['bp-avatar-upload']['name'])) {
-            if (bp_core_avatar_handle_upload(array('item_id' => $user_id, 'object' => 'user'))) {
-                bp_core_fetch_avatar(array('item_id' => $user_id, 'type' => 'full', 'html' => true));
+        if (!empty($_FILES['bp-avatar-upload']['name'])) {
+            $upload_success = bp_core_avatar_handle_upload([
+                'item_id' => $user_id,
+                'object'  => 'user',
+            ]);
+
+            if ($upload_success) {
+                bp_core_fetch_avatar([
+                    'item_id' => $user_id,
+                    'type'    => 'full',
+                    'html'    => true,
+                ]);
             }
         }
     }
+
 
     function tsg_simple_history_output()
     {
