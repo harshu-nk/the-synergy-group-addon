@@ -610,53 +610,113 @@ class WooAccountCustomizations
 
             <h6 class="mt25">Service Interactions</h6>
             <div class="block-lines small-lines media-full">
-                <div class="block-line spb">
-                    <div class="line-left va">
-                        <div class="line-icon2">
-                            <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/arrow_right.svg" alt="arrow right icon" />
-                        </div>
-                        <p>2024/07/07 - 17:45. Update 0.2.0231.01</p>
-                    </div>
-                </div>
+                <?php
+                $has_matching_order = false;
 
-                <div class="block-line spb">
-                    <div class="line-left va">
-                        <div class="line-icon2">
-                            <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/arrow_right.svg" alt="arrow right icon" />
+                $orders = wc_get_orders([
+                    'limit' => 20, 
+                    'orderby' => 'date',
+                    'order' => 'DESC',
+                    'return' => 'ids',
+                ]);
+                // echo '<pre>';
+                // print_r($orders);
+                // echo '</pre>';
+                if (!empty($orders)) {
+                    foreach ($orders as $order_id) {
+                        $order = wc_get_order($order_id);
+                        $is_current_user_author = false;
+                
+                        foreach ($order->get_items() as $item_id => $item) {
+                            if ($item instanceof WC_Order_Item_Product) {
+                                $product = $item->get_product();
+                
+                                if ($product && $product->get_post_data()->post_author == $current_user_id) {
+                                    $is_current_user_author = true;
+                                    break; 
+                                }
+                            }
+                        }
+                
+                        if ($is_current_user_author) {
+                            $has_matching_order = true;
+                            $date = $order->get_date_created()->date('Y/m/d - H:i'); 
+                            $name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(); 
+                            $total = $order->get_total(); 
+                
+                            ?>
+                            <div class="block-line spb">
+                                <div class="line-left va">
+                                    <div class="line-icon2">
+                                        <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/arrow_right.svg" alt="arrow right icon" />
+                                    </div>
+                                    <p>
+                                        <?php echo esc_html($date); ?>&nbsp;
+                                        <span>#</span><?php echo esc_html($order_id); ?>&nbsp;<?php echo esc_html($name); ?>&nbsp;
+                                        <strong>CHF </strong><?php echo esc_html(wc_price($total)); ?>
+                                    </p>
+                                </div>
+                            </div>
+                            <?php
+                        }
+                    }
+                } 
+                
+                if (!$has_matching_order) { 
+                    ?>
+                    <div class="block-line spb">
+                        <div class="line-left va">
+                            <div class="line-icon2">
+                                <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/arrow_right.svg" alt="arrow right icon" />
+                            </div>
+                            <p>No recent orders available for products authored by you.</p>
                         </div>
-                        <p>2024/07/07 - 19:42. Update 0.2.0231.02</p>
                     </div>
-                </div>
+                    <?php           
+                }
+                ?>           
             </div>
 
             <h6 class="mt25">Exchange Transactions</h6>
             <div class="block-lines small-lines media-full">
-                <div class="block-line spb">
-                    <div class="line-left va">
-                        <div class="line-icon2">
-                            <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/arrow_right.svg" alt="arrow right icon" />
-                        </div>
-                        <p>Transaction 46841521684651</p>
-                    </div>
-                </div>
+                <?php 
+                    $results = $wpdb->get_results($wpdb->prepare(
+                        "SELECT creds, entry, time FROM {$wpdb->prefix}myCRED_log WHERE user_id = %d ORDER BY time DESC LIMIT 10",
+                        $current_user_id
+                    ));
 
-                <div class="block-line spb">
-                    <div class="line-left va">
-                        <div class="line-icon2">
-                            <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/arrow_right.svg" alt="arrow right icon" />
+                    if (!empty($results)) {
+                        foreach ($results as $row) {
+                            $date = date('Y/m/d - H:i', $row->time);
+                            ?>
+                            <div class="block-line spb">
+                                <div class="line-left va">
+                                    <div class="line-icon2">
+                                        <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/arrow_right.svg" alt="arrow right icon" />
+                                    </div>
+                                    <p>
+                                        <?php echo esc_html($date); ?>&nbsp;
+                                        <strong>SF </strong><?php echo esc_html($row->creds); ?>&nbsp;
+                                        <?php echo esc_html($row->entry); ?>
+                                        
+                                    </p>
+                                </div>
+                            </div>
+                            <?php
+                        }
+                    } else {
+                        ?>
+                        <div class="block-line spb">
+                            <div class="line-left va">
+                                <div class="line-icon2">
+                                    <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/arrow_right.svg" alt="arrow right icon" />
+                                </div>
+                                <p>No logs available for this user.</p>
+                            </div>
                         </div>
-                        <p>Transaction 46841521684652</p>
-                    </div>
-                </div>
-
-                <div class="block-line spb">
-                    <div class="line-left va">
-                        <div class="line-icon2">
-                            <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/arrow_right.svg" alt="arrow right icon" />
-                        </div>
-                        <p>Transaction 46841521684653</p>
-                    </div>
-                </div>
+                        <?php           
+                    }
+                ?>
             </div>
         </div>
 <?php }
