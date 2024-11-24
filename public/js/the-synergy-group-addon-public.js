@@ -209,7 +209,7 @@ jQuery(document).ready(function ($) {
       $(".tsg-edit-service-btn").addClass("active");
       $(".tsg-service-edit").show();
       $("#tsg-service-save-btn").show();
-      $(".tsg-service-preview").hide();
+      //$(".tsg-service-preview").hide();
 
       if (productId === "create-new") {
          $(".tsg-edit-service-btn").addClass("locked");
@@ -220,25 +220,16 @@ jQuery(document).ready(function ($) {
          $("#service-name").val("");
          $("#long-desc").val("");
          $("#short-desc").val("");
-         $("#product-price").val("");
          $("#pricing-units").val("");
          $("#pricing-sf").val("");
          $("#pricing-chf").val("");
          $("#taxonomy-select").val("");
-         $("#activity-type").val("");
-         $("#service-image").val("");
+         $("#main-image").attr("src", "");
 
-         $("#pre-selected-service").html("");
-         $("#pre-service-name").html("");
-         $("#pre-long-desc").html("");
-         $("#pre-short-desc").html("");
-         $("#pre-product-price").html("");
-         $("#pre-pricing-units").html("");
-         $("#pre-pricing-sf").html("");
-         $("#pre-pricing-chf").html("");
-         $("#pre-taxonomy-select").html("");
-         $("#pre-activity-type").html("");
-         $("#pre-service-image").html("");
+         $(".tsg-service-gallery-image-preview").html("");
+         $("#service-gallery-collection").val("");
+         $("#performance-analytics").val("");
+         $("#performance-analytics").closest(".select").find(".select-name span").text("");
 
          $("#tsg-selected-service span").text("Create New");
       } else {
@@ -253,7 +244,10 @@ jQuery(document).ready(function ($) {
          $.ajax({
             url: tsg_public_ajax.ajax_url,
             type: "POST",
-            data: { action: "get_product_details", product_id: productId },
+            data: { 
+               action: "get_product_details", 
+               product_id: productId 
+            },
             success: function (response) {
                if (response.success) {
                   var product = response.data;
@@ -261,37 +255,20 @@ jQuery(document).ready(function ($) {
                   $("#service-name").val(product.name);
                   $("#long-desc").val(product.long_description);
                   $("#short-desc").val(product.short_description);
-                  // $("#product-price").val(product.chf_price);
-                  $("#pricing-units").val(product.pricing_units);
-                  $("#pricing-sf").val(product.pricing_sf);
-                  $("#pricing-chf").val(product.pricing_chf);
-                  $("#taxonomy-select").val(product.category);
-                  $("#activity-type").val(product.activity);
-                  // $("#service-image").val(product.main_image);
-                  // $("#service-image").attr("src", product.main_image);
-                  // $('#activity-type').val(product.gallery); // Load gallery images (implement your logic here)
+                  $("#pricing-units").val(product.regular_price);
+                  $("#pricing-sf").val(product.sf_percentage);
+                  $("#pricing-chf").val(product.chf_percentage);
+                  $("#taxonomy-select").val(product.categories[0]);
+                  $("#performance-analytics").val(product.perf_analytics);
+                  $("#main-image").attr("src", product.featured_image);
 
-                  $("#pre-service-name").html(product.name);
-                  $("#pre-long-desc").html(product.long_description);
-                  $("#pre-short-desc").html(product.short_description);
-                  // $("#product-price").html(product.chf_price);
-                  $("#pre-pricing-units").html(product.pricing_units);
-                  $("#pre-pricing-sf").html(product.pricing_sf);
-                  $("#pre-pricing-chf").html(product.pricing_chf);
-                  $("#pre-taxonomy-select").html(product.category);
-                  $("#pre-activity-type").html(product.activity);
-                  // $("#service-image").val(product.main_image);
-                  // $("#pre-service-image").attr("src", product.main_image);
+                  var galleryUrls = product.gallery_images.join(",");
+                  $("#service-gallery-collection").val(galleryUrls);
+                  loadGalleryFromCollection();
                }
             },
          });
       }
-   });
-
-   // Stop the click event from bubbling up -> after create new click
-   $(document).on("click", ".tsg-edit-service-btn.locked", function (e) {
-      e.preventDefault(); 
-      e.stopPropagation(); 
    });
 
    // Handle form submission (create/edit product)
@@ -2103,10 +2080,10 @@ jQuery(document).ready(function ($) {
          if ($button.hasClass("active")) {
             $(".tsg-service-edit").show();
             $("#tsg-service-save-btn").show();
-            $(".tsg-service-preview").hide();
+            //$(".tsg-service-preview").hide();
          } else {
             $(".tsg-service-edit").hide();
-            $(".tsg-service-preview").show();
+            //$(".tsg-service-preview").show();
             $("#tsg-service-save-btn").hide();
          }
    });
@@ -2127,91 +2104,162 @@ jQuery(document).ready(function ($) {
    togglePerformanceAnalytics();
 
    //customer service edit -> Handle file selection and preview
-   let galleryFiles = [];
+   // let galleryFiles = [];
 
-   function initializeGalleryFiles() {
-      const inputFiles = $("#service-gallery")[0].files;
+   // function initializeGalleryFiles() {
+   //    const inputFiles = $("#service-gallery")[0].files;
 
-      for (let i = 0; i < inputFiles.length; i++) {
-         galleryFiles.push(inputFiles[i]);
+   //    for (let i = 0; i < inputFiles.length; i++) {
+   //       galleryFiles.push(inputFiles[i]);
 
-         const reader = new FileReader();
-         reader.onload = function (e) {
-               const wrapper = $(`
-                  <div class="tsg-service-gallery-image-wrapper item w3">
-                     <div class="itemr">
-                           <img class="uploaded-picture opt tsg-service-gallery-image" src="${e.target.result}" />
-                     </div>
-                     <button class="delete-image-btn" data-index="${i}">&times;</button>
-                  </div>
-               `);
+   //       const reader = new FileReader();
+   //       reader.onload = function (e) {
+   //             const wrapper = $(`
+   //                <div class="tsg-service-gallery-image-wrapper item w3">
+   //                   <div class="itemr">
+   //                         <img class="uploaded-picture opt tsg-service-gallery-image" src="${e.target.result}" />
+   //                   </div>
+   //                   <button class="delete-image-btn" data-index="${i}">&times;</button>
+   //                </div>
+   //             `);
 
-               $(".tsg-service-gallery-image-preview").append(wrapper);
-         };
+   //             $(".tsg-service-gallery-image-preview").append(wrapper);
+   //       };
 
-         reader.readAsDataURL(inputFiles[i]);
-      }
+   //       reader.readAsDataURL(inputFiles[i]);
+   //    }
 
-      tsgUpdateFileInput(); 
-   }
+   //    tsgUpdateFileInput(); 
+   // }
 
    // Update the file input value with the current files in galleryFiles
-   function tsgUpdateFileInput() {
-      const dataTransfer = new DataTransfer();
+   // function tsgUpdateFileInput() {
+   //    const dataTransfer = new DataTransfer();
 
-      galleryFiles.forEach(file => {
-         dataTransfer.items.add(file);
-      });
+   //    galleryFiles.forEach(file => {
+   //       dataTransfer.items.add(file);
+   //    });
 
-      $("#service-gallery")[0].files = dataTransfer.files;
-   }
+   //    $("#service-gallery")[0].files = dataTransfer.files;
+   // }
 
    // Handle new file selection
-   $("#service-gallery").on("change", function (event) {
-      const files = event.target.files;
+   // $("#service-gallery").on("change", function (event) {
+   //    const files = event.target.files;
 
-      for (let i = 0; i < files.length; i++) {
-         const file = files[i];
-         const reader = new FileReader();
+   //    for (let i = 0; i < files.length; i++) {
+   //       const file = files[i];
+   //       const reader = new FileReader();
 
-         reader.onload = function (e) {
-               const wrapper = $(`
-                  <div class="tsg-service-gallery-image-wrapper item w3">
-                     <div class="itemr">
-                           <img class="uploaded-picture opt tsg-service-gallery-image" src="${e.target.result}" />
-                     </div>
-                     <button class="delete-image-btn" data-index="${galleryFiles.length}">&times;</button>
-                  </div>
-               `);
+   //       reader.onload = function (e) {
+   //             const wrapper = $(`
+   //                <div class="tsg-service-gallery-image-wrapper item w3">
+   //                   <div class="tsg-uploaded-picture-wrapper itemr">
+   //                         <img class="uploaded-picture opt tsg-service-gallery-image" src="${e.target.result}" />
+   //                   </div>
+   //                   <button class="delete-image-btn" data-index="${galleryFiles.length}">&times;</button>
+   //                </div>
+   //             `);
 
-               $(".tsg-service-gallery-image-preview").append(wrapper);
+   //             $(".tsg-service-gallery-image-preview").append(wrapper);
 
-               galleryFiles.push(file);
-               tsgUpdateFileInput();
-         };
+   //             galleryFiles.push(file);
+   //             tsgUpdateFileInput();
+   //       };
 
-         reader.readAsDataURL(file);
-      }
+   //       reader.readAsDataURL(file);
+   //    }
 
-      setTimeout(() => {
-            $("#service-gallery").val("");
-      }, 0); // Clear the input to allow re-selecting the same files
-   });
+   //    setTimeout(() => {
+   //          $("#service-gallery").val("");
+   //    }, 0); // Clear the input to allow re-selecting the same files
+   // });
 
    // Handle delete image
-   $(document).on("click", ".delete-image-btn", function () {
-      const index = $(this).data("index");
-      galleryFiles.splice(index, 1);
+   // $(document).on("click", ".delete-image-btn", function () {
+   //    const index = $(this).data("index");
+   //    galleryFiles.splice(index, 1);
 
-      $(this).closest(".tsg-service-gallery-image-wrapper").remove();
-      tsgUpdateFileInput();
-   });
+   //    $(this).closest(".tsg-service-gallery-image-wrapper").remove();
+   //    tsgUpdateFileInput();
+   // });
 
    // Initialize the gallery files on page load
-   $(document).ready(function () {
-      initializeGalleryFiles();
-   });
+   // $(document).ready(function () {
+   //    initializeGalleryFiles();
+   // });
 
-
+   function loadGalleryFromCollection() {
+      var galleryCollection = $("#service-gallery-collection").val().split(",").filter(Boolean);
+      $(".tsg-service-gallery-image-preview").empty(); // Clear existing items
+  
+      galleryCollection.forEach((item) => {
+          const wrapper = $(`
+              <div class="tsg-service-gallery-image-wrapper item w3">
+                  <div class="tsg-uploaded-picture-wrapper itemr">
+                      <img class="uploaded-picture opt tsg-service-gallery-image" src="${item}" />
+                  </div>
+                  <button class="delete-image-btn" data-value="${item}">&times;</button>
+              </div>
+          `);
+          $(".tsg-service-gallery-image-preview").append(wrapper);
+      });
+  }
+  
+  // Handle file uploads
+  $("#service-gallery").on("change", function () {
+      var galleryCollection = $("#service-gallery-collection").val().split(",").filter(Boolean);
+  
+      Array.from(this.files).forEach(file => {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+              galleryCollection.push(e.target.result);
+              $("#service-gallery-collection").val(galleryCollection.join(",")); // Update text input
+  
+              // Append only the new file to the DOM
+              const wrapper = $(`
+                  <div class="tsg-service-gallery-image-wrapper item w3">
+                      <div class="tsg-uploaded-picture-wrapper itemr">
+                          <img class="uploaded-picture opt tsg-service-gallery-image" src="${e.target.result}" />
+                      </div>
+                      <button class="delete-image-btn" data-value="${e.target.result}">&times;</button>
+                  </div>
+              `);
+              $(".tsg-service-gallery-image-preview").append(wrapper);
+          };
+          reader.readAsDataURL(file);
+      });
+  
+      setTimeout(() => {
+          $("#service-gallery").val(""); // Clear the input to allow re-selecting the same files
+      }, 0);
+  });
+  
+  // Handle delete button functionality
+  $(document).on("click", ".delete-image-btn", function () {
+      var galleryCollection = $("#service-gallery-collection").val().split(",").filter(Boolean);
+      var valueToRemove = $(this).data("value"); // Get the exact value to remove
+  
+      // Remove the item from the array
+      galleryCollection = galleryCollection.filter(item => item !== valueToRemove);
+  
+      // Update the hidden text input with the modified collection
+      $("#service-gallery-collection").val(galleryCollection.join(","));
+  
+      // Remove only the clicked wrapper from the DOM
+      $(this).closest(".tsg-service-gallery-image-wrapper").remove();
+  });
+  
+  // Automatically synchronize gallery preview with text input changes
+  $("#service-gallery-collection").on("input", function () {
+      loadGalleryFromCollection();
+  });
+  
+  // Initialize gallery on page load or after AJAX updates
+  $(document).ready(function () {
+      loadGalleryFromCollection();
+  });
+  
+  
    
 });

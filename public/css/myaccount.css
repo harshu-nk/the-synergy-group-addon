@@ -1220,10 +1220,8 @@ a.add-block:hover svg {
 }
 
 .uploaded-picture {
-	width: 100%;
-	height: 150px;
-	background-color: #f5fafa;
-	border: 2px solid #c8dde9;
+	width: auto !important;
+	height: 150px !important;
 }
 
 @media(max-width: 360px) {
@@ -1252,4 +1250,12 @@ a.add-block:hover svg {
 	border-top: 2px solid #c8dde9;
 	padding-top: 25px;
 	margin-top: 25px;
+}
+.tsg-uploaded-picture-wrapper {
+	display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    background-color: #f5fafa;
+    border: 2px solid #c8dde9;
 }

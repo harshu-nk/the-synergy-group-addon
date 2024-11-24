@@ -145,14 +145,11 @@
       </div>
       <div class="line-right input-field width2">
         <div class="select">
-          <p class="select-name" id="tsg-selected-service"><span>Select Service</span></p>
+          <p class="select-name" id="tsg-selected-service"><span>Create New</span></p>
           <input type="hidden" id="selected-service" name="selected-service" value="" />
           <ul class="select-list hauto" id="user-products">
             <li data-id="create-new">Create New</li>
-            <?php 
-            //foreach ($products as $product) {
-              //echo "<li data-value='{$product['id']}'>{$product['title']}</li>";
-            //} ?></ul>
+          </ul>
         </div>
       </div>
     </div>
@@ -167,7 +164,7 @@
             <a href="#" class="btn style2 tsg-edit-service-btn">edit</a>
           </div>
           <div class="btn-block">
-            <a href="#" class="btn style2 tsg-delete-service-btn" id="tsg-delete-service">delete</a>
+            <a href="#" class="btn style2 tsg-delete-service-btn" id="tsg-delete-service" style="display: none;">delete</a>
           </div>
         </div>
       </div>
@@ -193,7 +190,7 @@
             <p><?php _e('Long Description', 'the-synergy-group-addon'); ?></p>
           </div>
           <div class="line-right textarea-field long-textarea">
-            <textarea id="long-desc" name="long-description" placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt  consectetur adipiscing elit, sed do eiusmod tempor incididunt consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt  consectetur adipiscing elit, sed do eiusmod tempor incididunt consectetur adipiscing elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor "></textarea>
+            <textarea id="long-desc" name="long-description" placeholder=""></textarea>
           </div>
         </div>
 
@@ -202,7 +199,7 @@
             <p><?php _e('Short Description', 'the-synergy-group-addon'); ?></p>
           </div>
           <div class="line-right textarea-field">
-            <textarea id="short-desc" name="short-description" placeholder="Short Description"></textarea>
+            <textarea id="short-desc" name="short-description" placeholder=""></textarea>
           </div>
         </div>
 
@@ -212,7 +209,7 @@
           </div>
           <div class="line-right qty-field">
             <div class="line-right input-field">
-              <input type="number" placeholder="100" id="pricing-units" name="product-price">
+              <input type="number" placeholder="" id="pricing-units" name="product-price" >
             </div>
             <div class="items pad10 tsg-sf-and-chf-wrapper">
               <div class="item w2">
@@ -246,7 +243,7 @@
             <div class="main-picture-block">
               <div class="items pictures pad10">
                 <div class="item w3">
-                  <div class="itemr">
+                  <div class="tsg-uploaded-picture-wrapper itemr">
                     <img class="uploaded-picture opt tsg-main-service-image" id="main-image" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/service-placeholder.png"/>
                   </div>
                 </div>
@@ -267,6 +264,7 @@
             <div class="tsg-service-gallery-image-preview items pictures pad10">
             </div>
             <div class="btn-block fl-end mt20">
+              <input type="text" id="service-gallery-collection" name="service-gallery-collection" style="display: none;" value="">
               <input type="file" name="service-gallery[]" id="service-gallery" multiple style="display: none;" accept="image/*">
               <a href="#" class="btn style2" id="service-gallery-btn">change</a>
             </div>
@@ -293,13 +291,13 @@
       <!-- product preview section -->
       <div class="tsg-service-preview">
         <div class="tsg-service-performance-analytics">
-          <div class="block-line spb small-line" style="border-top: none !important;">
+          <!-- <div class="block-line spb small-line" style="border-top: none !important;">
             <div class="line-left">
-              <p><strong><?php _e('Service Performance Analytics', 'the-synergy-group-addon'); ?></strong></p>
+              <p><strong><?php //_e('Service Performance Analytics', 'the-synergy-group-addon'); ?></strong></p>
             </div>
             <div class="line-right input-field">
             </div>
-          </div>
+          </div> -->
           <div class="block-line spb">
             <div class="line-left">
               <p><?php _e('Views', 'the-synergy-group-addon'); ?></p>
