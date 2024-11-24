@@ -1595,6 +1595,51 @@ function tsg_update_profile_image() {
     }
 }
 
+//user settings page
+function save_user_settings() {
+    // Check if the user is logged in
+    if (!is_user_logged_in()) {
+        wp_send_json_error('User not logged in.');
+        return;
+    }
 
+    // Get the current user ID
+    $user_id = get_current_user_id();
 
+    // Check and sanitize data
+    $profile_visibility = isset($_POST['profile_visibility']) ? sanitize_text_field($_POST['profile_visibility']) : null;
+    $payment_methods = isset($_POST['payment_methods']) ? sanitize_text_field($_POST['payment_methods']) : null;
+    $default_currency = isset($_POST['default_currency']) ? sanitize_text_field($_POST['default_currency']) : null;
+    $notification_preferences = isset($_POST['notification_preferences']) ? sanitize_text_field($_POST['notification_preferences']) : null;
+    $affiliate_earnings = isset($_POST['affiliate_earnings']) ? sanitize_text_field($_POST['affiliate_earnings']) : null;
+    $data_export = isset($_POST['data_export']) ? sanitize_text_field($_POST['data_export']) : null;
 
+    // Save user meta
+    $errors = [];
+    if ($profile_visibility && !update_user_meta($user_id, 'user_profile_visibility', $profile_visibility)) {
+        $errors[] = 'Failed to save profile visibility.';
+    }
+    if ($payment_methods && !update_user_meta($user_id, 'user_payment_methods', $payment_methods)) {
+        $errors[] = 'Failed to save payment methods.';
+    }
+    if ($default_currency && !update_user_meta($user_id, 'user_default_currency', $default_currency)) {
+        $errors[] = 'Failed to save default currency.';
+    }
+    if ($notification_preferences && !update_user_meta($user_id, 'user_notification_preferences', $notification_preferences)) {
+        $errors[] = 'Failed to save notification preferences.';
+    }
+    if ($affiliate_earnings && !update_user_meta($user_id, 'user_affiliate_earnings', $affiliate_earnings)) {
+        $errors[] = 'Failed to save affiliate earnings.';
+    }
+    if ($data_export && !update_user_meta($user_id, 'user_data_export', $data_export)) {
+        $errors[] = 'Failed to save data export.';
+    }
+
+    // Return response
+    if (empty($errors)) {
+        wp_send_json_success('User settings saved successfully.');
+    } else {
+        wp_send_json_error(['Failed to save some settings.', 'errors' => $errors]);
+    }
+}
+add_action('wp_ajax_save_user_settings', 'save_user_settings');
