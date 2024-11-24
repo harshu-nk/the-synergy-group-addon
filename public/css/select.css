@@ -107,6 +107,7 @@
     opacity: 1;
     /*display: block;*/
     transition: .3s;
+	z-index: 9999;
 }
 
 .show .select-list.hauto {

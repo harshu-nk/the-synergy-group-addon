@@ -62,7 +62,7 @@ function save_product()
     $product->set_name($product_name);
     $product->set_description($product_desc);
     $product->set_short_description($product_short_desc);
-    $product->set_price($product_price);
+    $product->set_regular_price($product_price);
 
     $product->update_meta_data('sf_percentage', sanitize_text_field($_POST['pricing-sf']));
     $product->update_meta_data('chf_percentage', sanitize_text_field($_POST['pricing-chf']));
@@ -72,6 +72,47 @@ function save_product()
         $product->set_category_ids(isset($_POST['selected-category']) ? (array) $_POST['selected-category'] : array());
     }
 
+    // Handle Featured Image Upload
+    if (!empty($_FILES['service-image']['name'])) {
+        require_once(ABSPATH . 'wp-admin/includes/file.php');
+        require_once(ABSPATH . 'wp-admin/includes/image.php');
+        require_once(ABSPATH . 'wp-admin/includes/media.php');
+
+        $featured_image_id = media_handle_upload('service-image', 0);
+        if (!is_wp_error($featured_image_id)) {
+            set_post_thumbnail($product->get_id(), $featured_image_id); // Set the featured image
+        }
+    }
+
+    // Handle Gallery Images Upload
+    if (!empty($_FILES['service-gallery']['name'][0])) { // Check if at least one file is uploaded
+        require_once(ABSPATH . 'wp-admin/includes/file.php');
+        require_once(ABSPATH . 'wp-admin/includes/image.php');
+        require_once(ABSPATH . 'wp-admin/includes/media.php');
+
+        $gallery_image_ids = [];
+        foreach ($_FILES['service-gallery']['name'] as $key => $value) {
+            if (!empty($_FILES['service-gallery']['name'][$key])) {
+                $file = [
+                    'name'     => $_FILES['service-gallery']['name'][$key],
+                    'type'     => $_FILES['service-gallery']['type'][$key],
+                    'tmp_name' => $_FILES['service-gallery']['tmp_name'][$key],
+                    'error'    => $_FILES['service-gallery']['error'][$key],
+                    'size'     => $_FILES['service-gallery']['size'][$key],
+                ];
+
+                $gallery_image_id = media_handle_sideload($file, $product->get_id());
+                if (!is_wp_error($gallery_image_id)) {
+                    $gallery_image_ids[] = $gallery_image_id;
+                }
+            }
+        }
+
+        if (!empty($gallery_image_ids)) {
+            $product->set_gallery_image_ids($gallery_image_ids);
+        }
+    }
+   
     $product->save();
 
     wp_send_json_success('Product saved successfully!');

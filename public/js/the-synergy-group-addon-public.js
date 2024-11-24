@@ -104,19 +104,19 @@ jQuery(document).ready(function ($) {
       }, 5000);
    }
 
-   //user profile pic show
-   // $("#tsg-avatar-upload-input").on("change", function (event) {
-   //    var imgPreview = $("#tsg-profile-img-preview");
-   //    var file = event.target.files[0];
+   //customer -> conpany logo preview
+   $("#company_logo_input").on("change", function (event) {
+      var imgPreview = $("#company_logo_preview");
+      var file = event.target.files[0];
 
-   //    if (file) {
-   //       var reader = new FileReader();
-   //       reader.onload = function (e) {
-   //          imgPreview.attr("src", e.target.result);
-   //       };
-   //       reader.readAsDataURL(file);
-   //    }
-   // });
+      if (file) {
+         var reader = new FileReader();
+         reader.onload = function (e) {
+            imgPreview.attr("src", e.target.result);
+         };
+         reader.readAsDataURL(file);
+      }
+   });
 
    $(".user-withdraw-btn").on("click", function (e) {
       e.preventDefault();
@@ -149,6 +149,12 @@ jQuery(document).ready(function ($) {
       $(this).parents(".edit-parent").find(".hidable-value").toggle();
    });
 
+   $(".tsg-change-btn").on("click", function (e) {
+      e.preventDefault();
+      $(this).parents(".tsg-entry-block").find(".editable-input").toggle();
+      $(this).parents(".tsg-entry-block").find(".hidable-value").toggle();
+   });
+
    $("#taxonomy-select").select2({
       placeholder: "Select an option",
       ajax: {
@@ -166,8 +172,8 @@ jQuery(document).ready(function ($) {
             return {
                results: $.map(data, function (item) {
                   return {
-                     //   id: item.id,
-                     id: item.slug,
+                     id: item.id,
+                     // id: item.slug,
                      text: item.text,
                   };
                }),
@@ -175,7 +181,8 @@ jQuery(document).ready(function ($) {
          },
          cache: true,
       },
-      minimumInputLength: 2, // Start searching after 2 characters
+      placeholder: "Select category",
+      minimumInputLength: 0, // Start searching after 2 characters
    });
 
    //   Services Endpoint
@@ -190,6 +197,7 @@ jQuery(document).ready(function ($) {
             $.each(products, function (index, product) {
                $("#user-products").append('<li data-id="' + product.id + '">' + product.title + "</li>");
             });
+
          }
       },
    });
@@ -198,7 +206,13 @@ jQuery(document).ready(function ($) {
    $("#user-products").on("click", "li", function () {
       var productId = $(this).data("id");
 
+      $(".tsg-edit-service-btn").addClass("active");
+      $(".tsg-service-edit").show();
+      $("#tsg-service-save-btn").show();
+      $(".tsg-service-preview").hide();
+
       if (productId === "create-new") {
+         $(".tsg-edit-service-btn").addClass("locked");
          $(".tsg-delete-service-btn").hide();
 
          $("#selected-service").val("");
@@ -206,7 +220,7 @@ jQuery(document).ready(function ($) {
          $("#service-name").val("");
          $("#long-desc").val("");
          $("#short-desc").val("");
-         // $("#product-price").val("");
+         $("#product-price").val("");
          $("#pricing-units").val("");
          $("#pricing-sf").val("");
          $("#pricing-chf").val("");
@@ -214,8 +228,21 @@ jQuery(document).ready(function ($) {
          $("#activity-type").val("");
          $("#service-image").val("");
 
+         $("#pre-selected-service").html("");
+         $("#pre-service-name").html("");
+         $("#pre-long-desc").html("");
+         $("#pre-short-desc").html("");
+         $("#pre-product-price").html("");
+         $("#pre-pricing-units").html("");
+         $("#pre-pricing-sf").html("");
+         $("#pre-pricing-chf").html("");
+         $("#pre-taxonomy-select").html("");
+         $("#pre-activity-type").html("");
+         $("#pre-service-image").html("");
+
          $("#tsg-selected-service span").text("Create New");
       } else {
+         $(".tsg-edit-service-btn").removeClass("locked");
          $(".tsg-delete-service-btn").show();
          $("#selected-service").val(productId);
 
@@ -241,23 +268,49 @@ jQuery(document).ready(function ($) {
                   $("#taxonomy-select").val(product.category);
                   $("#activity-type").val(product.activity);
                   // $("#service-image").val(product.main_image);
-                  $("#service-image").attr("src", product.main_image);
+                  // $("#service-image").attr("src", product.main_image);
                   // $('#activity-type').val(product.gallery); // Load gallery images (implement your logic here)
+
+                  $("#pre-service-name").html(product.name);
+                  $("#pre-long-desc").html(product.long_description);
+                  $("#pre-short-desc").html(product.short_description);
+                  // $("#product-price").html(product.chf_price);
+                  $("#pre-pricing-units").html(product.pricing_units);
+                  $("#pre-pricing-sf").html(product.pricing_sf);
+                  $("#pre-pricing-chf").html(product.pricing_chf);
+                  $("#pre-taxonomy-select").html(product.category);
+                  $("#pre-activity-type").html(product.activity);
+                  // $("#service-image").val(product.main_image);
+                  // $("#pre-service-image").attr("src", product.main_image);
                }
             },
          });
       }
    });
 
+   // Stop the click event from bubbling up -> after create new click
+   $(document).on("click", ".tsg-edit-service-btn.locked", function (e) {
+      e.preventDefault(); 
+      e.stopPropagation(); 
+   });
+
    // Handle form submission (create/edit product)
    $("#manage-service-form").on("submit", function (e) {
       e.preventDefault();
-      var formData = $(this).serialize();
+      var formData = new FormData(this);
+      formData.append("action", "save_product");
+      // var formData = $(this).serialize();
 
+      for (let [key, value] of formData.entries()) {
+         console.log(key, value);
+     }
       $.ajax({
          url: tsg_public_ajax.ajax_url,
          type: "POST",
-         data: formData + "&action=save_product",
+         // data: formData + "&action=save_product",
+         data: formData,
+         processData: false,
+         contentType: false,
          success: function (response) {
             if (response.success) {
                alert("Product saved successfully!");
@@ -719,12 +772,12 @@ jQuery(document).ready(function ($) {
       $("#service-gallery").click();
    });
 
-   $("#service-image").on("change", function (event) {
+   $("#service-image, #pre-service-image").on("change", function (event) {
       if (event.target.files && event.target.files[0]) {
          var reader = new FileReader();
 
          reader.onload = function (e) {
-            $("#main-image").attr("src", e.target.result);
+            $(".tsg-main-service-image").attr("src", e.target.result);
          };
 
          reader.readAsDataURL(event.target.files[0]);
@@ -2041,5 +2094,124 @@ jQuery(document).ready(function ($) {
 
    });
 
-    
+   //customer service edit toggle
+   $(".tsg-edit-service-btn").on("click", function (e) {
+         e.preventDefault();
+         const $button = $(this);
+         $button.toggleClass("active");
+
+         if ($button.hasClass("active")) {
+            $(".tsg-service-edit").show();
+            $("#tsg-service-save-btn").show();
+            $(".tsg-service-preview").hide();
+         } else {
+            $(".tsg-service-edit").hide();
+            $(".tsg-service-preview").show();
+            $("#tsg-service-save-btn").hide();
+         }
+   });
+
+   //customer service edit -> Service performance analytics show hide
+   function togglePerformanceAnalytics() {
+      const value = $("#performance-analytics").val(); 
+      if (value === "Enabled") {
+          $(".tsg-service-performance-analytics").show(); 
+      } else if (value === "Disabled") {
+          $(".tsg-service-performance-analytics").hide(); 
+      }
+   }
+
+   $("#performance-analytics").on("change", function () {
+         togglePerformanceAnalytics();
+   });
+   togglePerformanceAnalytics();
+
+   //customer service edit -> Handle file selection and preview
+   let galleryFiles = [];
+
+   function initializeGalleryFiles() {
+      const inputFiles = $("#service-gallery")[0].files;
+
+      for (let i = 0; i < inputFiles.length; i++) {
+         galleryFiles.push(inputFiles[i]);
+
+         const reader = new FileReader();
+         reader.onload = function (e) {
+               const wrapper = $(`
+                  <div class="tsg-service-gallery-image-wrapper item w3">
+                     <div class="itemr">
+                           <img class="uploaded-picture opt tsg-service-gallery-image" src="${e.target.result}" />
+                     </div>
+                     <button class="delete-image-btn" data-index="${i}">&times;</button>
+                  </div>
+               `);
+
+               $(".tsg-service-gallery-image-preview").append(wrapper);
+         };
+
+         reader.readAsDataURL(inputFiles[i]);
+      }
+
+      tsgUpdateFileInput(); 
+   }
+
+   // Update the file input value with the current files in galleryFiles
+   function tsgUpdateFileInput() {
+      const dataTransfer = new DataTransfer();
+
+      galleryFiles.forEach(file => {
+         dataTransfer.items.add(file);
+      });
+
+      $("#service-gallery")[0].files = dataTransfer.files;
+   }
+
+   // Handle new file selection
+   $("#service-gallery").on("change", function (event) {
+      const files = event.target.files;
+
+      for (let i = 0; i < files.length; i++) {
+         const file = files[i];
+         const reader = new FileReader();
+
+         reader.onload = function (e) {
+               const wrapper = $(`
+                  <div class="tsg-service-gallery-image-wrapper item w3">
+                     <div class="itemr">
+                           <img class="uploaded-picture opt tsg-service-gallery-image" src="${e.target.result}" />
+                     </div>
+                     <button class="delete-image-btn" data-index="${galleryFiles.length}">&times;</button>
+                  </div>
+               `);
+
+               $(".tsg-service-gallery-image-preview").append(wrapper);
+
+               galleryFiles.push(file);
+               tsgUpdateFileInput();
+         };
+
+         reader.readAsDataURL(file);
+      }
+
+      setTimeout(() => {
+            $("#service-gallery").val("");
+      }, 0); // Clear the input to allow re-selecting the same files
+   });
+
+   // Handle delete image
+   $(document).on("click", ".delete-image-btn", function () {
+      const index = $(this).data("index");
+      galleryFiles.splice(index, 1);
+
+      $(this).closest(".tsg-service-gallery-image-wrapper").remove();
+      tsgUpdateFileInput();
+   });
+
+   // Initialize the gallery files on page load
+   $(document).ready(function () {
+      initializeGalleryFiles();
+   });
+
+
+   
 });

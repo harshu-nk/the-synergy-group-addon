@@ -98,3 +98,41 @@ p.form-row.active {
        content: "...";
    }
 }
+.style2 {
+   min-width: auto !important;
+}
+.woocommerce .block-line .btn {
+   font-size: 22px !important;
+   padding: 14px 27px 11px 27px !important;
+}
+.tsg-edit-service-btn.active {
+   background-color: #179ab3 !important;
+   color: #ffffff !important;
+}
+.tsg-service-gallery-image-wrapper {
+   position: relative;
+ }
+ .tsg-service-gallery-image-wrapper .delete-image-btn {
+   position: absolute;
+   top: 5px;
+   right: 5px;
+   background-color: red;
+   color: white;
+   border: none;
+   border-radius: 50%;
+   cursor: pointer;
+   width: 20px;
+   height: 20px;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   font-size: 12px;
+ }
+ .tsg-service-preview .tsg-service-gallery-image-wrapper .delete-image-btn {
+   display: none;
+ }
+ .tsg-main-service-image {
+   width: auto !important;
+   height: 150px !important;
+ }
+ 
