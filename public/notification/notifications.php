@@ -14,7 +14,7 @@ class Notifier
                 <div class="account-title-block spb">
                     <div class="title-content va">
                         <img width="48" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/bell.svg" alt="bell icon" />
-                        <h5><?php _e('Manage Alerts', 'the-synergy-group-addon'); ?></h5>
+                        <h5><?php _e('Manage Alerts test', 'the-synergy-group-addon'); ?></h5>
                     </div>
                 </div>
 
