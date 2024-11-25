@@ -2214,10 +2214,6 @@ jQuery(document).ready(function ($) {
       });
    }
 
-   // $(document).ready(function () {
-   //    textInputrenderGallery();
-   // });
-
    $(document).on("click", ".txt-delete-image-btn", function () {
       const index = $(this).data("index"); 
       const galleryInput = $("#service-gallery-collection");
