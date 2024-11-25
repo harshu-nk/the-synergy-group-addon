@@ -112,7 +112,7 @@ p.form-row.active {
 .tsg-service-gallery-image-wrapper {
    position: relative;
  }
- .tsg-service-gallery-image-wrapper .delete-image-btn {
+ .tsg-service-gallery-image-wrapper .delete-image-btn, .tsg-service-gallery-image-wrapper .txt-delete-image-btn {
    position: absolute;
    top: 5px;
    right: 5px;

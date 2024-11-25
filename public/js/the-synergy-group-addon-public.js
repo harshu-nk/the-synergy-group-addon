@@ -264,7 +264,7 @@ jQuery(document).ready(function ($) {
 
                   var galleryUrls = product.gallery_images.join(",");
                   $("#service-gallery-collection").val(galleryUrls);
-                  loadGalleryFromCollection();
+                  textInputrenderGallery();
                }
             },
          });
@@ -2104,162 +2104,131 @@ jQuery(document).ready(function ($) {
    togglePerformanceAnalytics();
 
    //customer service edit -> Handle file selection and preview
-   // let galleryFiles = [];
+   let galleryFiles = [];
 
-   // function initializeGalleryFiles() {
-   //    const inputFiles = $("#service-gallery")[0].files;
+   function initializeGalleryFiles(fromTxtDelete = true) {
 
-   //    for (let i = 0; i < inputFiles.length; i++) {
-   //       galleryFiles.push(inputFiles[i]);
+      const inputFiles = $("#service-gallery")[0].files;
+      
+      for (let i = 0; i < inputFiles.length; i++) {
 
-   //       const reader = new FileReader();
-   //       reader.onload = function (e) {
-   //             const wrapper = $(`
-   //                <div class="tsg-service-gallery-image-wrapper item w3">
-   //                   <div class="itemr">
-   //                         <img class="uploaded-picture opt tsg-service-gallery-image" src="${e.target.result}" />
-   //                   </div>
-   //                   <button class="delete-image-btn" data-index="${i}">&times;</button>
-   //                </div>
-   //             `);
+         if(fromTxtDelete) {
+            galleryFiles.push(inputFiles[i]);
+         }
 
-   //             $(".tsg-service-gallery-image-preview").append(wrapper);
-   //       };
+         const reader = new FileReader();
+         reader.onload = function (e) {
+               const wrapper = $(`
+                  <div class="tsg-service-gallery-image-wrapper item w3">
+                     <div class="tsg-uploaded-picture-wrapper itemr">
+                           <img class="uploaded-picture opt tsg-service-gallery-image" src="${e.target.result}" />
+                     </div>
+                     <button class="delete-image-btn" data-index="${i}">&times;</button>
+                  </div>
+               `);
 
-   //       reader.readAsDataURL(inputFiles[i]);
-   //    }
+               $(".tsg-service-gallery-image-preview").append(wrapper);
+         };
 
-   //    tsgUpdateFileInput(); 
-   // }
+         reader.readAsDataURL(inputFiles[i]);
+      }
+
+      tsgUpdateFileInput(); 
+   }
 
    // Update the file input value with the current files in galleryFiles
-   // function tsgUpdateFileInput() {
-   //    const dataTransfer = new DataTransfer();
+   function tsgUpdateFileInput() {
+      const dataTransfer = new DataTransfer();
 
-   //    galleryFiles.forEach(file => {
-   //       dataTransfer.items.add(file);
-   //    });
+      galleryFiles.forEach(file => {
+         dataTransfer.items.add(file);
+      });
 
-   //    $("#service-gallery")[0].files = dataTransfer.files;
-   // }
+      $("#service-gallery")[0].files = dataTransfer.files;
+   }
 
-   // Handle new file selection
-   // $("#service-gallery").on("change", function (event) {
-   //    const files = event.target.files;
+   //File input -> Handle new file selection
+   $("#service-gallery").on("change", function (event) {
+      const files = event.target.files;
 
-   //    for (let i = 0; i < files.length; i++) {
-   //       const file = files[i];
-   //       const reader = new FileReader();
+      for (let i = 0; i < files.length; i++) {
+         const file = files[i];
+         const reader = new FileReader();
 
-   //       reader.onload = function (e) {
-   //             const wrapper = $(`
-   //                <div class="tsg-service-gallery-image-wrapper item w3">
-   //                   <div class="tsg-uploaded-picture-wrapper itemr">
-   //                         <img class="uploaded-picture opt tsg-service-gallery-image" src="${e.target.result}" />
-   //                   </div>
-   //                   <button class="delete-image-btn" data-index="${galleryFiles.length}">&times;</button>
-   //                </div>
-   //             `);
+         reader.onload = function (e) {
+               const wrapper = $(`
+                  <div class="tsg-service-gallery-image-wrapper item w3">
+                     <div class="tsg-uploaded-picture-wrapper itemr">
+                           <img class="uploaded-picture opt tsg-service-gallery-image" src="${e.target.result}" />
+                     </div>
+                     <button class="delete-image-btn" data-index="${galleryFiles.length}">&times;</button>
+                  </div>
+               `);
 
-   //             $(".tsg-service-gallery-image-preview").append(wrapper);
+               $(".tsg-service-gallery-image-preview").append(wrapper);
 
-   //             galleryFiles.push(file);
-   //             tsgUpdateFileInput();
-   //       };
+               galleryFiles.push(file);
+               tsgUpdateFileInput();
+         };
 
-   //       reader.readAsDataURL(file);
-   //    }
+         reader.readAsDataURL(file);
+      }
 
-   //    setTimeout(() => {
-   //          $("#service-gallery").val("");
-   //    }, 0); // Clear the input to allow re-selecting the same files
-   // });
+      setTimeout(() => {
+            $("#service-gallery").val("");
+      }, 0); // Clear the input to allow re-selecting the same files
+   });
 
-   // Handle delete image
-   // $(document).on("click", ".delete-image-btn", function () {
-   //    const index = $(this).data("index");
-   //    galleryFiles.splice(index, 1);
+   //File input -> Handle delete image
+   $(document).on("click", ".delete-image-btn", function () {
+      const index = $(this).data("index");
+      galleryFiles.splice(index, 1);
 
-   //    $(this).closest(".tsg-service-gallery-image-wrapper").remove();
-   //    tsgUpdateFileInput();
-   // });
+      $(this).closest(".tsg-service-gallery-image-wrapper").remove();
+      tsgUpdateFileInput();
+   });
 
-   // Initialize the gallery files on page load
-   // $(document).ready(function () {
-   //    initializeGalleryFiles();
-   // });
+   //File input -> Initialize the gallery files on page load
+   $(document).ready(function () {
+      initializeGalleryFiles();
+   });
 
-   function loadGalleryFromCollection() {
-      var galleryCollection = $("#service-gallery-collection").val().split(",").filter(Boolean);
-      $(".tsg-service-gallery-image-preview").empty(); // Clear existing items
-  
-      galleryCollection.forEach((item) => {
+
+   //Text input -> Function to render the gallery based on text input value
+   function textInputrenderGallery() {
+      const galleryInput = $("#service-gallery-collection");
+      const galleryFiles = galleryInput.val() ? galleryInput.val().split(",") : [];
+      const previewContainer = $(".tsg-service-gallery-image-preview");
+      previewContainer.empty(); 
+
+      galleryFiles.forEach((file, index) => {
           const wrapper = $(`
               <div class="tsg-service-gallery-image-wrapper item w3">
                   <div class="tsg-uploaded-picture-wrapper itemr">
-                      <img class="uploaded-picture opt tsg-service-gallery-image" src="${item}" />
+                      <img class="uploaded-picture opt tsg-service-gallery-image" src="${file}" />
                   </div>
-                  <button class="delete-image-btn" data-value="${item}">&times;</button>
+                  <button class="txt-delete-image-btn" data-index="${index}">&times;</button>
               </div>
           `);
-          $(".tsg-service-gallery-image-preview").append(wrapper);
+          previewContainer.append(wrapper);
       });
-  }
-  
-  // Handle file uploads
-  $("#service-gallery").on("change", function () {
-      var galleryCollection = $("#service-gallery-collection").val().split(",").filter(Boolean);
-  
-      Array.from(this.files).forEach(file => {
-          const reader = new FileReader();
-          reader.onload = function (e) {
-              galleryCollection.push(e.target.result);
-              $("#service-gallery-collection").val(galleryCollection.join(",")); // Update text input
-  
-              // Append only the new file to the DOM
-              const wrapper = $(`
-                  <div class="tsg-service-gallery-image-wrapper item w3">
-                      <div class="tsg-uploaded-picture-wrapper itemr">
-                          <img class="uploaded-picture opt tsg-service-gallery-image" src="${e.target.result}" />
-                      </div>
-                      <button class="delete-image-btn" data-value="${e.target.result}">&times;</button>
-                  </div>
-              `);
-              $(".tsg-service-gallery-image-preview").append(wrapper);
-          };
-          reader.readAsDataURL(file);
-      });
-  
-      setTimeout(() => {
-          $("#service-gallery").val(""); // Clear the input to allow re-selecting the same files
-      }, 0);
-  });
-  
-  // Handle delete button functionality
-  $(document).on("click", ".delete-image-btn", function () {
-      var galleryCollection = $("#service-gallery-collection").val().split(",").filter(Boolean);
-      var valueToRemove = $(this).data("value"); // Get the exact value to remove
-  
-      // Remove the item from the array
-      galleryCollection = galleryCollection.filter(item => item !== valueToRemove);
-  
-      // Update the hidden text input with the modified collection
-      $("#service-gallery-collection").val(galleryCollection.join(","));
-  
-      // Remove only the clicked wrapper from the DOM
-      $(this).closest(".tsg-service-gallery-image-wrapper").remove();
-  });
-  
-  // Automatically synchronize gallery preview with text input changes
-  $("#service-gallery-collection").on("input", function () {
-      loadGalleryFromCollection();
-  });
-  
-  // Initialize gallery on page load or after AJAX updates
-  $(document).ready(function () {
-      loadGalleryFromCollection();
-  });
-  
-  
-   
+   }
+
+   // $(document).ready(function () {
+   //    textInputrenderGallery();
+   // });
+
+   $(document).on("click", ".txt-delete-image-btn", function () {
+      const index = $(this).data("index"); 
+      const galleryInput = $("#service-gallery-collection");
+      let galleryFiles = galleryInput.val() ? galleryInput.val().split(",") : [];
+
+      galleryFiles.splice(index, 1);
+
+      galleryInput.val(galleryFiles.join(","));
+      textInputrenderGallery();
+      initializeGalleryFiles(false);
+   });
+
+
 });
