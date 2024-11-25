@@ -52,3 +52,87 @@ p.form-row.active {
    z-index: 999;
    top: 50px;
 }
+
+.woocommerce-account .form-row {
+   margin-bottom: 0 !important;
+}
+
+.block-line.active {
+   padding: 7px 0 !important;
+}
+
+.btn-small {
+   font-size: 25px !important;
+   padding: 16px 30px 15px 30px !important;
+}
+
+.style2:hover {
+   color: #fff !important;
+   border-color: #179ab3 !important;
+   background-color: #179ab3 !important;
+   transition: .3s !important;
+ }
+
+ #tsg-saving-text {
+   font-size: 18px;
+   font-weight: bold;
+}
+
+#tsg-saving-text .tsg-saving-text-dots::after {
+   content: "";
+   display: inline-block;
+   animation: dots 1.5s steps(3, end) infinite;
+}
+
+@keyframes dots {
+   0% {
+       content: "";
+   }
+   33% {
+       content: ".";
+   }
+   66% {
+       content: "..";
+   }
+   100% {
+       content: "...";
+   }
+}
+.style2 {
+   min-width: auto !important;
+}
+.woocommerce .block-line .btn {
+   font-size: 22px !important;
+   padding: 14px 27px 11px 27px !important;
+}
+.tsg-edit-service-btn.active {
+   background-color: #179ab3 !important;
+   color: #ffffff !important;
+}
+.tsg-service-gallery-image-wrapper {
+   position: relative;
+ }
+ .tsg-service-gallery-image-wrapper .delete-image-btn {
+   position: absolute;
+   top: 5px;
+   right: 5px;
+   background-color: red;
+   color: white;
+   border: none;
+   border-radius: 50%;
+   cursor: pointer;
+   width: 20px;
+   height: 20px;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   font-size: 12px;
+ }
+ .tsg-service-preview .tsg-service-gallery-image-wrapper .delete-image-btn {
+   display: none;
+ }
+ .tsg-main-service-image {
+   width: auto !important;
+   height: 150px !important;
+ }
+ 

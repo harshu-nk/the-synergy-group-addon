@@ -156,7 +156,7 @@
             <div class="block-line spb">
                 <div class="line-right va btns-part">
                     <div class="btn-block">
-                        <button type="submit" class="btn minw"><?php _e('Save', 'the-synergy-group-addon'); ?></button>
+                        <button type="submit" class="btn minw user-settings-save"><?php _e('Save', 'the-synergy-group-addon'); ?></button>
                     </div>
                 </div>
             </div>

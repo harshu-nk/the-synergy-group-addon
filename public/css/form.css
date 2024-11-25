@@ -245,12 +245,12 @@ button[type="submit"] img {
 }
 
 .search-form input[type="submit"] {
-    width: 100px;
-	min-width: auto;
-	font-size: 22px;
-	margin-left: 10px;
-	padding: 0 15px;
-	padding-top: 4px;
+	width: 100px;
+    min-width: auto;
+    font-size: 22px !important;
+    margin-left: 10px;
+    padding: 0 15px !important;
+    padding-top: 4px !important;
 }
 
 input[type="submit"] {

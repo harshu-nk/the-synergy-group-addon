@@ -125,13 +125,27 @@
                     
                         $tickets = new WP_Query($args);
                         $ticket_count = $tickets->found_posts;
+
+                        function tsg_display_support_tickets() {
+                            ob_start();
+                        
+                            echo do_shortcode('[support_tickets]');
+                        
+                            $support_tickets_output = ob_get_clean();
+                        
+                            if (trim($support_tickets_output) === '') {
+                                return '<p>No support tickets available at the moment.</p>';
+                            } else {
+                                return $support_tickets_output;
+                            }
+                        }
                     ?>
                     <div class="btn-block">
                         <a href="#" class="btn style2 w100" id="tsg-active-tickets-btn"><?php echo $ticket_count; ?> active tickets</a>
                     </div>
                 </div>
             </div>
-            <div class="block-line spb" id="tsg-active-tickets-container" style="display: none;"><?php echo do_shortcode('[support_tickets]'); ?></div>
+            <div class="block-line spb" id="tsg-active-tickets-container" style="display: none;"><?php echo tsg_display_support_tickets(); ?></div>
         </div>
     </div>
 

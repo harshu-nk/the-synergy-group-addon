@@ -209,25 +209,35 @@ function tsg_add_save_certificates() {
     }
 
     $certificates = json_decode(stripslashes($_POST['certificates']), true);
+    $user_id = get_current_user_id(); 
 
     if (is_array($certificates)) {
-        foreach ($certificates as $certificate) {
-            if (isset($certificate['id']) && isset($certificate['text'])) {
-                echo '<div class="item w2" id="' . esc_html($certificate['id']) . '">
-                        <div class="itemr">
-                            <div class="award-block tc">
-                                <a href="#" class="block-edit delete-certificate-btn" data-id="' . esc_html($certificate['id']) . '" data-text="' . esc_html($certificate['text']) . '"><img src="' . THE_SYNERGY_GROUP_URL . '/public/img/account/edit.svg" alt="edit icon"></a>
-                                <div class="award-icon">
-                                    <img src="' . THE_SYNERGY_GROUP_URL . '/public/img/account/award.svg" alt="award icon">
+        update_user_meta($user_id, 'user_certificates', $certificates);
+        $saved_certificates = get_user_meta($user_id, 'user_certificates', true);
+
+        if (!empty($saved_certificates)) {
+            foreach ($saved_certificates as $index => $certificate) {
+                if (isset($certificate['text'])) {
+                    echo '<div class="item w2" id="certificate-' . $index . '">
+                            <div class="itemr">
+                                <div class="award-block tc">
+                                    <a href="#" class="block-edit delete-certificate-btn" data-id="' . $index . '" data-text="' . esc_html($certificate['text']) . '">
+                                        <img src="' . THE_SYNERGY_GROUP_URL . '/public/img/account/trash-can.png" alt="edit icon">
+                                    </a>
+                                    <div class="award-icon">
+                                        <img src="' . THE_SYNERGY_GROUP_URL . '/public/img/account/award.svg" alt="award icon">
+                                    </div>
+                                    <p class="fs-20 mt18 tsg-certificate-name">' . esc_html($certificate['text']) . '</p>
                                 </div>
-                                <p class="fs-20 mt18 tsg-certificate-name">' . esc_html($certificate['text']) . '</p>
                             </div>
-                        </div>
-                    </div>';
+                        </div>';
+                }
             }
+        } else {
+            echo '<p>No valid certificates found</p>';
         }
     } else {
-        echo '<p>No valid certificates found</p>';
+        echo '<p>Invalid certificates data</p>';
     }
     wp_die();
 }
@@ -1539,5 +1549,97 @@ function tsg_admin_manual_fee_adjustment() {
     wp_die(); 
 }
 
+add_action('wp_ajax_onchange_update_user_profile', 'tsg_onchange_update_user_profile');
 
+function tsg_onchange_update_user_profile() {
 
+    $field_name = sanitize_text_field($_POST['field_name']);
+    $field_value = sanitize_text_field($_POST['field_value']);
+    $user_id = get_current_user_id();
+
+    if (update_user_meta($user_id, $field_name, $field_value)) {
+        echo ( $field_value );
+    } else {
+        // wp_send_json_error(['message' => 'Failed to update profile.']);
+        echo "Failed.";
+    }
+
+    wp_die(); 
+}
+
+add_action('wp_ajax_update_profile_image', 'tsg_update_profile_image');
+function tsg_update_profile_image() {
+    
+    if (empty($_FILES['bp_avatar_upload']) || $_FILES['bp_avatar_upload']['error'] != 0) {
+        wp_send_json_error(['message' => __('Invalid file upload.', 'the-synergy-group-addon')]);
+    }
+
+    require_once ABSPATH . 'wp-admin/includes/file.php';
+    $file = $_FILES['bp_avatar_upload'];
+    $uploaded = wp_handle_upload($file, ['test_form' => false]);
+
+    if (isset($uploaded['file'])) {
+        $user_id = get_current_user_id();
+        bp_core_delete_existing_avatar(['item_id' => $user_id, 'type' => 'full']);
+        bp_core_avatar_handle_upload(
+            [
+                'item_id' => $user_id,
+                'type'    => 'full',
+                'file'    => $uploaded['file']
+            ]
+        );
+
+        wp_send_json_success(['new_image_url' => $uploaded['url']]);
+    } else {
+        wp_send_json_error(['message' => __('File upload failed.', 'the-synergy-group-addon')]);
+    }
+}
+
+//user settings page
+function save_user_settings() {
+    // Check if the user is logged in
+    if (!is_user_logged_in()) {
+        wp_send_json_error('User not logged in.');
+        return;
+    }
+
+    // Get the current user ID
+    $user_id = get_current_user_id();
+
+    // Check and sanitize data
+    $profile_visibility = isset($_POST['profile_visibility']) ? sanitize_text_field($_POST['profile_visibility']) : null;
+    $payment_methods = isset($_POST['payment_methods']) ? sanitize_text_field($_POST['payment_methods']) : null;
+    $default_currency = isset($_POST['default_currency']) ? sanitize_text_field($_POST['default_currency']) : null;
+    $notification_preferences = isset($_POST['notification_preferences']) ? sanitize_text_field($_POST['notification_preferences']) : null;
+    $affiliate_earnings = isset($_POST['affiliate_earnings']) ? sanitize_text_field($_POST['affiliate_earnings']) : null;
+    $data_export = isset($_POST['data_export']) ? sanitize_text_field($_POST['data_export']) : null;
+
+    // Save user meta
+    $errors = [];
+    if ($profile_visibility && !update_user_meta($user_id, 'user_profile_visibility', $profile_visibility)) {
+        $errors[] = 'Failed to save profile visibility.';
+    }
+    if ($payment_methods && !update_user_meta($user_id, 'user_payment_methods', $payment_methods)) {
+        $errors[] = 'Failed to save payment methods.';
+    }
+    if ($default_currency && !update_user_meta($user_id, 'user_default_currency', $default_currency)) {
+        $errors[] = 'Failed to save default currency.';
+    }
+    if ($notification_preferences && !update_user_meta($user_id, 'user_notification_preferences', $notification_preferences)) {
+        $errors[] = 'Failed to save notification preferences.';
+    }
+    if ($affiliate_earnings && !update_user_meta($user_id, 'user_affiliate_earnings', $affiliate_earnings)) {
+        $errors[] = 'Failed to save affiliate earnings.';
+    }
+    if ($data_export && !update_user_meta($user_id, 'user_data_export', $data_export)) {
+        $errors[] = 'Failed to save data export.';
+    }
+
+    // Return response
+    if (empty($errors)) {
+        wp_send_json_success('User settings saved successfully.');
+    } else {
+        wp_send_json_error(['Failed to save some settings.', 'errors' => $errors]);
+    }
+}
+add_action('wp_ajax_save_user_settings', 'save_user_settings');

@@ -32,8 +32,14 @@ function get_product_details()
             'name' => $product->get_name(),
             'long_description' => $product->get_description(),
             'short_description' => $product->get_short_description(),
-            'chf_price' => $product->get_price(),
+            'reqular_price' => $product->get_price(),
             // Add any custom fields you need
+            'sf_percentage' => get_post_meta($product->get_id(), 'sf_percentage', true),
+            'chf_percentage' => get_post_meta($product->get_id(), 'chf_percentage', true),
+            'perf_analytics' => get_post_meta($product->get_id(), 'perf_analytics', true),
+            'featured_image' => wp_get_attachment_url($product->get_image_id()),
+            'gallery_images' => array_map('wp_get_attachment_url', $product->get_gallery_image_ids()),
+            'categories' => wp_get_post_terms($product->get_id(), 'product_cat', array('fields' => 'ids')),
         );
 
         wp_send_json_success($product_data);
@@ -62,7 +68,7 @@ function save_product()
     $product->set_name($product_name);
     $product->set_description($product_desc);
     $product->set_short_description($product_short_desc);
-    $product->set_price($product_price);
+    $product->set_regular_price($product_price);
 
     $product->update_meta_data('sf_percentage', sanitize_text_field($_POST['pricing-sf']));
     $product->update_meta_data('chf_percentage', sanitize_text_field($_POST['pricing-chf']));
@@ -72,6 +78,98 @@ function save_product()
         $product->set_category_ids(isset($_POST['selected-category']) ? (array) $_POST['selected-category'] : array());
     }
 
+    // Handle Featured Image Upload
+    if (!empty($_FILES['service-image']['name'])) {
+        require_once(ABSPATH . 'wp-admin/includes/file.php');
+        require_once(ABSPATH . 'wp-admin/includes/image.php');
+        require_once(ABSPATH . 'wp-admin/includes/media.php');
+
+        $featured_image_id = media_handle_upload('service-image', 0);
+        if (!is_wp_error($featured_image_id)) {
+            set_post_thumbnail($product->get_id(), $featured_image_id); // Set the featured image
+        }
+    }
+
+    // Handle Gallery Images Upload
+    // if (!empty($_FILES['service-gallery']['name'][0])) { // Check if at least one file is uploaded
+    //     require_once(ABSPATH . 'wp-admin/includes/file.php');
+    //     require_once(ABSPATH . 'wp-admin/includes/image.php');
+    //     require_once(ABSPATH . 'wp-admin/includes/media.php');
+
+    //     $gallery_image_ids = [];
+    //     foreach ($_FILES['service-gallery']['name'] as $key => $value) {
+    //         if (!empty($_FILES['service-gallery']['name'][$key])) {
+    //             $file = [
+    //                 'name'     => $_FILES['service-gallery']['name'][$key],
+    //                 'type'     => $_FILES['service-gallery']['type'][$key],
+    //                 'tmp_name' => $_FILES['service-gallery']['tmp_name'][$key],
+    //                 'error'    => $_FILES['service-gallery']['error'][$key],
+    //                 'size'     => $_FILES['service-gallery']['size'][$key],
+    //             ];
+
+    //             $gallery_image_id = media_handle_sideload($file, $product->get_id());
+    //             if (!is_wp_error($gallery_image_id)) {
+    //                 $gallery_image_ids[] = $gallery_image_id;
+    //             }
+    //         }
+    //     }
+
+    //     if (!empty($gallery_image_ids)) {
+    //         $product->set_gallery_image_ids($gallery_image_ids);
+    //     }
+    // }
+   
+    // Handle Gallery Images
+    if (!empty($_POST['service-gallery-collection'])) {
+        require_once(ABSPATH . 'wp-admin/includes/file.php');
+        require_once(ABSPATH . 'wp-admin/includes/image.php');
+        require_once(ABSPATH . 'wp-admin/includes/media.php');
+
+        $gallery_collection = explode(',', sanitize_text_field($_POST['service-gallery-collection']));
+        $gallery_image_ids = [];
+
+        foreach ($gallery_collection as $item) {
+            if (filter_var($item, FILTER_VALIDATE_URL)) {
+                // Handle existing image URLs
+                $attachment_id = attachment_url_to_postid($item);
+                if ($attachment_id) {
+                    $gallery_image_ids[] = $attachment_id;
+                }
+            } elseif (strpos($item, 'data:image') === 0) {
+                // Handle base64-encoded images
+                $image_data = explode(',', $item)[1]; // Extract the base64 part
+                $image_data = base64_decode($image_data);
+                $upload_dir = wp_upload_dir();
+                $filename = 'gallery-' . uniqid() . '.png'; // Adjust file extension as needed
+                $file_path = $upload_dir['path'] . '/' . $filename;
+
+                // Save the file
+                file_put_contents($file_path, $image_data);
+
+                // Insert as attachment
+                $attachment = [
+                    'post_mime_type' => 'image/png', // Adjust MIME type as needed
+                    'post_title'     => sanitize_file_name($filename),
+                    'post_content'   => '',
+                    'post_status'    => 'inherit',
+                ];
+                $attachment_id = wp_insert_attachment($attachment, $file_path, $product_id);
+
+                // Generate metadata and attach
+                if (!is_wp_error($attachment_id)) {
+                    $attachment_data = wp_generate_attachment_metadata($attachment_id, $file_path);
+                    wp_update_attachment_metadata($attachment_id, $attachment_data);
+                    $gallery_image_ids[] = $attachment_id;
+                }
+            }
+        }
+
+        // Update the product gallery
+        if (!empty($gallery_image_ids)) {
+            $product->set_gallery_image_ids($gallery_image_ids);
+        }
+    }
+    
     $product->save();
 
     wp_send_json_success('Product saved successfully!');

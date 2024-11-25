@@ -458,6 +458,7 @@ class WooAccountCustomizations
 
     function tsg_save_custom_fields_my_account($user_id)
     {
+        wc_get_logger('notice', "Save function triggered for user ID: $user_id");
         $account_bio = ! empty($_POST['account_bio']) ? wc_clean(wp_unslash($_POST['account_bio'])) : '';
         if ($account_bio) {
             update_user_meta($user_id, 'description', $account_bio);
@@ -518,23 +519,48 @@ class WooAccountCustomizations
                 update_user_meta($user_id, 'twitter', $instagram);
             }
         }
+
+        $this->bp_handle_avatar_upload_in_wc_account($user_id);
     }
 
     /**
      * Handle BuddyPress avatar upload on WooCommerce Edit Account form submission.
      */
+    // function bp_handle_avatar_upload_in_wc_account($user_id): void
+    // {
+    //     if (isset($_POST['bp-avatar-delete']) && 1 == $_POST['bp-avatar-delete']) {
+    //         bp_core_delete_existing_avatar(array('item_id' => $user_id));
+    //     }
+
+    //     if (! empty($_FILES['bp-avatar-upload']['name'])) {
+    //         if (bp_core_avatar_handle_upload(array('item_id' => $user_id, 'object' => 'user'))) {
+    //             bp_core_fetch_avatar(array('item_id' => $user_id, 'type' => 'full', 'html' => true));
+    //         }
+    //     }
+    // }
     function bp_handle_avatar_upload_in_wc_account($user_id): void
     {
+        wc_get_logger('notice', "Avatar upload function triggered for user ID: $user_id");
         if (isset($_POST['bp-avatar-delete']) && 1 == $_POST['bp-avatar-delete']) {
-            bp_core_delete_existing_avatar(array('item_id' => $user_id));
+            bp_core_delete_existing_avatar(['item_id' => $user_id]);
         }
 
-        if (! empty($_FILES['bp-avatar-upload']['name'])) {
-            if (bp_core_avatar_handle_upload(array('item_id' => $user_id, 'object' => 'user'))) {
-                bp_core_fetch_avatar(array('item_id' => $user_id, 'type' => 'full', 'html' => true));
+        if (!empty($_FILES['bp-avatar-upload']['name'])) {
+            $upload_success = bp_core_avatar_handle_upload([
+                'item_id' => $user_id,
+                'object'  => 'user',
+            ]);
+
+            if ($upload_success) {
+                bp_core_fetch_avatar([
+                    'item_id' => $user_id,
+                    'type'    => 'full',
+                    'html'    => true,
+                ]);
             }
         }
     }
+
 
     function tsg_simple_history_output()
     {
@@ -584,53 +610,113 @@ class WooAccountCustomizations
 
             <h6 class="mt25">Service Interactions</h6>
             <div class="block-lines small-lines media-full">
-                <div class="block-line spb">
-                    <div class="line-left va">
-                        <div class="line-icon2">
-                            <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/arrow_right.svg" alt="arrow right icon" />
-                        </div>
-                        <p>2024/07/07 - 17:45. Update 0.2.0231.01</p>
-                    </div>
-                </div>
+                <?php
+                $has_matching_order = false;
 
-                <div class="block-line spb">
-                    <div class="line-left va">
-                        <div class="line-icon2">
-                            <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/arrow_right.svg" alt="arrow right icon" />
+                $orders = wc_get_orders([
+                    'limit' => 20, 
+                    'orderby' => 'date',
+                    'order' => 'DESC',
+                    'return' => 'ids',
+                ]);
+                // echo '<pre>';
+                // print_r($orders);
+                // echo '</pre>';
+                if (!empty($orders)) {
+                    foreach ($orders as $order_id) {
+                        $order = wc_get_order($order_id);
+                        $is_current_user_author = false;
+                
+                        foreach ($order->get_items() as $item_id => $item) {
+                            if ($item instanceof WC_Order_Item_Product) {
+                                $product = $item->get_product();
+                
+                                if ($product && $product->get_post_data()->post_author == $current_user_id) {
+                                    $is_current_user_author = true;
+                                    break; 
+                                }
+                            }
+                        }
+                
+                        if ($is_current_user_author) {
+                            $has_matching_order = true;
+                            $date = $order->get_date_created()->date('Y/m/d - H:i'); 
+                            $name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(); 
+                            $total = $order->get_total(); 
+                
+                            ?>
+                            <div class="block-line spb">
+                                <div class="line-left va">
+                                    <div class="line-icon2">
+                                        <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/arrow_right.svg" alt="arrow right icon" />
+                                    </div>
+                                    <p>
+                                        <?php echo esc_html($date); ?>&nbsp;
+                                        <span>#</span><?php echo esc_html($order_id); ?>&nbsp;<?php echo esc_html($name); ?>&nbsp;
+                                        <strong>CHF </strong><?php echo esc_html(wc_price($total)); ?>
+                                    </p>
+                                </div>
+                            </div>
+                            <?php
+                        }
+                    }
+                } 
+                
+                if (!$has_matching_order) { 
+                    ?>
+                    <div class="block-line spb">
+                        <div class="line-left va">
+                            <div class="line-icon2">
+                                <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/arrow_right.svg" alt="arrow right icon" />
+                            </div>
+                            <p>No recent orders available for products authored by you.</p>
                         </div>
-                        <p>2024/07/07 - 19:42. Update 0.2.0231.02</p>
                     </div>
-                </div>
+                    <?php           
+                }
+                ?>           
             </div>
 
             <h6 class="mt25">Exchange Transactions</h6>
             <div class="block-lines small-lines media-full">
-                <div class="block-line spb">
-                    <div class="line-left va">
-                        <div class="line-icon2">
-                            <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/arrow_right.svg" alt="arrow right icon" />
-                        </div>
-                        <p>Transaction 46841521684651</p>
-                    </div>
-                </div>
+                <?php 
+                    $results = $wpdb->get_results($wpdb->prepare(
+                        "SELECT creds, entry, time FROM {$wpdb->prefix}myCRED_log WHERE user_id = %d ORDER BY time DESC LIMIT 10",
+                        $current_user_id
+                    ));
 
-                <div class="block-line spb">
-                    <div class="line-left va">
-                        <div class="line-icon2">
-                            <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/arrow_right.svg" alt="arrow right icon" />
+                    if (!empty($results)) {
+                        foreach ($results as $row) {
+                            $date = date('Y/m/d - H:i', $row->time);
+                            ?>
+                            <div class="block-line spb">
+                                <div class="line-left va">
+                                    <div class="line-icon2">
+                                        <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/arrow_right.svg" alt="arrow right icon" />
+                                    </div>
+                                    <p>
+                                        <?php echo esc_html($date); ?>&nbsp;
+                                        <strong>SF </strong><?php echo esc_html($row->creds); ?>&nbsp;
+                                        <?php echo esc_html($row->entry); ?>
+                                        
+                                    </p>
+                                </div>
+                            </div>
+                            <?php
+                        }
+                    } else {
+                        ?>
+                        <div class="block-line spb">
+                            <div class="line-left va">
+                                <div class="line-icon2">
+                                    <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/arrow_right.svg" alt="arrow right icon" />
+                                </div>
+                                <p>No logs available for this user.</p>
+                            </div>
                         </div>
-                        <p>Transaction 46841521684652</p>
-                    </div>
-                </div>
-
-                <div class="block-line spb">
-                    <div class="line-left va">
-                        <div class="line-icon2">
-                            <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/arrow_right.svg" alt="arrow right icon" />
-                        </div>
-                        <p>Transaction 46841521684653</p>
-                    </div>
-                </div>
+                        <?php           
+                    }
+                ?>
             </div>
         </div>
 <?php }

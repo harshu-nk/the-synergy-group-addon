@@ -1,23 +1,26 @@
 jQuery(document).ready(function ($) {
    $(".edit-pencil:not(.bio-edit-pencil)").click(function (e) {
       e.preventDefault();
-      $(this).toggleClass("active");
+      $(this).addClass("tsg-entry-hidden");
+      $(this).closest(".tsg-entry-block").find(".tsg-save-profile").removeClass("tsg-entry-hidden");
       const parentRow = $(this).closest(".line-row");
+      const parentDiv = $(this).closest(".block-line");
 
-      parentRow.find(".form-curr-value").toggleClass("tsg-entry-hidden");
-      parentRow.find(".form-row").toggleClass("tsg-entry-hidden");
+      parentDiv.addClass("active");
+      parentRow.find(".form-curr-value").addClass("tsg-entry-hidden");
+      parentRow.find(".form-row").removeClass("tsg-entry-hidden");
    });
 
    $(".bio-edit-pencil").click(function (e) {
       e.preventDefault();
-      if ($(".bio").find(".form-curr-value").is(":visible")) {
-         $(".bio").find(".form-curr-value").hide();
-
-         $(".bio").find(".form-row").show().addClass("active");
-      } else {
-         $(".bio").find(".form-curr-value").show();
-         $(".bio").find(".form-row").hide().removeClass("active");
-      }
+      var $parent = $(this).closest('.tsg-entry-block');
+      var $section = $(this).closest('.tsg-entry-block-section');
+   
+      $(this).addClass("tsg-entry-hidden");
+      $parent.find(".tsg-save-description").removeClass("tsg-entry-hidden");
+      $section.find(".form-curr-value").addClass("tsg-entry-hidden");
+      $section.find(".form-row").removeClass("tsg-entry-hidden");
+      
    });
 
    $("#tsg-add-certificate").click(function (e) {
@@ -36,13 +39,11 @@ jQuery(document).ready(function ($) {
          $('#tsg-certificate-error-message').hide();
       }
 
-      // var certificateId = 'certificate-' + (certificates.length + 1);
-      // certificates.push({ id: certificateId, text: certificateText });
-
       certificates.push({ text: certificateText });
-      var certificateIndex = certificates.length - 1;
-      var certificateId = 'certificate-' + certificateIndex;
-      certificates[certificateIndex].id = certificateId;
+  
+      certificates.forEach((certificate, index) => {
+         certificate.id = index;
+      });
 
       $('#tsg-certificate-input').val(JSON.stringify(certificates));
 
@@ -56,19 +57,17 @@ jQuery(document).ready(function ($) {
 
    $(document).on('click', '.delete-certificate-btn', function(e) {  
       e.preventDefault();
-      var certificateId = $(this).data('id');
-      var certificateText = $(this).data('text');
+      var certificateId = parseInt($(this).data('id'));
+     
+      certificates = certificates.filter(function(certificate, index) {
+         return index !== certificateId;
+      });
 
-      // Find the certificate text in the array and remove it
-      // certificates = certificates.filter(function(certificate) {
-      //    return certificate.text !== certificateText;
-      // });
-      certificates = certificates.filter(function(certificate) {
-         return certificate.id !== certificateId && certificate.text !== certificateText;
+      certificates.forEach((certificate, index) => {
+         certificate.id = index; 
       });
 
       $('#tsg-certificate-input').val(JSON.stringify(certificates));
-      $('#' + certificateId).remove();
 
       const data = {
          action: "tsg_add_save_certificates",
@@ -79,12 +78,15 @@ jQuery(document).ready(function ($) {
    });
 
    function renderCertificate(data) {
+      $('#tsg-adjust-msg-container').removeClass('tsg-entry-hidden');
+      $('#tsg-adjust-msg-container').html('<div id="tsg-saving-text">Saving<span class="tsg-saving-text-dots"></span></div>');
       $.ajax({
          url: tsg_public_ajax.ajax_url,
          type: "POST",
          data: data,
          success: function (response) {
-             console.log(response);
+            //  console.log(response);
+             $('#tsg-adjust-msg-container').html('<div id="tsg-saving-text">Saved.</div>'); ;
              $('#certificate-input').val('');
              $('#tsg-certificate-container').html(response);
          },
@@ -93,124 +95,18 @@ jQuery(document).ready(function ($) {
              $('#tsg-adjust-msg-container').css('color', 'red').html('An error occurred.');
          },
       });
+
+      setTimeout(function () {
+         $('#tsg-adjust-msg-container').fadeOut('slow', function () {
+            $(this).html('');
+            $(this).addClass('tsg-entry-hidden'); 
+         });
+      }, 5000);
    }
 
-
-   // $('#tsg-certificate-container').on('click', '.delete-certificate-btn', function(e) {
-   //    e.preventDefault();
-   //    var certificateId = $(this).data('id');
-   //    var certificateText = $(this).data('text');
-
-   //    $('#' + certificateId).remove();
-
-   //    // Find the certificate text in the array and remove it
-   //    certificates = certificates.filter(function(text) {
-   //       return text !== certificateText;
-   //    });
-
-   //    console.log(certificates);
-   // });
-
-   // Certificates Array
-   // var certificates = [];
-
-   // Add Certificate Button Click
-   // $("#tsg-user-add-certificate-btn").on("click", function () {
-   //    var certificateText = $("#certificate-input").val().trim();
-
-   //    if (certificateText === "") {
-   //       $("#tsg-certificate-error-message").show();
-   //       return;
-   //    } else {
-   //       $("#tsg-certificate-error-message").hide();
-   //    }
-
-   //    certificates.push(certificateText);
-
-   //    // AJAX to Save Certificates
-   //    saveCertificates();
-   // });
-
-   // Render Certificate
-   // function renderCertificate(certificateText, id) {
-   //    var certificateId = "certificate-" + id;
-   //    var newCertificate = `
-   //       <div class="item w2" id="${certificateId}">
-   //             <div class="itemr">
-   //                <div class="award-block tc">
-   //                   <a href="#" class="block-edit delete-certificate-btn" data-id="${certificateId}" data-text="${certificateText}">
-   //                         <img src="https://thesynergygroup.ch/wp-content/plugins/the-synergy-group-addon/public/img/account/edit.svg" alt="edit icon">
-   //                   </a>
-   //                   <div class="award-icon">
-   //                         <img src="https://thesynergygroup.ch/wp-content/plugins/the-synergy-group-addon/public/img/account/award.svg" alt="award icon">
-   //                   </div>
-   //                   <p class="fs-20 mt18 tsg-certificate-name">${certificateText}</p>
-   //                </div>
-   //             </div>
-   //       </div>
-   //    `;
-   //    $("#tsg-certificate-container").append(newCertificate);
-   // }
-
-   // Delete Certificate Button Click
-   // $("#tsg-certificate-container").on("click", ".delete-certificate-btn", function (e) {
-   //    e.preventDefault();
-   //    var certificateId = $(this).data("id");
-   //    var certificateText = $(this).data("text");
-
-   //    $("#" + certificateId).remove();
-   //    certificates = certificates.filter((text) => text !== certificateText);
-
-   //    // Save Updated Certificates Array
-   //    saveCertificates();
-   // });
-
-   // Save Certificates to Database via AJAX
-   // function saveCertificates() {
-   //    $.ajax({
-   //       url: tsg_public_ajax.ajax_url,
-   //       type: "POST",
-   //       data: {
-   //          action: "save_certificates",
-   //          certificates: certificates,
-   //       },
-   //       success: function (response) {
-   //          console.log(response);
-   //          renderCertificate(certificateText, certificates.length);
-   //          $("#certificate-input").val("");
-   //          $(".tsg-certificate-wrapper").addClass("tsg-entry-hidden");
-   //          //console.log("Certificates saved successfully:", response);
-   //       },
-   //       error: function (error) {
-   //          console.error("Error saving certificates:", error);
-   //       },
-   //    });
-   // }
-
-   // Fetch Certificates on Page Load
-
-   // $.ajax({
-   //       url: tsg_public_ajax.ajax_url,
-   //       type: "POST",
-   //       data: {
-   //          action: "fetch_certificates"
-   //       },
-   //       success: function(response) {
-   //          if (response.success) {
-   //             certificates = response.data.certificates || [];
-   //             certificates.forEach((cert, index) => renderCertificate(cert, index + 1));
-   //          } else {
-   //             console.error("Error fetching certificates:", response);
-   //          }
-   //       },
-   //       error: function(error) {
-   //          console.error("AJAX error fetching certificates:", error);
-   //       }
-   // });
-
-   //user profile pic show
-   $("#tsg-avatar-upload-input").on("change", function (event) {
-      var imgPreview = $("#tsg-profile-img-preview");
+   //customer -> conpany logo preview
+   $("#company_logo_input").on("change", function (event) {
+      var imgPreview = $("#company_logo_preview");
       var file = event.target.files[0];
 
       if (file) {
@@ -253,6 +149,12 @@ jQuery(document).ready(function ($) {
       $(this).parents(".edit-parent").find(".hidable-value").toggle();
    });
 
+   $(".tsg-change-btn").on("click", function (e) {
+      e.preventDefault();
+      $(this).parents(".tsg-entry-block").find(".editable-input").toggle();
+      $(this).parents(".tsg-entry-block").find(".hidable-value").toggle();
+   });
+
    $("#taxonomy-select").select2({
       placeholder: "Select an option",
       ajax: {
@@ -270,8 +172,8 @@ jQuery(document).ready(function ($) {
             return {
                results: $.map(data, function (item) {
                   return {
-                     //   id: item.id,
-                     id: item.slug,
+                     id: item.id,
+                     // id: item.slug,
                      text: item.text,
                   };
                }),
@@ -279,7 +181,8 @@ jQuery(document).ready(function ($) {
          },
          cache: true,
       },
-      minimumInputLength: 2, // Start searching after 2 characters
+      placeholder: "Select category",
+      minimumInputLength: 0, // Start searching after 2 characters
    });
 
    //   Services Endpoint
@@ -294,6 +197,7 @@ jQuery(document).ready(function ($) {
             $.each(products, function (index, product) {
                $("#user-products").append('<li data-id="' + product.id + '">' + product.title + "</li>");
             });
+
          }
       },
    });
@@ -302,7 +206,13 @@ jQuery(document).ready(function ($) {
    $("#user-products").on("click", "li", function () {
       var productId = $(this).data("id");
 
+      $(".tsg-edit-service-btn").addClass("active");
+      $(".tsg-service-edit").show();
+      $("#tsg-service-save-btn").show();
+      //$(".tsg-service-preview").hide();
+
       if (productId === "create-new") {
+         $(".tsg-edit-service-btn").addClass("locked");
          $(".tsg-delete-service-btn").hide();
 
          $("#selected-service").val("");
@@ -310,16 +220,20 @@ jQuery(document).ready(function ($) {
          $("#service-name").val("");
          $("#long-desc").val("");
          $("#short-desc").val("");
-         // $("#product-price").val("");
          $("#pricing-units").val("");
          $("#pricing-sf").val("");
          $("#pricing-chf").val("");
          $("#taxonomy-select").val("");
-         $("#activity-type").val("");
-         $("#service-image").val("");
+         $("#main-image").attr("src", "");
+
+         $(".tsg-service-gallery-image-preview").html("");
+         $("#service-gallery-collection").val("");
+         $("#performance-analytics").val("");
+         $("#performance-analytics").closest(".select").find(".select-name span").text("");
 
          $("#tsg-selected-service span").text("Create New");
       } else {
+         $(".tsg-edit-service-btn").removeClass("locked");
          $(".tsg-delete-service-btn").show();
          $("#selected-service").val(productId);
 
@@ -330,7 +244,10 @@ jQuery(document).ready(function ($) {
          $.ajax({
             url: tsg_public_ajax.ajax_url,
             type: "POST",
-            data: { action: "get_product_details", product_id: productId },
+            data: { 
+               action: "get_product_details", 
+               product_id: productId 
+            },
             success: function (response) {
                if (response.success) {
                   var product = response.data;
@@ -338,15 +255,16 @@ jQuery(document).ready(function ($) {
                   $("#service-name").val(product.name);
                   $("#long-desc").val(product.long_description);
                   $("#short-desc").val(product.short_description);
-                  // $("#product-price").val(product.chf_price);
-                  $("#pricing-units").val(product.pricing_units);
-                  $("#pricing-sf").val(product.pricing_sf);
-                  $("#pricing-chf").val(product.pricing_chf);
-                  $("#taxonomy-select").val(product.category);
-                  $("#activity-type").val(product.activity);
-                  // $("#service-image").val(product.main_image);
-                  $("#service-image").attr("src", product.main_image);
-                  // $('#activity-type').val(product.gallery); // Load gallery images (implement your logic here)
+                  $("#pricing-units").val(product.regular_price);
+                  $("#pricing-sf").val(product.sf_percentage);
+                  $("#pricing-chf").val(product.chf_percentage);
+                  $("#taxonomy-select").val(product.categories[0]);
+                  $("#performance-analytics").val(product.perf_analytics);
+                  $("#main-image").attr("src", product.featured_image);
+
+                  var galleryUrls = product.gallery_images.join(",");
+                  $("#service-gallery-collection").val(galleryUrls);
+                  loadGalleryFromCollection();
                }
             },
          });
@@ -356,12 +274,20 @@ jQuery(document).ready(function ($) {
    // Handle form submission (create/edit product)
    $("#manage-service-form").on("submit", function (e) {
       e.preventDefault();
-      var formData = $(this).serialize();
+      var formData = new FormData(this);
+      formData.append("action", "save_product");
+      // var formData = $(this).serialize();
 
+      for (let [key, value] of formData.entries()) {
+         console.log(key, value);
+     }
       $.ajax({
          url: tsg_public_ajax.ajax_url,
          type: "POST",
-         data: formData + "&action=save_product",
+         // data: formData + "&action=save_product",
+         data: formData,
+         processData: false,
+         contentType: false,
          success: function (response) {
             if (response.success) {
                alert("Product saved successfully!");
@@ -823,12 +749,12 @@ jQuery(document).ready(function ($) {
       $("#service-gallery").click();
    });
 
-   $("#service-image").on("change", function (event) {
+   $("#service-image, #pre-service-image").on("change", function (event) {
       if (event.target.files && event.target.files[0]) {
          var reader = new FileReader();
 
          reader.onload = function (e) {
-            $("#main-image").attr("src", e.target.result);
+            $(".tsg-main-service-image").attr("src", e.target.result);
          };
 
          reader.readAsDataURL(event.target.files[0]);
@@ -2000,5 +1926,340 @@ jQuery(document).ready(function ($) {
       }
    });
 
-    
+   //Profile data upload
+   $('.tsg-save-profile').on('click', function (e) {
+      e.preventDefault();
+
+      var $saveButton = $(this);
+      var $wrapper = $(this).closest('.tsg-entry-block-wrapper');
+      var $parent = $(this).closest('.tsg-entry-block');
+      var $input = $parent.find('.tsg-input-field');
+      var $section = $(this).closest('.tsg-entry-block-section');
+      
+      var fieldName = $input.attr('name');
+      var fieldValue = $input.val();
+      // console.log(fieldName);
+      $wrapper.find('.tsg-error-msg').html('<div id="tsg-saving-text">Saving<span class="tsg-saving-text-dots"></span></div>');
+
+      $.ajax({
+          url: tsg_public_ajax.ajax_url, 
+          type: 'POST',
+          data: {
+              action: 'onchange_update_user_profile', 
+              field_name: fieldName,
+              field_value: fieldValue,
+          },
+          success: function (response) {
+            console.log(response);
+            $saveButton.addClass("tsg-entry-hidden");
+            $section.removeClass("active");
+            $parent.find(".edit-pencil").removeClass("tsg-entry-hidden");
+            $parent.find(".form-curr-value").removeClass("tsg-entry-hidden");
+            $parent.find(".form-row").addClass("tsg-entry-hidden");
+            $parent.find('.form-curr-value').text(response);
+            $wrapper.find('.tsg-error-msg').html('<div id="tsg-saving-text">Saved.</div>');
+          },
+          error: function () {
+              $wrapper.find('.tsg-error-msg').html('<div id="tsg-saving-text">Failed to save changes. Please try again.</div>');
+          },
+      });
+
+      setTimeout(function () {
+         $wrapper.find('.tsg-error-msg').fadeOut('slow', function () {
+             $(this).html('');
+             $(this).show(); 
+         });
+     }, 5000);
+
+   });
+
+   //Profile description update
+   $('.tsg-save-description').on('click', function (e) {
+      e.preventDefault();
+
+      var $saveButton = $(this);
+      var $wrapper = $(this).closest('.tsg-entry-block-wrapper');
+      var $section = $(this).closest('.tsg-entry-block-section');
+      var $parent = $(this).closest('.tsg-entry-block');
+      var $input = $section.find('.tsg-input-field');
+      
+      
+      var fieldName = $input.attr('name');
+      var fieldValue = $input.val();
+      // console.log(fieldName);
+      $wrapper.find('.tsg-error-msg').html('<div id="tsg-saving-text">Saving<span class="tsg-saving-text-dots"></span></div>');
+
+      $.ajax({
+          url: tsg_public_ajax.ajax_url, 
+          type: 'POST',
+          data: {
+              action: 'onchange_update_user_profile', 
+              field_name: fieldName,
+              field_value: fieldValue,
+          },
+          success: function (response) {
+            console.log(response);
+            $saveButton.addClass("tsg-entry-hidden");
+            $parent.find(".bio-edit-pencil").removeClass("tsg-entry-hidden");
+            $section.find(".form-curr-value").removeClass("tsg-entry-hidden");
+            $section.find(".form-row").addClass("tsg-entry-hidden");
+            $section.find('.form-curr-value').text(response);
+            $wrapper.find('.tsg-error-msg').html('<div id="tsg-saving-text">Saved.</div>');
+          },
+          error: function () {
+              $wrapper.find('.tsg-error-msg').html('<div id="tsg-saving-text">Failed to save changes. Please try again.</div>');
+          },
+      });
+
+      setTimeout(function () {
+         $wrapper.find('.tsg-error-msg').fadeOut('slow', function () {
+             $(this).html('');
+             $(this).show(); 
+         });
+     }, 5000);
+
+   });
+
+   $('#tsg-copy-referral-url').on('click', function (e) {
+      e.preventDefault(); 
+
+      const referralUrl = $(this).data('referral');
+
+      navigator.clipboard.writeText(referralUrl).then(() => {
+          alert('Referral URL copied to clipboard!');
+      }).catch(err => {
+          console.error('Failed to copy text: ', err);
+      });
+   });
+  
+   $('#tsg-avatar-upload-input').on('change', function () {
+      var $wrapper = $(this).closest('.tsg-entry-block-wrapper');
+      var fileData = this.files[0]; 
+      var formData = new FormData(); 
+      formData.append('action', 'update_profile_image'); 
+      formData.append('bp_avatar_upload', fileData); 
+
+      $.ajax({
+          url: tsg_public_ajax.ajax_url, 
+          type: 'POST',
+          data: formData,
+          processData: false,
+          contentType: false,
+          beforeSend: function () {
+            $wrapper.find('.tsg-error-msg').html('<div id="tsg-saving-text">Saving<span class="tsg-saving-text-dots"></span></div>');
+          },
+          success: function (response) {
+            // console.log(response);
+               $('#tsg-profile-img-preview').attr('src', response.data.new_image_url);
+               $wrapper.find('.tsg-error-msg').html('<div id="tsg-saving-text">Saved.</div>'); 
+          },
+          error: function (xhr, status, error) {
+            console.log(xhr.responseText); 
+            console.log(status); 
+            console.log(error); 
+            $wrapper.find('.tsg-error-msg').html('An error occurred while uploading the image. Please try again.');
+         }
+        
+      });
+
+      setTimeout(function () {
+         $wrapper.find('.tsg-error-msg').fadeOut('slow', function () {
+            $(this).html('');
+            $(this).show(); 
+         });
+      }, 5000);
+
+   });
+
+   //customer service edit toggle
+   $(".tsg-edit-service-btn").on("click", function (e) {
+         e.preventDefault();
+         const $button = $(this);
+         $button.toggleClass("active");
+
+         if ($button.hasClass("active")) {
+            $(".tsg-service-edit").show();
+            $("#tsg-service-save-btn").show();
+            //$(".tsg-service-preview").hide();
+         } else {
+            $(".tsg-service-edit").hide();
+            //$(".tsg-service-preview").show();
+            $("#tsg-service-save-btn").hide();
+         }
+   });
+
+   //customer service edit -> Service performance analytics show hide
+   function togglePerformanceAnalytics() {
+      const value = $("#performance-analytics").val(); 
+      if (value === "Enabled") {
+          $(".tsg-service-performance-analytics").show(); 
+      } else if (value === "Disabled") {
+          $(".tsg-service-performance-analytics").hide(); 
+      }
+   }
+
+   $("#performance-analytics").on("change", function () {
+         togglePerformanceAnalytics();
+   });
+   togglePerformanceAnalytics();
+
+   //customer service edit -> Handle file selection and preview
+   // let galleryFiles = [];
+
+   // function initializeGalleryFiles() {
+   //    const inputFiles = $("#service-gallery")[0].files;
+
+   //    for (let i = 0; i < inputFiles.length; i++) {
+   //       galleryFiles.push(inputFiles[i]);
+
+   //       const reader = new FileReader();
+   //       reader.onload = function (e) {
+   //             const wrapper = $(`
+   //                <div class="tsg-service-gallery-image-wrapper item w3">
+   //                   <div class="itemr">
+   //                         <img class="uploaded-picture opt tsg-service-gallery-image" src="${e.target.result}" />
+   //                   </div>
+   //                   <button class="delete-image-btn" data-index="${i}">&times;</button>
+   //                </div>
+   //             `);
+
+   //             $(".tsg-service-gallery-image-preview").append(wrapper);
+   //       };
+
+   //       reader.readAsDataURL(inputFiles[i]);
+   //    }
+
+   //    tsgUpdateFileInput(); 
+   // }
+
+   // Update the file input value with the current files in galleryFiles
+   // function tsgUpdateFileInput() {
+   //    const dataTransfer = new DataTransfer();
+
+   //    galleryFiles.forEach(file => {
+   //       dataTransfer.items.add(file);
+   //    });
+
+   //    $("#service-gallery")[0].files = dataTransfer.files;
+   // }
+
+   // Handle new file selection
+   // $("#service-gallery").on("change", function (event) {
+   //    const files = event.target.files;
+
+   //    for (let i = 0; i < files.length; i++) {
+   //       const file = files[i];
+   //       const reader = new FileReader();
+
+   //       reader.onload = function (e) {
+   //             const wrapper = $(`
+   //                <div class="tsg-service-gallery-image-wrapper item w3">
+   //                   <div class="tsg-uploaded-picture-wrapper itemr">
+   //                         <img class="uploaded-picture opt tsg-service-gallery-image" src="${e.target.result}" />
+   //                   </div>
+   //                   <button class="delete-image-btn" data-index="${galleryFiles.length}">&times;</button>
+   //                </div>
+   //             `);
+
+   //             $(".tsg-service-gallery-image-preview").append(wrapper);
+
+   //             galleryFiles.push(file);
+   //             tsgUpdateFileInput();
+   //       };
+
+   //       reader.readAsDataURL(file);
+   //    }
+
+   //    setTimeout(() => {
+   //          $("#service-gallery").val("");
+   //    }, 0); // Clear the input to allow re-selecting the same files
+   // });
+
+   // Handle delete image
+   // $(document).on("click", ".delete-image-btn", function () {
+   //    const index = $(this).data("index");
+   //    galleryFiles.splice(index, 1);
+
+   //    $(this).closest(".tsg-service-gallery-image-wrapper").remove();
+   //    tsgUpdateFileInput();
+   // });
+
+   // Initialize the gallery files on page load
+   // $(document).ready(function () {
+   //    initializeGalleryFiles();
+   // });
+
+   function loadGalleryFromCollection() {
+      var galleryCollection = $("#service-gallery-collection").val().split(",").filter(Boolean);
+      $(".tsg-service-gallery-image-preview").empty(); // Clear existing items
+  
+      galleryCollection.forEach((item) => {
+          const wrapper = $(`
+              <div class="tsg-service-gallery-image-wrapper item w3">
+                  <div class="tsg-uploaded-picture-wrapper itemr">
+                      <img class="uploaded-picture opt tsg-service-gallery-image" src="${item}" />
+                  </div>
+                  <button class="delete-image-btn" data-value="${item}">&times;</button>
+              </div>
+          `);
+          $(".tsg-service-gallery-image-preview").append(wrapper);
+      });
+  }
+  
+  // Handle file uploads
+  $("#service-gallery").on("change", function () {
+      var galleryCollection = $("#service-gallery-collection").val().split(",").filter(Boolean);
+  
+      Array.from(this.files).forEach(file => {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+              galleryCollection.push(e.target.result);
+              $("#service-gallery-collection").val(galleryCollection.join(",")); // Update text input
+  
+              // Append only the new file to the DOM
+              const wrapper = $(`
+                  <div class="tsg-service-gallery-image-wrapper item w3">
+                      <div class="tsg-uploaded-picture-wrapper itemr">
+                          <img class="uploaded-picture opt tsg-service-gallery-image" src="${e.target.result}" />
+                      </div>
+                      <button class="delete-image-btn" data-value="${e.target.result}">&times;</button>
+                  </div>
+              `);
+              $(".tsg-service-gallery-image-preview").append(wrapper);
+          };
+          reader.readAsDataURL(file);
+      });
+  
+      setTimeout(() => {
+          $("#service-gallery").val(""); // Clear the input to allow re-selecting the same files
+      }, 0);
+  });
+  
+  // Handle delete button functionality
+  $(document).on("click", ".delete-image-btn", function () {
+      var galleryCollection = $("#service-gallery-collection").val().split(",").filter(Boolean);
+      var valueToRemove = $(this).data("value"); // Get the exact value to remove
+  
+      // Remove the item from the array
+      galleryCollection = galleryCollection.filter(item => item !== valueToRemove);
+  
+      // Update the hidden text input with the modified collection
+      $("#service-gallery-collection").val(galleryCollection.join(","));
+  
+      // Remove only the clicked wrapper from the DOM
+      $(this).closest(".tsg-service-gallery-image-wrapper").remove();
+  });
+  
+  // Automatically synchronize gallery preview with text input changes
+  $("#service-gallery-collection").on("input", function () {
+      loadGalleryFromCollection();
+  });
+  
+  // Initialize gallery on page load or after AJAX updates
+  $(document).ready(function () {
+      loadGalleryFromCollection();
+  });
+  
+  
+   
 });

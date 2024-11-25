@@ -191,7 +191,8 @@ class The_Synergy_Group_Addon {
 
 		$this->loader->add_action('woocommerce_account_menu_items', $woo_customizations, 'my_account_tabs_customize', 30 );
 		$this->loader->add_action('woocommerce_before_edit_account_form', $woo_customizations, 'bp_avatar_on_wc_edit_account', 20 );
-		$this->loader->add_action('woocommerce_save_account_details', $woo_customizations, 'bp_handle_avatar_upload_in_wc_account' );
+		$this->loader->add_action('woocommerce_save_account_details', $woo_customizations, 'tsg_save_custom_fields_my_account', 10 );
+		$this->loader->add_action('woocommerce_save_account_details', $woo_customizations, 'bp_handle_avatar_upload_in_wc_account', 20 );
 		$this->loader->add_action('init', $woo_customizations, 'tsg_add_my_account_tab_endpoints');
 		$this->loader->add_action('query_vars', $woo_customizations, 'tsg_my_acc_tabs_query_vars');
 		$this->loader->add_action('woocommerce_account_notifications_endpoint', $woo_customizations, 'tsg_notifications_tab_content');
@@ -201,7 +202,7 @@ class The_Synergy_Group_Addon {
 		$this->loader->add_action('woocommerce_account_customer-support_endpoint', $woo_customizations, 'tsg_customer_support_tab_content');
 		$this->loader->add_action('woocommerce_account_my-affiliate_endpoint', $woo_customizations, 'tsg_customer_affiliate_tab_content');
 		$this->loader->add_action('woocommerce_account_sf-management_endpoint', $woo_customizations, 'tsg_sf_management_tab_content');
-		$this->loader->add_action( 'woocommerce_save_account_details', $woo_customizations, 'tsg_save_custom_fields_my_account' );
+		
 
 		$this->loader->add_action('woocommerce_account_synergy-network-transactions_endpoint', $woo_customizations, 'tsg_synergy_network_dashboard_transactions_tab_content');
 		$this->loader->add_action('woocommerce_account_synergy-network-members_endpoint', $woo_customizations, 'tsg_synergy_network_dashboard_members_tab_content');
