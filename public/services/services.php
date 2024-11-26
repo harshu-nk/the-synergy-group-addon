@@ -27,19 +27,68 @@ function get_product_details()
     $product = wc_get_product($product_id);
 
     if ($product) {
+
+        //service performance analytics
+        $orders = wc_get_orders([
+            'orderby' => 'date',
+            'order' => 'DESC',
+            'return' => 'ids',
+            'status' => 'completed',
+        ]);
+
+        $total_sales = 0;
+        $chf_total = 0;
+        $sf_total = 0;
+
+        foreach ($orders as $order_id) {
+            $order = wc_get_order($order_id); 
+    
+            foreach ($order->get_items() as $item) {
+                if ($item->get_product_id() == $product_id) {
+                    $total_sales += $item->get_quantity();
+                }
+            }
+        }
+
+        $product_regular_price = $product->get_regular_price();
+        $chf_precentage = get_post_meta($product->get_id(), 'chf_percentage', true);
+        $sf_precentage = get_post_meta($product->get_id(), 'sf_percentage', true);
+        $chf_precentage = is_numeric($chf_precentage) ? (float) $chf_precentage : 0;
+        $sf_precentage = is_numeric($sf_precentage) ? (float) $sf_precentage : 0;
+        $product_view_count = get_post_meta( $product->get_id(), 'product_view_count', true );
+        $product_view_count = !empty( $product_view_count ) ? $product_view_count : 0;
+
+
+        if (!($chf_precentage >= 75 && $chf_precentage < 100 && $sf_precentage > 0 && $sf_precentage <= 25)) {
+            $chf_precentage = 75;
+            $sf_precentage = 25;
+        }
+
+        if($total_sales > 0 && $product_regular_price > 0) {
+            $real_product_chf_value = $product_regular_price * $chf_precentage / 100;
+            $real_product_sf_value = $product_regular_price * $sf_precentage / 100;
+
+            $chf_total = $real_product_chf_value * $total_sales;
+            $sf_total = $real_product_sf_value * $total_sales;
+        }
+
         $product_data = array(
             'id' => $product->get_id(),
             'name' => $product->get_name(),
             'long_description' => $product->get_description(),
             'short_description' => $product->get_short_description(),
-            'reqular_price' => $product->get_price(),
+            'regular_price' => $product_regular_price,
             // Add any custom fields you need
-            'sf_percentage' => get_post_meta($product->get_id(), 'sf_percentage', true),
-            'chf_percentage' => get_post_meta($product->get_id(), 'chf_percentage', true),
+            'sf_percentage' => $sf_precentage,
+            'chf_percentage' => $chf_precentage,
             'perf_analytics' => get_post_meta($product->get_id(), 'perf_analytics', true),
             'featured_image' => wp_get_attachment_url($product->get_image_id()),
             'gallery_images' => array_map('wp_get_attachment_url', $product->get_gallery_image_ids()),
-            'categories' => wp_get_post_terms($product->get_id(), 'product_cat', array('fields' => 'ids')),
+            'categories' => wp_get_post_terms($product->get_id(), 'product_cat', array('fields' => 'all')),
+            'bookings' => $total_sales,
+            'total_chf_value' => $chf_total,
+            'total_sf_value' => $sf_total,
+            'service_views' => $product_view_count
         );
 
         wp_send_json_success($product_data);

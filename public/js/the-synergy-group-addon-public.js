@@ -233,6 +233,7 @@ jQuery(document).ready(function ($) {
 
          $("#tsg-selected-service span").text("Create New");
       } else {
+         $("#tsg-service-load-buffer").html('<div id="tsg-saving-text">Loading<span class="tsg-saving-text-dots"></span></div>');
          $(".tsg-edit-service-btn").removeClass("locked");
          $(".tsg-delete-service-btn").show();
          $("#selected-service").val(productId);
@@ -251,6 +252,7 @@ jQuery(document).ready(function ($) {
             success: function (response) {
                if (response.success) {
                   var product = response.data;
+                  console.log(product);
                   $("#product-id").val(product.id);
                   $("#service-name").val(product.name);
                   $("#long-desc").val(product.long_description);
@@ -258,29 +260,76 @@ jQuery(document).ready(function ($) {
                   $("#pricing-units").val(product.regular_price);
                   $("#pricing-sf").val(product.sf_percentage);
                   $("#pricing-chf").val(product.chf_percentage);
-                  $("#taxonomy-select").val(product.categories[0]);
+                  //$("#taxonomy-select").val(product.categories[0]);
                   $("#performance-analytics").val(product.perf_analytics);
+                  $("#performance-analytics").closest(".select").find(".select-name span").text(product.perf_analytics);
+                  togglePerformanceAnalytics();
+
                   $("#main-image").attr("src", product.featured_image);
+                  $("#tsg-product-views").html(product.service_views);
+                  $("#tsg-product-booking").html(product.bookings);
+                  $("#tsg-product-chf-total").html(product.total_chf_value);
+                  $("#tsg-product-sf-total").html(product.total_sf_value);
 
                   var galleryUrls = product.gallery_images.join(",");
                   $("#service-gallery-collection").val(galleryUrls);
+                  $("#taxonomy-select").select2('trigger', 'select', {
+                     data: { id: product.categories[0].term_id, text: product.categories[0].name }
+                  });
                   textInputrenderGallery();
+                  $("#tsg-service-load-buffer").html('<div id="tsg-saving-text" style="color: green;">Loaded.</div>');
                }
             },
          });
+
+         setTimeout(function () {
+            $('#tsg-service-load-buffer').fadeOut('slow', function () {
+               $(this).html('');
+            });
+         }, 5000);
       }
    });
 
    // Handle form submission (create/edit product)
    $("#manage-service-form").on("submit", function (e) {
       e.preventDefault();
+
+      $("#tsg-service-save-error").html("");
+      let isValid = true;
+      const serviceName = $("#service-name").val().trim();
+      const shortDescription = $("#short-desc").val().trim();
+      const productPrice = $("#pricing-units").val().trim();
+      const selectedCategory = $("#taxonomy-select").val(); 
+
+      if (!serviceName) {
+         isValid = false;
+         $("#tsg-service-save-error").append("<div style='color: red;'>Please enter the service name.</div>");
+      }
+      if (!shortDescription) {
+         isValid = false;
+         $("#tsg-service-save-error").append("<div style='color: red;'>Please enter a short description.</div>");
+      }
+      if (!productPrice || isNaN(productPrice) || parseFloat(productPrice) <= 0) {
+         isValid = false;
+         $("#tsg-service-save-error").append("<div style='color: red;'>Please enter a valid product price.</div>");
+      }
+      if (!selectedCategory || selectedCategory.length === 0) {
+         isValid = false;
+         $("#tsg-service-save-error").append("<div style='color: red;'>Please select at least one category.</div>");
+      }
+
+      if (!isValid) {
+         return;
+      }
+
       var formData = new FormData(this);
       formData.append("action", "save_product");
       // var formData = $(this).serialize();
+      $("#tsg-service-save-error").html('<div id="tsg-saving-text">Saving<span class="tsg-saving-text-dots"></span></div>');
 
-      for (let [key, value] of formData.entries()) {
-         console.log(key, value);
-     }
+   //    for (let [key, value] of formData.entries()) {
+   //       console.log(key, value);
+   //   }
       $.ajax({
          url: tsg_public_ajax.ajax_url,
          type: "POST",
@@ -290,11 +339,21 @@ jQuery(document).ready(function ($) {
          contentType: false,
          success: function (response) {
             if (response.success) {
-               alert("Product saved successfully!");
-               // Refresh the product list or other actions
+               setTimeout(function () {
+                  location.reload(); 
+               }, 1500);
+               $("#tsg-service-save-error").html("<div style='color: green;'>Product saved successfully!</div>");
+            } else {
+               $("#tsg-service-save-error").html("<div style='color: red;'>Error saving the product. Please try again.</div>");
             }
          },
       });
+
+      setTimeout(function () {
+         $('#tsg-service-save-error').fadeOut('slow', function () {
+            $(this).html('');
+         });
+      }, 5000);
    });
 
    // Handle product deletion
@@ -719,6 +778,8 @@ jQuery(document).ready(function ($) {
          return;
       }
 
+      $("#tsg-service-load-buffer").html('<div id="tsg-saving-text">Deleting<span class="tsg-saving-text-dots"></span></div>');
+
       $.ajax({
          url: tsg_public_ajax.ajax_url,
          type: "POST",
@@ -728,16 +789,23 @@ jQuery(document).ready(function ($) {
          },
          success: function (response) {
             if (response.success) {
-               alert(response.data.message);
+               // alert(response.data.message);
                location.reload();
+               $("#tsg-service-load-buffer").html('<div id="tsg-saving-text" style="color: green;">Deleted.</div>');
             } else {
                alert(response.data.message);
             }
          },
          error: function () {
-            alert("An error occurred while deleting the product.");
+            $("#tsg-service-load-buffer").html("<div style='color: red;'>An error occurred while deleting the product.</div>");
          },
       });
+
+      setTimeout(function () {
+         $('#tsg-service-load-buffer').fadeOut('slow', function () {
+            $(this).html('');
+         });
+      }, 5000);
    });
 
    //gallery file input click
@@ -2057,7 +2125,18 @@ jQuery(document).ready(function ($) {
             console.log(xhr.responseText); 
             console.log(status); 
             console.log(error); 
-            $wrapper.find('.tsg-error-msg').html('An error occurred while uploading the image. Please try again.');
+            
+            var errorMsg = 'An error occurred while uploading the image. Please try again.';
+            try {
+               var responseJson = JSON.parse(xhr.responseText);
+               if (responseJson.message) {
+                     errorMsg = responseJson.message;
+               }
+            } catch (e) {
+               console.error('Error parsing response:', e);
+            }
+
+            $wrapper.find('.tsg-error-msg').html(errorMsg);
          }
         
       });
@@ -2098,14 +2177,9 @@ jQuery(document).ready(function ($) {
       }
    }
 
-   $("#performance-analytics").on("change", function () {
-         togglePerformanceAnalytics();
-   });
-   togglePerformanceAnalytics();
 
    //customer service edit -> Handle file selection and preview
    let galleryFiles = [];
-
    function initializeGalleryFiles(fromTxtDelete = true) {
 
       const inputFiles = $("#service-gallery")[0].files;
@@ -2189,9 +2263,9 @@ jQuery(document).ready(function ($) {
    });
 
    //File input -> Initialize the gallery files on page load
-   $(document).ready(function () {
-      initializeGalleryFiles();
-   });
+   // $(document).ready(function () {
+   //    initializeGalleryFiles();
+   // });
 
 
    //Text input -> Function to render the gallery based on text input value

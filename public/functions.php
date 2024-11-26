@@ -1572,26 +1572,41 @@ function tsg_update_profile_image() {
     
     if (empty($_FILES['bp_avatar_upload']) || $_FILES['bp_avatar_upload']['error'] != 0) {
         wp_send_json_error(['message' => __('Invalid file upload.', 'the-synergy-group-addon')]);
+        return; 
     }
 
     require_once ABSPATH . 'wp-admin/includes/file.php';
+    require_once ABSPATH . 'wp-admin/includes/image.php';
+    require_once ABSPATH . 'wp-admin/includes/media.php';
+
     $file = $_FILES['bp_avatar_upload'];
-    $uploaded = wp_handle_upload($file, ['test_form' => false]);
+    $overrides = ['test_form' => false]; 
+    $uploaded = wp_handle_upload($file, $overrides);
 
-    if (isset($uploaded['file'])) {
+    if (!isset($uploaded['error']) && isset($uploaded['file'])) {
         $user_id = get_current_user_id();
-        bp_core_delete_existing_avatar(['item_id' => $user_id, 'type' => 'full']);
-        bp_core_avatar_handle_upload(
-            [
-                'item_id' => $user_id,
-                'type'    => 'full',
-                'file'    => $uploaded['file']
-            ]
-        );
 
-        wp_send_json_success(['new_image_url' => $uploaded['url']]);
+        $args = [
+            'item_id' => $user_id,
+            'object' => 'user',
+            'avatar_dir' => 'avatars',
+            'file' => $file, 
+            'crop_x' => 0,
+            'crop_y' => 0,
+            'crop_w' => bp_core_avatar_full_width(),
+            'crop_h' => bp_core_avatar_full_height()
+        ];
+
+        $avatar_handle = bp_core_avatar_handle_upload($args, 'bp_core_avatar_handle_upload'); 
+
+        if ($avatar_handle) {
+            $new_avatar_url = bp_core_fetch_avatar(['item_id' => $user_id, 'type' => 'full', 'html' => false]);
+            wp_send_json_success(['new_image_url' => $new_avatar_url]);
+        } else {
+            wp_send_json_error(['message' => __('Failed to set new avatar.', 'the-synergy-group-addon')]);
+        }
     } else {
-        wp_send_json_error(['message' => __('File upload failed.', 'the-synergy-group-addon')]);
+        wp_send_json_error(['message' => isset($uploaded['error']) ? $uploaded['error'] : __('File upload failed.', 'the-synergy-group-addon')]);
     }
 }
 
