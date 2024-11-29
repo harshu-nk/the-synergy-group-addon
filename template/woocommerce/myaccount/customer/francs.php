@@ -159,7 +159,7 @@
 
     </div>
 
-    <div class="account-text-block">
+    <div class="account-text-block" id="tsg-sf-exchange-section">
       <div class="account-title-block spb">
         <div class="title-content va">
           <img width="52" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/francs_exchange.svg" alt="SF Exchange icon" />
