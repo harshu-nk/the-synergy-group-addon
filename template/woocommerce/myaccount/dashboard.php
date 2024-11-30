@@ -100,6 +100,8 @@ if ( ! defined( 'ABSPATH' ) ) {
     }
 
     function get_current_user_affiliate_earnings($user_id) {
+        global $wpdb;
+
         $sum_creds = $wpdb->get_var( $wpdb->prepare(
             "SELECT SUM(creds) FROM {$wpdb->prefix}myCRED_log WHERE user_id = %d AND ref LIKE %s", $user_id, '%ref_fee%'
         ));
@@ -114,10 +116,6 @@ if ( ! defined( 'ABSPATH' ) ) {
     }
 
     function get_current_user_product_ids($user_id) {
-
-        if (!$user_id) {
-            return [];
-        }
     
         global $wpdb;
     
@@ -173,16 +171,115 @@ if ( ! defined( 'ABSPATH' ) ) {
 
     $current_user_sales = array_map('get_current_user_sales', $current_user_product_ids);
     $current_user_total_sales = array_sum( $current_user_sales );
-    $current_user_sales_precentage = ( $current_user_total_sales / $current_user_total_product_views ) * 100;
+
+    if ($current_user_total_product_views > 0) {
+        $current_user_sales_percentage = ($current_user_total_sales / $current_user_total_product_views) * 100;
+    } else {
+        $current_user_sales_percentage = 0; 
+    }
 
     function tsg_get_current_product_ratings($product_id) {
         $product = wc_get_product($product_id);
         $product_avg_rating  = $product->get_average_rating();
         return $product_avg_rating;
     }
+
     $current_user_prdouct_avg_rating = array_map('tsg_get_current_product_ratings', $current_user_product_ids);
     $current_user_total_avg_rating = array_sum( $current_user_prdouct_avg_rating );
-    $current_user_avg_rating_precentage = ( $current_user_total_avg_rating / count($current_user_product_ids) * 5 ) * 100;
+
+    if (count($current_user_product_ids) > 0) {
+        $current_user_avg_rating_precentage = ( $current_user_total_avg_rating / count($current_user_product_ids) * 5 ) * 100;
+    } else {
+        $current_user_avg_rating_precentage = 0;
+    }
+
+    function get_current_user_visualize_earnings($user_id) {
+        global $wpdb;
+        $recent_time = date('Y-m-d H:i:s', strtotime('-30 days'));
+
+        $sum_sale_creds = $wpdb->get_var( $wpdb->prepare(
+            "SELECT SUM(creds) FROM {$wpdb->prefix}myCRED_log WHERE user_id = %d AND ref LIKE %s AND time >= %s", $user_id, '%sale_of_service%', $recent_time
+        ));
+        $sum_total_creds = $wpdb->get_var( $wpdb->prepare(
+            "SELECT SUM(creds) FROM {$wpdb->prefix}myCRED_log WHERE user_id = %d AND time >= %s", $user_id, $recent_time
+        ));
+
+        if($sum_total_creds > 0) {
+            $visualize_earnings_percentage = ($sum_sale_creds / $sum_total_creds) * 100;
+        } else {
+            $visualize_earnings_percentage = 0;
+        }
+        return $visualize_earnings_percentage;
+    }
+
+    function get_current_user_sf_spending($user_id) {
+        global $wpdb;
+        $recent_time = date('Y-m-d H:i:s', strtotime('-30 days'));
+
+        $sum_buy_creds = $wpdb->get_var( $wpdb->prepare(
+            "SELECT SUM(creds) FROM {$wpdb->prefix}myCRED_log WHERE user_id = %d AND ref LIKE %s AND time >= %s", $user_id, '%buy_service%', $recent_time
+        ));
+        $sum_total_deduct_creds = $wpdb->get_var( $wpdb->prepare(
+            "SELECT SUM(creds) FROM {$wpdb->prefix}myCRED_log WHERE user_id = %d AND time >= %s AND creds < 0", $user_id, $recent_time
+        ));
+
+        if($sum_total_deduct_creds > 0) {
+            $sf_spending_percentage = ($sum_buy_creds / $sum_total_deduct_creds) * 100;
+        } else {
+            $sf_spending_percentage = 0;
+        }
+        return $sf_spending_percentage;
+    }
+
+    function get_current_user_chf_and_sf($product_id) {
+        $product = wc_get_product($product_id);
+        $product_total_chf = 0;
+        $product_total_sf = 0;
+        $item_quantity = 0;
+
+        if ($product) {
+            //service performance analytics
+            $orders = wc_get_orders([
+                'orderby' => 'date',
+                'order' => 'DESC',
+                'return' => 'ids',
+                'status' => 'completed',
+            ]);
+        
+            foreach ($orders as $order_id) {
+                $order = wc_get_order($order_id); 
+                foreach ($order->get_items() as $item) {
+                    if ($item->get_product_id() == $product_id) {
+                        $product = $item->get_product();
+                        $regular_price = $product->get_regular_price();
+                        $chf_percentage = get_post_meta($product_id, 'chf_percentage', true);
+                        $sf_percentage = get_post_meta($product_id, 'sf_percentage', true);
+                        $item_quantity += $item->get_quantity();    
+                    }
+                }
+            }
+        }
+        $product_total_chf = $regular_price * ($chf_percentage / 100) * $item_quantity;
+        $product_total_sf = $regular_price * ($sf_percentage / 100) * $item_quantity;
+        return [
+            'product_total_chf' => $product_total_chf,
+            'product_total_sf' => $product_total_sf,
+        ];
+    }
+
+    $sale_product_total_chf_sf = array_map('get_current_user_chf_and_sf', $current_user_product_ids);  
+    $sale_product_total_chf = array_reduce($sale_product_total_chf_sf, function ($carry, $item) {
+        return $carry + $item['product_total_chf'];
+    }, 0);
+    $sale_product_total_sf = array_reduce($sale_product_total_chf_sf, function ($carry, $item) {
+        return $carry + $item['product_total_sf'];
+    }, 0); 
+    // echo $sale_product_total_chf . "," . $sale_product_total_sf;
+    if( ($sale_product_total_chf +  $sale_product_total_sf) > 0 ) {
+        $cash_flow_from_services_percentage = ( $sale_product_total_chf / ($sale_product_total_chf +  $sale_product_total_sf) ) * 100;
+    } else {
+        $cash_flow_from_services_percentage = 0;
+    }
 
 ?>
 
@@ -247,7 +344,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     <?php $limited_messages = array_slice($messages, 0, 5);
         if (! empty($limited_messages)) {
             foreach ($limited_messages as $message) {
-                $messageUrl = Better_Messages()->functions->get_user_messages_url($current_user_id, $message->thread_id); ?>
+                $messageUrl = Better_Messages()->functions->get_user_messages_url($user_id, $message->thread_id); ?>
                 <div class="message-block spb">
                     <div class="message-icon">
                         <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/message2.svg" alt="message icon ">
@@ -328,7 +425,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
         <div class="progress-block">
             <p>Conversion rates</p>
-            <div class="progress"><div class="progress-val bg-green" style="width:<?php echo $current_user_sales_precentage; ?>%;"></div></div>
+            <div class="progress"><div class="progress-val bg-green" style="width:<?php echo $current_user_sales_percentage; ?>%;"></div></div>
         </div>
 
         <div class="progress-block">
@@ -358,18 +455,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
         <div class="progress-block">
             <p>Visualize earnings</p>
-            <div class="progress"><div class="progress-val" style="width:80%;"></div></div>
+            <div class="progress"><div class="progress-val" style="width:<?php echo get_current_user_visualize_earnings($user_id); ?>%;"></div></div>
         </div>
 
         <div class="progress-block">
             <p>SF spending</p>
-            <div class="progress"><div class="progress-val bg-green" style="width:80%;"></div></div>
+            <div class="progress"><div class="progress-val bg-green" style="width:<?php echo get_current_user_sf_spending($user_id); ?>%;"></div></div>
         </div>
 
         <div class="progress-block">
             <p>Cash flow from services / 
             Synergy Francs</p>
-            <div class="progress"><div class="progress-val bg-viol" style="width:80%;"></div></div>
+            <div class="progress"><div class="progress-val bg-viol" style="width:<?php echo $cash_flow_from_services_percentage; ?>%;"></div></div>
         </div>
 
         </div>
