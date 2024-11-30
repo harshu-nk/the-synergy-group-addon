@@ -1658,3 +1658,30 @@ function save_user_settings() {
     }
 }
 add_action('wp_ajax_save_user_settings', 'save_user_settings');
+
+
+add_action('wp_ajax_change_user_password', 'handle_change_user_password');
+
+function handle_change_user_password() {
+    // Check if the user is logged in
+    if (!is_user_logged_in()) {
+        wp_send_json_error('You must be logged in to change your password.');
+    }
+
+    // Get the current user
+    $user_id = get_current_user_id();
+    $new_password = sanitize_text_field($_POST['password']);
+
+    // Validate the password
+    if (empty($new_password) || strlen($new_password) < 6) {
+        wp_send_json_error('The password must be at least 6 characters long.');
+    }
+
+    // Update the user's password
+    wp_set_password($new_password, $user_id);
+
+    // Optional: Log the user out after changing the password
+    wp_logout();
+
+    wp_send_json_success('Password updated successfully.');
+}

@@ -15,7 +15,12 @@
                     <p>Password</p>
                 </div>
                 <div class="line-right input-field">
-                    <input type="password" name="password" id="client-password">
+                    <input type="password" name="password" id="client-password" value="********">
+                    <div class="line-right va btns-part">
+                        <div class="btn-block">
+                            <button type="submit" class="btn minw user-settings-password-save"><?php _e('Save Password', 'the-synergy-group-addon'); ?></button>
+                        </div>
+                    </div>  
                 </div>
             </div>
 

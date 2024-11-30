@@ -2301,4 +2301,46 @@ jQuery(document).ready(function ($) {
    });
 
 
+
+   // change the user password
+   let isEdited = false;
+
+   $('#client-password').on('focus', function () {
+      if (!isEdited && $(this).val() === '********') {
+          $(this).val(''); // Clear the dummy value
+          isEdited = true; // Ensure this runs only once
+      }
+   });
+
+   $('.user-settings-password-save').on('click', function (e) {
+      e.preventDefault();
+
+      let password = $('#client-password').val();
+
+      if (!password || password === '********') {
+         alert('Please enter a new password.');
+         return;
+      }
+
+      $.ajax({
+         url: tsg_public_ajax.ajax_url,
+         type: 'POST',
+         data: {
+            action: 'change_user_password',
+            password: password,
+         },
+         success: function (response) {
+            if (response.success) {
+                  alert('Password changed successfully!');
+                  $('#client-password').val('********'); // Reset to dummy value
+                  isEdited = false; // Allow re-editing
+            } else {
+                  alert(response.data || 'Error updating password.');
+            }
+         },
+         error: function () {
+            alert('An unexpected error occurred.');
+         }
+      });
+   });
 });

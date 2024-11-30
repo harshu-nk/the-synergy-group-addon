@@ -1,88 +1,440 @@
 <?php
-/**
- * My Subscriptions section on the My Account page
- *
- * @author   Prospress
- * @category WooCommerce Subscriptions/Templates
- * @version  7.2.0 - Migrated from WooCommerce Subscriptions v2.6.4
- */
-
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+if (! defined('ABSPATH')) {
+	exit;
 }
+$current_user_id = get_current_user_id();
+$referrer_id = get_user_meta($current_user_id, 'referred_by', true);
+$referrer = get_user_by('ID', $referrer_id);
+$sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
 ?>
-<div class="woocommerce_account_subscriptions">
+<div class="account-col-right">
+		<div class="light-style input-small">
 
-	<?php if ( ! empty( $subscriptions ) ) : ?>
-	<table class="my_account_subscriptions my_account_orders woocommerce-orders-table woocommerce-MyAccount-subscriptions shop_table shop_table_responsive woocommerce-orders-table--subscriptions">
-
-	<thead>
-		<tr>
-			<th class="subscription-id order-number woocommerce-orders-table__header woocommerce-orders-table__header-order-number woocommerce-orders-table__header-subscription-id"><span class="nobr"><?php esc_html_e( 'Subscription', 'woocommerce-subscriptions' ); ?></span></th>
-			<th class="subscription-status order-status woocommerce-orders-table__header woocommerce-orders-table__header-order-status woocommerce-orders-table__header-subscription-status"><span class="nobr"><?php esc_html_e( 'Status', 'woocommerce-subscriptions' ); ?></span></th>
-			<th class="subscription-next-payment order-date woocommerce-orders-table__header woocommerce-orders-table__header-order-date woocommerce-orders-table__header-subscription-next-payment"><span class="nobr"><?php echo esc_html_x( 'Next payment', 'table heading', 'woocommerce-subscriptions' ); ?></span></th>
-			<th class="subscription-total order-total woocommerce-orders-table__header woocommerce-orders-table__header-order-total woocommerce-orders-table__header-subscription-total"><span class="nobr"><?php echo esc_html_x( 'Total', 'table heading', 'woocommerce-subscriptions' ); ?></span></th>
-			<th class="subscription-actions order-actions woocommerce-orders-table__header woocommerce-orders-table__header-order-actions woocommerce-orders-table__header-subscription-actions">&nbsp;</th>
-		</tr>
-	</thead>
-
-	<tbody>
-	<?php /** @var WC_Subscription $subscription */ ?>
-	<?php foreach ( $subscriptions as $subscription_id => $subscription ) : ?>
-		<tr class="order woocommerce-orders-table__row woocommerce-orders-table__row--status-<?php echo esc_attr( $subscription->get_status() ); ?>">
-			<td class="subscription-id order-number woocommerce-orders-table__cell woocommerce-orders-table__cell-subscription-id woocommerce-orders-table__cell-order-number" data-title="<?php esc_attr_e( 'ID', 'woocommerce-subscriptions' ); ?>">
-				<?php // translators: placeholder is a subscription number. ?>
-				<a href="<?php echo esc_url( $subscription->get_view_order_url() ); ?>" aria-label="<?php echo esc_attr( sprintf( __( 'View subscription number %s', 'woocommerce-subscriptions' ), $subscription->get_order_number() ) ) ?>">
-					<?php echo esc_html( sprintf( _x( '#%s', 'hash before order number', 'woocommerce-subscriptions' ), $subscription->get_order_number() ) ); ?>
-				</a>
-				<?php do_action( 'woocommerce_my_subscriptions_after_subscription_id', $subscription ); ?>
-			</td>
-			<td class="subscription-status order-status woocommerce-orders-table__cell woocommerce-orders-table__cell-subscription-status woocommerce-orders-table__cell-order-status" data-title="<?php esc_attr_e( 'Status', 'woocommerce-subscriptions' ); ?>">
-				<?php echo esc_attr( wcs_get_subscription_status_name( $subscription->get_status() ) ); ?>
-			</td>
-			<td class="subscription-next-payment order-date woocommerce-orders-table__cell woocommerce-orders-table__cell-subscription-next-payment woocommerce-orders-table__cell-order-date" data-title="<?php echo esc_attr_x( 'Next Payment', 'table heading', 'woocommerce-subscriptions' ); ?>">
-				<?php echo esc_attr( $subscription->get_date_to_display( 'next_payment' ) ); ?>
-				<?php if ( ! $subscription->is_manual() && $subscription->has_status( 'active' ) && $subscription->get_time( 'next_payment' ) > 0 ) : ?>
-				<br/><small><?php echo esc_attr( $subscription->get_payment_method_to_display( 'customer' ) ); ?></small>
-				<?php endif; ?>
-			</td>
-			<td class="subscription-total order-total woocommerce-orders-table__cell woocommerce-orders-table__cell-subscription-total woocommerce-orders-table__cell-order-total" data-title="<?php echo esc_attr_x( 'Total', 'Used in data attribute. Escaped', 'woocommerce-subscriptions' ); ?>">
-				<?php echo wp_kses_post( $subscription->get_formatted_order_total() ); ?>
-			</td>
-			<td class="subscription-actions order-actions woocommerce-orders-table__cell woocommerce-orders-table__cell-subscription-actions woocommerce-orders-table__cell-order-actions">
-				<a href="<?php echo esc_url( $subscription->get_view_order_url() ) ?>" class="woocommerce-button button view"><?php echo esc_html_x( 'View', 'view a subscription', 'woocommerce-subscriptions' ); ?></a>
-				<?php do_action( 'woocommerce_my_subscriptions_actions', $subscription ); ?>
-			</td>
-		</tr>
-	<?php endforeach; ?>
-	</tbody>
-
-	</table>
-		<?php if ( 1 < $max_num_pages ) : ?>
-			<div class="woocommerce-pagination woocommerce-pagination--without-numbers woocommerce-Pagination">
-			<?php if ( 1 !== $current_page ) : ?>
-				<a class="woocommerce-button woocommerce-button--previous woocommerce-Button woocommerce-Button--previous button" href="<?php echo esc_url( wc_get_endpoint_url( 'subscriptions', $current_page - 1 ) ); ?>"><?php esc_html_e( 'Previous', 'woocommerce-subscriptions' ); ?></a>
-			<?php endif; ?>
-
-			<?php if ( intval( $max_num_pages ) !== $current_page ) : ?>
-				<a class="woocommerce-button woocommerce-button--next woocommerce-Button woocommerce-Button--next button" href="<?php echo esc_url( wc_get_endpoint_url( 'subscriptions', $current_page + 1 ) ); ?>"><?php esc_html_e( 'Next', 'woocommerce-subscriptions' ); ?></a>
-			<?php endif; ?>
+		<div class="account-text-block">
+			<div class="account-title-block spb">
+			<div class="title-content va">
+				<img width="45" src="img/account/subscriptions.svg" alt="subscriptions icon" />
+				<h5>Subscriptions</h5>
 			</div>
-		<?php endif; ?>
-	<?php else : ?>
-		<p class="no_subscriptions woocommerce-message woocommerce-message--info woocommerce-Message woocommerce-Message--info woocommerce-info">
-			<?php if ( 1 < $current_page ) :
-				printf( esc_html__( 'You have reached the end of subscriptions. Go to the %sfirst page%s.', 'woocommerce-subscriptions' ), '<a href="' . esc_url( wc_get_endpoint_url( 'subscriptions', 1 ) ) . '">', '</a>' );
-			else :
-				esc_html_e( 'You have no active subscriptions.', 'woocommerce-subscriptions' );
-				?>
-				<a class="woocommerce-Button button" href="<?php echo esc_url( apply_filters( 'woocommerce_return_to_shop_redirect', wc_get_page_permalink( 'shop' ) ) ); ?>">
-					<?php esc_html_e( 'Browse products', 'woocommerce-subscriptions' ); ?>
-				</a>
-			<?php
-		endif; ?>
-		</p>
+			</div>
 
-	<?php endif; ?>
+			<div class="block-lines">
 
-</div>
+			<div class="block-line spb media-full">
+				<div class="line-left">
+				<p>Current Subscription Plan</p>
+				</div>
+				<div class="line-right">
+				<p><strong>Increase Reach</strong></p>
+				</div>
+			</div>
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Cycle: Annual or Monthly</p>
+				</div>
+				<div class="line-right">
+				<p><strong>Annual</strong></p>
+				</div>
+			</div>
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Start Date</p>
+				</div>
+				<div class="line-right">
+				<p><strong>2024/04/04</strong></p>
+				</div>
+			</div>
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Fee Model</p>
+				</div>
+				<div class="line-right">
+				<p><strong>10%</strong></p>
+				</div>
+			</div>
+
+			<div class="block-line spb small-line">
+				<div class="line-left">
+				<p>Change</p>
+				</div>
+				<div class="line-right va btns-part">
+				<div class="btn-block">
+					<a href="#" class="btn style2">upgrate</a>
+				</div>
+				<div class="btn-block">
+					<a href="#" class="btn style2">Downgrade</a>
+				</div>
+				<div class="btn-block">
+					<a href="#" class="btn style2">Cancel</a>
+				</div>
+				</div>
+			</div>
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Next Billing Date</p>
+				</div>
+				<div class="line-right">
+				<p><strong>2025/04/04</strong></p>
+				</div>
+			</div>
+
+			<div class="block-line spb media-full">
+				<div class="line-left">
+				<p>Affiliate (Referred by…)</p>
+				</div>
+				<div class="line-right">
+				<p><strong>John Clarckson</strong></p>
+				</div>
+			</div>
+			</div>
+		</div>
+
+		<div class="account-text-block">
+			<div class="account-title-block spb media-full">
+			<div class="title-content va">
+				<img width="48" src="img/account/purchases.svg" alt="purchases icon" />
+				<h5>Purchases</h5>
+			</div>
+			<div class="line-right input-field">
+				<div class="select">
+				<p class="select-name"><span>Apr 04 2024</span></p>
+				<input type="hidden" id="data-export" name="data-export" value="Apr 04 2024" />
+				<ul class="select-list hauto">
+					<li>Apr 04 2024</li>
+					<li>May 25 2024</li>
+				</ul>
+				</div>
+			</div>
+			</div>
+
+			<div class="block-lines">
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Service Name</p>
+				</div>
+				<div class="line-right">
+				<p><strong>Super Service</strong></p>
+				</div>
+			</div>
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Service Provider</p>
+				</div>
+				<div class="line-right">
+				<p><strong>Synergy</strong></p>
+				</div>
+			</div>
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Purchase Date</p>
+				</div>
+				<div class="line-right">
+				<p><strong>2024/04/04</strong></p>
+				</div>
+			</div>
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Cost</p>
+				</div>
+				<div class="line-right">
+				<p><strong>1,450 (CHF 360 + SF 1,090)</strong></p>
+				</div>
+			</div>
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Transaction Fees</p>
+				</div>
+				<div class="line-right">
+				<p><strong>7.5%</strong></p>
+				</div>
+			</div>
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Affiliate Beneficiary</p>
+				</div>
+				<div class="line-right">
+				<p><strong>John Clarckson</strong></p>
+				</div>
+			</div>
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Rating</p>
+				</div>
+				<div class="line-right">
+				<div data-stars="3.4" class="stars-block">
+					<div class="main-stars">
+					<img src="img/stars.svg" class="stars" alt="stars 5" />
+					</div>
+					<img src="img/stars_light.svg" class="stars light" alt="no selected stars" />
+				</div>
+				</div>
+			</div>
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Review</p>
+				</div>
+				<div class="line-right textarea-field">
+				<textarea id="review" placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt  consectetur adipiscing elit,"></textarea>
+				</div>
+			</div>
+
+			</div>
+		</div>
+
+		<div class="account-text-block">
+			<div class="account-title-block spb media-full">
+			<div class="title-content va">
+				<img width="48" src="img/account/purchases.svg" alt="purchases icon" />
+				<h5>Sales</h5>
+			</div>
+			<div class="line-right input-field">
+				<div class="select">
+				<p class="select-name"><span>Apr 04 2024</span></p>
+				<input type="hidden" id="data-export" name="data-export" value="Apr 04 2024" />
+				<ul class="select-list hauto">
+					<li>Apr 04 2024</li>
+					<li>May 25 2024</li>
+				</ul>
+				</div>
+			</div>
+			</div>
+
+			<div class="block-lines">
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Service Name</p>
+				</div>
+				<div class="line-right">
+				<p><strong>Super Service</strong></p>
+				</div>
+			</div>
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Service Provider</p>
+				</div>
+				<div class="line-right">
+				<p><strong>Synergy</strong></p>
+				</div>
+			</div>
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Purchase Date</p>
+				</div>
+				<div class="line-right">
+				<p><strong>2024/04/04</strong></p>
+				</div>
+			</div>
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Cost</p>
+				</div>
+				<div class="line-right">
+				<p><strong>1,450 (CHF 360 + SF 1,090)</strong></p>
+				</div>
+			</div>
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Transaction Fees</p>
+				</div>
+				<div class="line-right">
+				<p><strong>7.5%</strong></p>
+				</div>
+			</div>
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Affiliate Beneficiary</p>
+				</div>
+				<div class="line-right">
+				<p><strong>John Clarckson</strong></p>
+				</div>
+			</div>
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Rating</p>
+				</div>
+				<div class="line-right">
+				<div data-stars="4.5" class="stars-block">
+					<div class="main-stars">
+					<img src="img/stars.svg" class="stars" alt="stars 5" />
+					</div>
+					<img src="img/stars_light.svg" class="stars light" alt="no selected stars" />
+				</div>
+				</div>
+			</div>
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Review</p>
+				</div>
+				<div class="line-right textarea-field">
+				<textarea id="review" placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt  consectetur adipiscing elit,"></textarea>
+				</div>
+			</div>
+
+			</div>
+		</div>
+
+		<div class="account-text-block">
+			<div class="account-title-block spb media-full">
+			<div class="title-content va">
+				<img width="48" src="img/account/earnings2.svg" alt="earnings icon" />
+				<h6>My Affiliate Earnings</h6>
+			</div>
+			<div class="line-right input-field">
+				<div class="select">
+				<p class="select-name"><span>Apr 04 2024</span></p>
+				<input type="hidden" id="data-export" name="data-export" value="Apr 04 2024" />
+				<ul class="select-list hauto">
+					<li>Apr 04 2024</li>
+					<li>May 25 2024</li>
+				</ul>
+				</div>
+			</div>
+			</div>
+
+			<div class="fl-end mt25">
+			<p class="main-val">CHF 3600 + SF 1,090</p>
+			</div>
+
+			<div class="block-lines media-full">
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Date</p>
+				</div>
+				<div class="line-right">
+				<p><strong>2024/04/04</strong></p>
+				</div>
+			</div>
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Referred Member Name</p>
+				</div>
+				<div class="line-right">
+				<p><strong>John Clarckson</strong></p>
+				</div>
+			</div>
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Referred Member Subscription Plan</p>
+				</div>
+				<div class="line-right">
+				<p><strong>Starting Out</strong></p>
+				</div>
+			</div>
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Referred Member Fee</p>
+				</div>
+				<div class="line-right">
+				<p><strong>10%</strong></p>
+				</div>
+			</div>
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Service/Product Purchased</p>
+				</div>
+				<div class="line-right">
+				<p><strong>Super Service</strong></p>
+				</div>
+			</div>
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Transaction Amount (CHF)</p>
+				</div>
+				<div class="line-right">
+				<p><strong>CHF 360 + SF 1,090</strong></p>
+				</div>
+			</div>
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Affiliate Fee Earned (CHF)</p>
+				</div>
+				<div class="line-right">
+				<p><strong>CHF 36</strong></p>
+				</div>
+			</div>
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Affiliate Fee Earned (SF)</p>
+				</div>
+				<div class="line-right">
+				<p><strong>CHF 109</strong></p>
+				</div>
+			</div>
+
+			</div>
+		</div>
+
+		<div class="account-text-block">
+			<div class="account-title-block spb media-full">
+			<div class="title-content va">
+				<img width="55" src="img/account/withdrawals.svg" alt="withdrawals icon" />
+				<h5>Withdrawals</h5>
+			</div>
+			</div>
+
+			<div class="block-lines media-full">
+
+			<div class="block-line spb">
+				<div class="line-left">
+				<p>Available Balance</p>
+				</div>
+				<div class="line-right">
+				<p class="main-val">CHF 360</p>
+				</div>
+			</div>
+
+			<div class="block-line spb small-line">
+				<div class="line-left">
+				<p>Withdrawal Request</p>
+				</div>
+				<div class="line-right input-field width2">
+				<div class="btn-block">
+					<a href="#" class="btn style2 w100">Withdrawal</a>
+				</div>
+				</div>
+			</div>
+
+			<div class="block-line spb small-line">
+				<div class="line-left">
+				<p>Withdrawal History</p>
+				</div>
+				<div class="line-right input-field width2">
+				<div class="btn-block">
+					<a href="#" class="btn style2 w100">Check history</a>
+				</div>
+				</div>
+			</div>
+
+			</div>
+		</div>
+		
+		</div>
+	</div>
