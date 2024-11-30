@@ -112,7 +112,40 @@ if ( ! defined( 'ABSPATH' ) ) {
             'recent_transactions' => $recent_transactions,
         ];
     }
-   
+
+    function get_current_user_product_ids($user_id) {
+
+        if (!$user_id) {
+            return [];
+        }
+    
+        global $wpdb;
+    
+        $query = "
+            SELECT ID 
+            FROM {$wpdb->prefix}posts
+            WHERE post_type = 'product'
+            AND post_status = 'publish'
+            AND post_author = %d
+        ";
+    
+        $prepared_query = $wpdb->prepare($query, $user_id);
+        $product_ids = $wpdb->get_col($prepared_query);
+    
+        return $product_ids;
+    }
+
+    function get_current_user_views_of_services($id) {
+        $product_view_count = get_post_meta( $id, 'product_view_count', true );
+        $product_view_count = !empty( $product_view_count ) ? $product_view_count : 0;
+        return $product_view_count;
+    }
+    $current_user_product_ids = get_current_user_product_ids($user_id);
+    $current_user_product_views = array_map('get_current_user_views_of_services', $current_user_product_ids);
+    $current_user_total_product_views = array_sum( $current_user_product_views);
+    $total_product_views_precentage = ( $current_user_total_product_views / 1000 ) * 100;
+
+
 ?>
 
 <div class="account-text-block" style="margin-top: 0 !important;">
