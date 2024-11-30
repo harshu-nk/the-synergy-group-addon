@@ -135,16 +135,54 @@ if ( ! defined( 'ABSPATH' ) ) {
         return $product_ids;
     }
 
-    function get_current_user_views_of_services($id) {
-        $product_view_count = get_post_meta( $id, 'product_view_count', true );
+    function get_current_user_views_of_services($product_id) {
+        $product_view_count = get_post_meta( $product_id, 'product_view_count', true );
         $product_view_count = !empty( $product_view_count ) ? $product_view_count : 0;
         return $product_view_count;
     }
     $current_user_product_ids = get_current_user_product_ids($user_id);
     $current_user_product_views = array_map('get_current_user_views_of_services', $current_user_product_ids);
-    $current_user_total_product_views = array_sum( $current_user_product_views);
+    $current_user_total_product_views = array_sum( $current_user_product_views );
     $total_product_views_precentage = ( $current_user_total_product_views / 1000 ) * 100;
 
+    function get_current_user_sales($product_id) {
+        $product = wc_get_product($product_id);
+        $total_sales = 0;
+
+        if ($product) {
+            //service performance analytics
+            $orders = wc_get_orders([
+                'orderby' => 'date',
+                'order' => 'DESC',
+                'return' => 'ids',
+                'status' => 'completed',
+            ]);
+        
+            foreach ($orders as $order_id) {
+                $order = wc_get_order($order_id); 
+        
+                foreach ($order->get_items() as $item) {
+                    if ($item->get_product_id() == $product_id) {
+                        $total_sales += $item->get_quantity();
+                    }
+                }
+            }
+        }
+        return $total_sales;
+    }
+
+    $current_user_sales = array_map('get_current_user_sales', $current_user_product_ids);
+    $current_user_total_sales = array_sum( $current_user_sales );
+    $current_user_sales_precentage = ( $current_user_total_sales / $current_user_total_product_views ) * 100;
+
+    function tsg_get_current_product_ratings($product_id) {
+        $product = wc_get_product($product_id);
+        $product_avg_rating  = $product->get_average_rating();
+        return $product_avg_rating;
+    }
+    $current_user_prdouct_avg_rating = array_map('tsg_get_current_product_ratings', $current_user_product_ids);
+    $current_user_total_avg_rating = array_sum( $current_user_prdouct_avg_rating );
+    $current_user_avg_rating_precentage = ( $current_user_total_avg_rating / count($current_user_product_ids) * 5 ) * 100;
 
 ?>
 
@@ -285,17 +323,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 
         <div class="progress-block">
             <p>Engagement</p>
-            <div class="progress"><div class="progress-val" style="width:80%;"></div></div>
+            <div class="progress"><div class="progress-val" style="width:<?php echo $total_product_views_precentage; ?>%;"></div></div>
         </div>
 
         <div class="progress-block">
             <p>Conversion rates</p>
-            <div class="progress"><div class="progress-val bg-green" style="width:70%;"></div></div>
+            <div class="progress"><div class="progress-val bg-green" style="width:<?php echo $current_user_sales_precentage; ?>%;"></div></div>
         </div>
 
         <div class="progress-block">
             <p>Client satisfaction</p>
-            <div class="progress"><div class="progress-val bg-viol" style="width:60%;"></div></div>
+            <div class="progress"><div class="progress-val bg-viol" style="width:<?php echo $current_user_avg_rating_precentage; ?>%;"></div></div>
         </div>
 
         </div>
