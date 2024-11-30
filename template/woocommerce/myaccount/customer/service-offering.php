@@ -137,7 +137,7 @@
   <input type="hidden" name="form-type" value="service-offering">
   <input type="hidden" id="product-id" name="product-id" value=""> <!-- For editing existing product -->
 
-  <div class="account-text-block">
+  <div class="account-text-block" id="tsg-manage-service-section">
     <div class="account-title-block media-full spb">
       <div class="title-content va">
         <img width="53" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/manage_services.svg" alt="manage services icon" />
