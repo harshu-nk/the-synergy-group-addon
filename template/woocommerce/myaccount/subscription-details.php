@@ -31,7 +31,10 @@ $sf_balance = mycred_display_users_balance($current_user_id, 'synergy_francs');
 
 			<?php foreach ($subscription->get_items() as $item_id => $item) {
 				$_product = apply_filters('woocommerce_subscriptions_order_item_product', $item->get_product(), $item);
-				if (apply_filters('woocommerce_order_item_visible', true, $item)) { ?>
+				$is_visible = apply_filters('woocommerce_order_item_visible', true, $item);
+				error_log('Order item visibility: ' . ($is_visible ? 'true' : 'false')); // Logs to server
+		
+				if ($is_visible) { ?>
 					<div class="block-line spb media-full">
 						<div class="line-left">
 							<p><?php _e('Current Subscription Plan', ''); ?></p>
