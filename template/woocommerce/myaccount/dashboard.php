@@ -498,7 +498,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     </div>
     <div class="line-right">
         <?php $affiliate_earnings = get_current_user_affiliate_earnings($user_id); ?>
-        <p class="main-val">SF <?php echo $affiliate_earnings['sum_creds']; ?></p>
+        <p class="main-val">SF <?php echo !empty($affiliate_earnings['sum_creds']) ? $affiliate_earnings['sum_creds'] : "0"; ?></p>
     </div>
     </div>
 
