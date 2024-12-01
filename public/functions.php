@@ -1685,3 +1685,66 @@ function handle_change_user_password() {
 
     wp_send_json_success('Password updated successfully.');
 }
+
+
+
+function get_user_leaderboard_positions($user_id, $point_type = 'synergy_francs') {
+    global $wpdb, $mycred;
+
+    if (!class_exists('myCRED_Core')) {
+        return array('current_position' => '-', 'previous_position' => '-');
+    }
+
+    // Get the myCred log table name
+    $log_table = $mycred->log_table;
+
+    // Get the current timestamp
+    $until = current_time('timestamp');
+
+    // Query for the current position
+    $current_position = $wpdb->get_var($wpdb->prepare("
+        SELECT rank FROM (
+            SELECT s.*, @rank := @rank + 1 rank FROM (
+                SELECT l.user_id, SUM(l.creds) AS Balance 
+                FROM {$log_table} l
+                WHERE l.ctype = %s
+                GROUP BY l.user_id
+            ) s, (SELECT @rank := 0) init
+            ORDER BY Balance DESC, s.user_id ASC
+        ) r
+        WHERE user_id = %d", $point_type, $user_id
+    ));
+
+    // Handle the case where no position is found
+    if ($current_position === NULL) {
+        $current_position = '-';
+    }
+
+    // Get the time range for the previous month
+    $from_last_month = mktime(0, 0, 0, date('m', $until) - 1, 1, date('Y', $until));
+    $until_last_month = mktime(23, 59, 59, date('m', $until), 0, date('Y', $until));
+
+    // Query for the previous month's position
+    $previous_position = $wpdb->get_var($wpdb->prepare("
+        SELECT rank FROM (
+            SELECT s.*, @rank := @rank + 1 rank FROM (
+                SELECT l.user_id, SUM(l.creds) AS Balance 
+                FROM {$log_table} l
+                WHERE l.ctype = %s AND l.time BETWEEN %d AND %d
+                GROUP BY l.user_id
+            ) s, (SELECT @rank := 0) init
+            ORDER BY Balance DESC, s.user_id ASC
+        ) r
+        WHERE user_id = %d", $point_type, $from_last_month, $until_last_month, $user_id
+    ));
+
+    // Handle the case where no position is found
+    if ($previous_position === NULL) {
+        $previous_position = '-';
+    }
+
+    return array(
+        'current_position' => $current_position,
+        'previous_position' => $previous_position
+    );
+}
