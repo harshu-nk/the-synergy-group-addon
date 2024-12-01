@@ -1164,8 +1164,24 @@ jQuery(document).ready(function ($) {
       }
      
       return isValid;
-  }
-  
+   }
+
+   //Transaction history display - Customer
+   $('#tsg-customer-show-all-transactions').on('click', function(e) { 
+      e.preventDefault(); 
+      const currentUserId = $(this).data("id");
+      const data = {
+         member: currentUserId,
+         filter: 0
+      };
+
+      if( currentUserId ) {
+         sendAllTransactionsHistory(data);
+      } else {
+         console.log("User id is null");
+      }
+
+   });
    
    function sendAllTransactionsHistory(data) {
       $.ajax({
@@ -1176,7 +1192,7 @@ jQuery(document).ready(function ($) {
             data: data,
          },
          success: function (response) {
-            console.log(response);
+            //console.log(response);
             $('.tsg-display-transaction-history').html(response);
          },
          error: function () {

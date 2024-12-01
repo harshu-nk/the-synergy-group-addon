@@ -491,7 +491,7 @@ function tsg_display_all_transactions_history() {
     if ( $member > 0 ) {
         $query .= " AND user_id = %d";
         $params[] = $member;
-    } elseif (empty($transactionType) && $filter === 1) {
+    } elseif (empty($transactionType) && $filter === 1) { //referral users filter /if filter === 1
         $referred_users_meta = get_user_meta($current_user_id, 'referred_users', true);
         $referred_user_ids = !empty($referred_users_meta) ? maybe_unserialize($referred_users_meta) : [];
 
