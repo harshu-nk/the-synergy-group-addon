@@ -2359,4 +2359,28 @@ jQuery(document).ready(function ($) {
          }
       });
    });
+
+   $("#tsg-show-trading-history").on("click", function(e){
+      e.preventDefault();
+      const userId = $(this).data("id");
+
+      $('#tsg-show-trading-history-container').show();
+      $('#tsg-show-trading-history-container').html('<div id="tsg-saving-text">Loading<span class="tsg-saving-text-dots"></span></div>');
+
+      $.ajax({
+         url: tsg_public_ajax.ajax_url,
+         type: 'POST',
+         data: {
+            action: 'get_current_user_buy_sell_history',
+            user_id: userId,
+         },
+         success: function (response) {
+            $('#tsg-show-trading-history-container').html(response);
+         },
+         error: function (error) {
+            $('#tsg-show-trading-history-container').html(error);
+         }
+      });
+
+   });
 });

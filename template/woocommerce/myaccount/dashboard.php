@@ -57,8 +57,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- </p> -->
 <?php
     $user_id = get_current_user_id();
-    $sf_balance = mycred_get_users_cred($user_id);
-
+    $sf_balance = mycred_get_users_total_balance($user_id, 'synergy_francs');
 
     function get_current_user_subscription_status($user_id) {
         $subscriptions = wcs_get_users_subscriptions($user_id);
