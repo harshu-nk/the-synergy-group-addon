@@ -1748,3 +1748,113 @@ function get_user_leaderboard_positions($user_id, $point_type = 'synergy_francs'
         'previous_position' => $previous_position
     );
 }
+
+add_action('wp_ajax_get_current_user_buy_sell_history', 'tsg_get_current_user_buy_sell_history');
+function tsg_get_current_user_buy_sell_history() {
+    $user_id = $_POST['user_id'];
+    global $wpdb;
+
+    if(!empty($user_id)) {
+        $results = $wpdb->get_results( $wpdb->prepare(
+            "SELECT * FROM {$wpdb->prefix}myCRED_log WHERE user_id = %d AND ( ref LIKE %s OR ref LIKE %s)", $user_id, '%buy_creds_with%', '%withdrawal%'
+        ));
+
+        if ($results) {
+            // echo '<pre>';
+            // print_r($results);
+            // echo '</pre>';
+            foreach ($results as $row) {
+                $user_info = get_userdata($row->user_id);
+                $user_name = $user_info ? $user_info->display_name : 'Unknown User';
+    
+                echo '<div class="message-block spb" style="width: 100%;">
+                    <div class="text-icon">
+                        <img src="'. THE_SYNERGY_GROUP_URL . 'public/img/account/transactions_blue.svg" alt="transaction icon"/>
+                    </div>';
+                echo '<div class="message-text">
+                        <p><strong>Affiliate member: ' . $user_name . '</strong><br>SF' . $row->creds . ' (' . $row->entry . ')' . date('Y-m-d H:i:s', $row->time) . '</p>
+                    </div>';
+                echo '<div class="btn-block">
+                        <a href="#" class="btn">read more</a>
+                    </div>
+                </div>';
+    
+            }
+        } else {
+            echo '<div class="message-block spb" >
+                <div class="text-icon">
+                    <img src="'. THE_SYNERGY_GROUP_URL . 'public/img/account/transactions_blue.svg" alt="transaction icon"/>
+                </div>';
+            echo '<div class="message-text">
+                    <p>No transactions found matching the criteria.</p>
+                </div>';
+            echo '<div class="btn-block"> </div>
+                </div>';
+     
+        }
+
+    } else {
+        wp_die();
+    }
+    wp_die();
+}
+
+//Change product price 
+add_filter('woocommerce_product_get_price', 'modify_product_price_with_chf', 10, 2);
+function modify_product_price_with_chf($price, $product) {
+    $chf_percentage = get_post_meta($product->get_id(), 'chf_percentage', true);
+
+    if (!empty($chf_percentage)) {
+        $price = $price * ($chf_percentage / 100);
+    }
+
+    return $price; 
+}
+
+add_filter('woocommerce_cart_item_price', 'show_custom_prices_in_cart', 10, 2);
+function show_custom_prices_in_cart($price, $cart_item) {
+    $product_id = $cart_item['product_id'];
+    $regular_price = $cart_item['data']->get_regular_price();
+
+    $sf_percentage = get_post_meta($product_id, 'sf_percentage', true);
+    $sf_price = !empty($sf_percentage) ? $regular_price * ($sf_percentage / 100) : 0;
+
+    $sf_price_html = '<small>SF Price: ' . wc_price($sf_price) . '</small>';
+
+    return $price . '<br>' . $sf_price_html;
+}
+
+add_action('woocommerce_before_calculate_totals', 'update_cart_prices_with_chf', 10, 1);
+function update_cart_prices_with_chf($cart) {
+    if (is_admin() && !defined('DOING_AJAX')) {
+        return;
+    }
+
+    foreach ($cart->get_cart() as $cart_item) {
+        $product_id = $cart_item['product_id'];
+        $regular_price = $cart_item['data']->get_regular_price();
+
+        $chf_percentage = get_post_meta($product_id, 'chf_percentage', true);
+
+        if (!empty($chf_percentage)) {
+            $chf_price = $regular_price * ($chf_percentage / 100);
+            $cart_item['data']->set_price($chf_price);
+        }
+    }
+}
+
+add_filter('woocommerce_get_price_html', 'show_sf_price_on_product_page', 10, 2);
+function show_sf_price_on_product_page($price_html, $product) {
+    $product_id = $product->get_id();
+    $regular_price = $product->get_regular_price();
+
+    $sf_percentage = get_post_meta($product_id, 'sf_percentage', true);
+    $sf_price = !empty($sf_percentage) ? $regular_price * ($sf_percentage / 100) : 0;
+
+    if ($sf_price > 0) {
+        $price_html .= '<br><small>SF Price: ' . wc_price($sf_price) . '</small>';
+    }
+
+    return $price_html;
+}
+

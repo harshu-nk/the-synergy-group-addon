@@ -135,4 +135,13 @@ p.form-row.active {
    width: auto !important;
    height: 150px !important;
  }
- 
+ #tsg-sf-exchange-section .myCRED-buy-form {
+   display: flex;
+   justify-content: space-between;
+ }
+ #tsg-sf-exchange-section .myCRED-buy-form-wrapper .row {
+   width: 100%;
+ }
+ #tsg-sf-exchange-section .myCRED-buy-form .button {
+   justify-content: center;
+ }

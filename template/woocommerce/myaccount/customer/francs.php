@@ -1,6 +1,7 @@
 <?php 
   $user_id = get_current_user_id();
-  $sf_balance = mycred_get_users_cred($user_id);
+  $sf_balance = mycred_get_users_total_balance($user_id, 'synergy_francs');
+
 
   function get_current_user_sf_received($user_id) {
     global $wpdb;
@@ -15,7 +16,7 @@
       "SELECT SUM(creds) FROM {$wpdb->prefix}myCRED_log WHERE user_id = %d AND ref LIKE %s", $user_id, '%ref_fee%'
     ));
     $sum_purchases_creds = $wpdb->get_var( $wpdb->prepare(
-      "SELECT SUM(creds) FROM {$wpdb->prefix}myCRED_log WHERE user_id = %d AND ref LIKE %s", $user_id, '%sf_addition%'
+      "SELECT SUM(creds) FROM {$wpdb->prefix}myCRED_log WHERE user_id = %d AND ref LIKE %s", $user_id, '%buy_creds_with%'
     ));
     $sum_all_received_creds = $wpdb->get_var( $wpdb->prepare(
       "SELECT SUM(creds) FROM {$wpdb->prefix}myCRED_log WHERE user_id = %d AND creds > 0", $user_id
@@ -244,9 +245,13 @@
           </div>
           <div class="line-right width-field width2">
             <div class="btn-block">
-              <a href="#" class="btn style2 w100">Sell</a>
+              <a href="#" class="btn style2 w100 tsg-item-toggle-btn" data-target="#tsg-buy-sf-cred-toggle">Buy</a>
             </div>
           </div>
+        </div>
+
+        <div class="block-line spb myCRED-buy-form-wrapper" id="tsg-buy-sf-cred-toggle" style="display: none;">
+          <?php echo do_shortcode('[mycred_buy_form]');?>
         </div>
 
         <div class="block-line spb">
@@ -255,9 +260,13 @@
           </div>
           <div class="line-right width-field width2">
             <div class="btn-block">
-              <a href="#" class="btn style2 w100">Buy</a>
+              <a href="#" class="btn style2 w100 tsg-item-toggle-btn" data-target="#tsg-sell-sf-cred-toggle">Sell</a>
             </div>
           </div>
+        </div>
+
+        <div class="block-line spb" id="tsg-sell-sf-cred-toggle" style="display: none;">
+          <?php echo do_shortcode('[mycred_cashcred]');?>
         </div>
 
         <div class="block-line spb">
@@ -266,9 +275,12 @@
           </div>
           <div class="line-right width-field width2">
             <div class="btn-block">
-              <a href="#" class="btn style2 w100">Show Details</a>
+              <a href="#" class="btn style2 w100" id="tsg-show-trading-history" data-id="<?php echo $user_id; ?>">Show Details</a>
             </div>
           </div>
+        </div>
+
+        <div class="block-line spb" id="tsg-show-trading-history-container" style="display: none;">
         </div>
 
       </div>
