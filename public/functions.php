@@ -1807,7 +1807,7 @@ function set_chf_price_in_cart($cart_item_data, $product_id) {
 
     if (!empty($chf_percentage)) {
         $chf_price = $regular_price * ($chf_percentage / 100);
-        $cart_item_data['chf_price'] = $chf_price; // Store calculated CHF price
+        $cart_item_data['chf_price'] = $chf_price; 
     }
 
     return $cart_item_data;
@@ -1826,32 +1826,28 @@ function apply_chf_price_in_cart($cart) {
     }
 }
 
-// add_filter('woocommerce_product_badge_html', 'customize_sf_price_badge', 10, 5);
-// function customize_sf_price_badge($html, $product) {
-//     $sf_percentage = get_post_meta($product->get_id(), 'sf_percentage', true);
-//     $regular_price = $product->get_regular_price();
-//     $sf_price = !empty($sf_percentage) ? $regular_price * ($sf_percentage / 100) : 0;
 
-//     if ($sf_price > 0) {
-//         $html = '<div class="wc-block-components-product-badge wc-block-components-sale-badge">SF <span class="wc-block-formatted-money-amount wc-block-components-formatted-money-amount">' . wc_price($sf_price) . '</span></div>';
-//     }
-
-//     return $html;
-// }
-
-add_filter('woocommerce_get_price_html', 'show_sf_price_on_product_page', 10, 2);
-function show_sf_price_on_product_page($price_html, $product) {
+add_filter('woocommerce_get_price_html', 'replace_regular_price_with_chf_price', 10, 2);
+function replace_regular_price_with_chf_price($price_html, $product) {
     $product_id = $product->get_id();
     $regular_price = $product->get_regular_price();
+
+    $chf_percentage = get_post_meta($product_id, 'chf_percentage', true);
+    $chf_price = !empty($chf_percentage) ? $regular_price * ($chf_percentage / 100) : $regular_price;
 
     $sf_percentage = get_post_meta($product_id, 'sf_percentage', true);
     $sf_price = !empty($sf_percentage) ? $regular_price * ($sf_percentage / 100) : 0;
 
+    $price_html = wc_price($chf_price);
+
     if ($sf_price > 0) {
-        // Format the SF price without currency symbol
         $price_html .= '<br><small>SF ' . number_format($sf_price, 2) . '</small>';
     }
 
     return $price_html;
 }
+
+
+
+
 
