@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta property="og:image" content="">
+  <title>Affiliate | Synergy Group</title>
+  <link rel="preload" href="css/header.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="css/form.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="css/items.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="css/blocks.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="css/blocks2.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="css/myaccount.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="css/select.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="css/faq.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="css/footer.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="icon" href="img/favicon.png" type="image/x-icon" />
+</head>
+  <body>
+    <div class="hid">
+
+    <div id="mySidenav" class="sidenav">
+      <div class="cont">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="design.html">Design</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="quiz.html">Quiz</a></li>
+          <li><a href="join.html">Join</a></li>
+          <li><a href="market.html">Market</a></li>
+          <li><a href="#">Checkout</a></li>
+          <li><a href="#">My Account</a></li>
+        </ul>
+        <a href="javascript:void(0)" class="closebtn" id="closenav" onclick="closeNav()">&times;</a>
+      </div>
+    </div>
+    
+    <!-- <header>
+      <div class="header-top">
+        <div class="container spb">
+          <a href="index.html" class="logo" title="link to home page">
+            <img src="img/logotype.svg" loading="lazy" alt="logotype" />
+          </a>
+          <div class="options va">
+            <div class="va">
+              <a href="#" class="option va" title="link to cart page">
+                <svg id="cart" width="24" height="22" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24.0002 22.0003"><defs><style>.cls-1{fill-rule:evenodd;}</style></defs><title>car</title><path class="cls-1" d="M23.9282,5.7387l-4.0547,9.4155a.8892.8892,0,0,1-.8138.5383H7.9168a.89.89,0,0,1-.8582-.6575L3.433,1.7925H.8879a.8967.8967,0,0,1,0-1.7933H4.099a.8892.8892,0,0,1,.8583.658L8.5827,13.8987h9.885l3.2852-7.6221h-10.95a.8967.8967,0,0,1,0-1.7934H23.1142a.879.879,0,0,1,.74.4035A.9155.9155,0,0,1,23.9282,5.7387ZM7.0733,17.9341a2.0328,2.0328,0,1,1-2.0125,2.0327A2.0248,2.0248,0,0,1,7.0733,17.9341Zm12.4452-.0005a2.0367,2.0367,0,0,1,1.6573,3.3631A2.0018,2.0018,0,0,1,19.8,22h-.148a2.0365,2.0365,0,0,1-.1331-4.0659Z" transform="translate(0 0.0008)"/></svg>              
+                <p class="price"><span class="type">CHF</span> <span id="cart-price">0.00</span></p>
+                <div class="count">
+                  <p><strong>0</strong></p>
+                </div>
+              </a>
+              <a href="#" class="option va" title="link to search page">
+                <svg id="search" width="25" height="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24.9879 24.9889"><defs><style>.cls-1{fill-rule:evenodd;}</style></defs><title>search</title><path class="cls-1" d="M24.7525,23.6293,18.3008,17.281a10.2068,10.2068,0,0,0,2.7274-6.9345A10.4318,10.4318,0,0,0,10.514,0,10.43,10.43,0,0,0,.0008,10.3465,10.43,10.43,0,0,0,10.514,20.6925a10.5748,10.5748,0,0,0,6.6172-2.31l6.4767,6.3738a.8184.8184,0,0,0,1.1437,0A.7889.7889,0,0,0,24.7525,23.6293ZM10.514,19.1a8.8255,8.8255,0,0,1-8.8958-8.7539A8.8255,8.8255,0,0,1,10.514,1.5922,8.8253,8.8253,0,0,1,19.41,10.3465,8.8253,8.8253,0,0,1,10.514,19.1Z" transform="translate(-0.0008 -0.0001)"/></svg>
+              </a>
+            </div>
+            <a href="#" class="menu-burger" id="opennav">
+              <svg height="384pt" viewBox="0 -53 384 384" width="384pt" xmlns="http://www.w3.org/2000/svg">
+                <path d="m368 154.667969h-352c-8.832031 0-16-7.167969-16-16s7.167969-16 16-16h352c8.832031 0 16 7.167969 16 16s-7.167969 16-16 16zm0 0" />
+                <path d="m368 32h-352c-8.832031 0-16-7.167969-16-16s7.167969-16 16-16h352c8.832031 0 16 7.167969 16 16s-7.167969 16-16 16zm0 0" />
+                <path d="m368 277.332031h-352c-8.832031 0-16-7.167969-16-16s7.167969-16 16-16h352c8.832031 0 16 7.167969 16 16s-7.167969 16-16 16zm0 0" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      <nav>
+        <div class="container">
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="design.html">Design</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="quiz.html">Quiz</a></li>
+            <li><a href="join.html">Join</a></li>
+            <li><a href="market.html">Market</a></li>
+            <li><a href="#">Checkout</a></li>
+            <li><a href="#">My Account</a></li>
+          </ul>
+        </div>
+      </nav>
+    </header> -->
+
+    <main>
+
+      <!-- <section id="top-section" class="blue-violet inner inner-auto">
+        <div class="top-bg opt"></div>
+        <div class="container text-white spb">
+          <h1>My account</h1>
+          <div class="btn-block log-out">
+            <a href="#" class="btn white-btn">LOG OUT</a>
+          </div>
+        </div>
+        <img src="img/arrow.svg" loading="lazy" class="to-next" alt="to next section" />
+        <img src="img/header_circle_gray.png" loading="lazy" class="bot" alt="empty circle with arrow" />
+      </section> -->
+
+      <section id="page-content" class="gray pad2">
+        <div class="container account-page">
+          <!-- <div class="account-block account-top spb">
+            <div class="title-left-block spb">
+              <h4><strong>Affiliate</strong></h4>
+              <img width="47" src="img/account/affiliate2.svg" class="title-icon" alt="affiliate icon" />
+            </div>
+            <div class="hello va">
+              <img src="img/account/avatar.svg" alt="avatar icon" />
+              <p>Hello Web Dev (not Web Dev? <a href="#">Log out</a>)</p>
+            </div>
+          </div> -->
+
+          <div class="account-block fl">
+            <div class="account-col-left">
+
+              <a href="myaccount.html" class="account-li va">
+                <div class="account-nav-icon">
+                  <img src="img/account/dashboard.svg" alt="dashboard icon" />
+                </div>
+                <p>Dashboard</p>
+              </a>
+
+              <a href="profile.html" class="account-li va">
+                <div class="account-nav-icon">
+                  <img src="img/account/profile.svg" alt="profile icon" />
+                </div>
+                <p>Profile</p>
+              </a>
+
+              <a href="activity.html" class="account-li va">
+                <div class="account-nav-icon">
+                  <img src="img/account/messages.svg" alt="messages icon" />
+                </div>
+                <p>Activity / Messages</p>
+              </a>
+
+              <a href="settings.html" class="account-li va">
+                <div class="account-nav-icon">
+                  <img src="img/account/settings.svg" alt="settings icon" />
+                </div>
+                <p>Settings</p>
+              </a>
+
+              <a href="transactions.html" class="account-li va">
+                <div class="account-nav-icon">
+                  <img src="img/account/transactions.svg" alt="transactions icon" />
+                </div>
+                <p>Transactions</p>
+              </a>
+
+              <a href="service-offering.html" class="account-li va">
+                <div class="account-nav-icon">
+                  <img src="img/account/service_offering.svg" alt="service offering icon" />
+                </div>
+                <p>Service Offering</p>
+              </a>
+
+              <a href="francs.html" class="account-li va">
+                <div class="account-nav-icon">
+                  <img src="img/account/francs.svg" alt="synergy francs icon" />
+                </div>
+                <p>Synergy Francs</p>
+              </a>
+
+              <a href="support.html" class="account-li va">
+                <div class="account-nav-icon">
+                  <img src="img/account/support.svg" alt="support icon" />
+                </div>
+                <p>Support</p>
+              </a>
+
+              <a href="affiliate.html" class="account-li li-main va">
+                <div class="account-nav-icon">
+                  <img src="img/account/affiliate.svg" alt="affiliate icon" />
+                </div>
+                <p>Affiliate</p>
+              </a>
+
+            </div>
+            <div class="account-col-right">
+              <div class="light-style input-small">
+
+                <div class="account-text-block">
+                  <div class="account-title-block spb">
+                    <div class="title-content va">
+                      <img width="55" src="img/account/hands.svg" alt="My Affiliate Earnings icon" />
+                      <div class="title-text">
+                        <h5 class="big-title">My Affiliate Earnings</h5>
+                        <p>from Transaction Fees from ALL the members</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="block-lines">
+
+                    <div class="block-line spb">
+                      <div class="line-left">
+                        <p>Services Purchased</p>
+                      </div>
+                      <div class="line-right">
+                        <p class="main-val2">SF 350</p>
+                      </div>
+                    </div>
+  
+                    <div class="block-line spb">
+                      <div class="line-left">
+                        <p>Sales Made</p>
+                      </div>
+                      <div class="line-right">
+                        <p class="main-val2">SF 150</p>
+                      </div>
+                    </div>
+
+                    <div class="block-line spb">
+                      <div class="line-left">
+                        <p>SF Purchased</p>
+                      </div>
+                      <div class="line-right">
+                        <p class="main-val2">SF 150</p>
+                      </div>
+                    </div>
+
+                    <div class="block-line spb">
+                      <div class="line-left">
+                        <p>SF Sold</p>
+                      </div>
+                      <div class="line-right">
+                        <p class="main-val2">SF 150</p>
+                      </div>
+                    </div>
+
+                    <div class="block-line spb">
+                      <div class="line-left">
+                        <p>Total SF Earned To-Date</p>
+                      </div>
+                      <div class="line-right">
+                        <p class="main-val2">SF 550</p>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <h6 class="mt25"><strong>Trend:</strong></h6>
+                  <div class="chart-image">
+                    <img src="img/account/affiliate_chart1.jpg" alt="chart 1" />
+                  </div>
+                </div>
+
+                <div class="account-text-block">
+                  <div class="account-title-block spb">
+                    <div class="title-content va">
+                      <img width="47" src="img/account/affiliate_progress.svg" alt="Transaction Fees icon" />
+                      <div class="title-text">
+                        <h5 class="big-title">Transaction Fees </h5>
+                        <p>I've paid to Josh Johansen</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="block-lines">
+
+                    <div class="block-line spb">
+                      <div class="line-left">
+                        <p>Services Purchased</p>
+                      </div>
+                      <div class="line-right">
+                        <p class="main-val2">SF 350</p>
+                      </div>
+                    </div>
+  
+                    <div class="block-line spb">
+                      <div class="line-left">
+                        <p>Sales Made</p>
+                      </div>
+                      <div class="line-right">
+                        <p class="main-val2">SF 150</p>
+                      </div>
+                    </div>
+
+                    <div class="block-line spb">
+                      <div class="line-left">
+                        <p>SF Purchased</p>
+                      </div>
+                      <div class="line-right">
+                        <p class="main-val2">SF 150</p>
+                      </div>
+                    </div>
+
+                    <div class="block-line spb">
+                      <div class="line-left">
+                        <p>SF Sold</p>
+                      </div>
+                      <div class="line-right">
+                        <p class="main-val2">SF 150</p>
+                      </div>
+                    </div>
+
+                    <div class="block-line spb">
+                      <div class="line-left">
+                        <p>Total SF Paid To-Date</p>
+                      </div>
+                      <div class="line-right">
+                        <p class="main-val2">SF 550</p>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <h6 class="mt25"><strong>Trend:</strong></h6>
+                  <div class="chart-image">
+                    <img src="img/account/affiliate_chart2.jpg" alt="chart 2" />
+                  </div>
+                </div>
+
+                <div class="account-text-block">
+                  <div class="account-title-block spb">
+                    <div class="title-content va">
+                      <img width="47" src="img/account/affiliate_progress.svg" alt="Net Affiliate Transaction Fee Position icon" />
+                      <div class="title-text">
+                        <h5 class="big-title">Net Affiliate Transaction Fee Position</h5>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="block-lines mt2">
+
+                    <div class="block-line spb">
+                      <div class="line-left">
+                        <p>Services Purchased</p>
+                      </div>
+                      <div class="line-right">
+                        <p class="main-val2">SF 350</p>
+                      </div>
+                    </div>
+  
+                    <div class="block-line spb">
+                      <div class="line-left">
+                        <p>Sales Made</p>
+                      </div>
+                      <div class="line-right">
+                        <p class="main-val2">SF 150</p>
+                      </div>
+                    </div>
+
+                    <div class="block-line spb">
+                      <div class="line-left">
+                        <p>SF Purchased</p>
+                      </div>
+                      <div class="line-right">
+                        <p class="main-val2">SF 150</p>
+                      </div>
+                    </div>
+
+                    <div class="block-line spb">
+                      <div class="line-left">
+                        <p>SF Sold</p>
+                      </div>
+                      <div class="line-right">
+                        <p class="main-val2">SF 150</p>
+                      </div>
+                    </div>
+
+                    <div class="block-line spb">
+                      <div class="line-left">
+                        <p>Total SF Net Position To-Date</p>
+                      </div>
+                      <div class="line-right">
+                        <p class="main-val2">SF 550</p>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <h6 class="mt25"><strong>Trend:</strong></h6>
+                  <div class="chart-image last">
+                    <img src="img/account/affiliate_chart3.jpg" alt="chart 3" />
+                  </div>
+                  
+                  <div class="block-lines mt2 media-full">
+                    <div class="block-line spb">
+                      <div class="line-left">
+                        <p>You</p>
+                      </div>
+                      <div class="line-right input-field width3">
+                        <div class="progress-line">
+                          <div class="progress-value" style="width: 80%;"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="block-line spb">
+                      <div class="line-left">
+                        <p>Josh Jansen</p>
+                      </div>
+                      <div class="line-right input-field width3">
+                        <div class="progress-line">
+                          <div class="progress-value" style="width: 40%;"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="account-text-block">
+                  <div class="account-title-block spb">
+                    <div class="title-content va">
+                      <img width="47" src="img/account/affiliate_progress.svg" alt="Affiliate Leaderboard icon" />
+                      <div class="title-text">
+                        <h5 class="big-title">Affiliate Leaderboard</h5>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="block-lines mt2">
+
+                    <div class="block-line spb media-full">
+                      <div class="line-left">
+                        <p>My Affiliate Link:</p>
+                      </div>
+                      <div class="line-right">
+                        <p class="main-val2"><a target="_blank" href="http://thesynergygroup.ch/8247" class="blue-link">http://thesynergygroup.ch/8247</a></p>
+                      </div>
+                    </div>
+  
+                    <div class="block-line spb">
+                      <div class="line-left">
+                        <p>Current Position</p>
+                      </div>
+                      <div class="line-right">
+                        <p class="main-val2">15</p>
+                      </div>
+                    </div>
+
+                    <div class="block-line spb">
+                      <div class="line-left">
+                        <p>Position Last Month</p>
+                      </div>
+                      <div class="line-right">
+                        <p class="main-val2">12</p>
+                      </div>
+                    </div>
+
+                    <div class="block-line spb">
+                      <div class="line-left">
+                        <p>Change from Last Month</p>
+                      </div>
+                      <div class="line-right">
+                        <img width="24" src="img/account/green_arrow_top.svg" alt="green arrow" />
+                      </div>
+                    </div>
+
+                    <div class="block-line spb">
+                      <div class="line-left">
+                        <p>Affiliate Name</p>
+                      </div>
+                      <div class="line-right">
+                        <p class="main-val2">Aff23434</p>
+                      </div>
+                    </div>
+
+                    <div class="block-line spb">
+                      <div class="line-left">
+                        <p>Nr. Members Referred</p>
+                      </div>
+                      <div class="line-right">
+                        <p class="main-val2">8</p>
+                      </div>
+                    </div>
+
+                    <div class="block-line spb">
+                      <div class="line-left">
+                        <p>Affiliate Income Earned</p>
+                      </div>
+                      <div class="line-right">
+                        <p class="main-val2">SF 550</p>
+                      </div>
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- <footer>
+      <div class="container">
+        <div class="logo-block va jc">
+          <a href="index.html" class="logo-footer" title="link to home page">
+            <img src="img/logo_footer.svg" loading="lazy" alt="logotype" />
+          </a>
+        </div>
+        <ul>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="contact-us.html">Contact Us</a></li>
+          <li><a href="terms-and-conditions.html">Terms & Conditions</a></li>
+          <li><a href="privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="refund-policy.html">Refund Policy</a></li>
+          <li><a href="compliance.html">Compliance</a></li>
+        </ul>
+        <div class="copy spb">
+          <div class="copy-text">
+            <p>&copy; thesynergygroup.ch</p>
+          </div>
+          <div class="va swiss">
+            <img src="img/swiss.png" loading="lazy" alt="Swiss flag" />
+            <p>Swiss Made</p>
+          </div>
+        </div>
+      </div>
+    </footer> -->
+    
+    <script src="js/jquery.min.js"></script>
+    <script defer src="js/script.js"></script>
+    <script defer src="js/form.js"></script>
+    <script defer src="js/faq.js"></script>
+    <script defer src="js/stars.js"></script>
+
+    </div>
+  </body>
+</html>

@@ -29,13 +29,18 @@
                     <p>Two-Factor Authentication</p>
                 </div>
                 <div class="line-right input-field">
-                    <div class="select">
+                    <!-- <div class="select">
                         <p class="select-name"><span>On</span></p>
                         <input type="hidden" id="two-factor" name="two-factor" value="<?php echo $settings['2fa'] ?>" />
                         <ul class="select-list hauto">
                             <li data-value="On">On</li>
                             <li data-value="Off">Off</li>
                         </ul>
+                    </div> -->
+                    <div class="line-right va btns-part">
+                        <div class="btn-block">
+                            <a href="<?php site_url(); ?>/wp-2fa-config" class="btn minw user-settings-configure-2fa"><?php _e('Configure', 'the-synergy-group-addon'); ?></a>
+                        </div>
                     </div>
                 </div>
             </div>

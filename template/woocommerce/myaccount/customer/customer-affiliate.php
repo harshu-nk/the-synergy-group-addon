@@ -37,14 +37,11 @@ $change_image = '';
 
 if ($current_position && $previous_position && $current_position !== '-') {
     if ($previous_position > $current_position) {
-        // Improved rank, show green arrow
         $change_image = '<img width="24" src="' . THE_SYNERGY_GROUP_URL . 'public/img/account/green_arrow_top.svg" alt="green arrow" />';
     } elseif ($previous_position < $current_position) {
-        // Worsened rank, show red arrow
         $change_image = '<img width="24" src="' . THE_SYNERGY_GROUP_URL . 'public/img/account/red_arrow_bot.svg" alt="red arrow" />';
     }
 } else {
-    // No change or no valid position data
     $change_image = 'N/A';
 }
 
@@ -61,6 +58,31 @@ $meta_key = 'referred_users';
 $meta_value = get_user_meta($current_user_id, $meta_key, true);
 $referred_users = maybe_unserialize($meta_value);
 $referred_count = is_array($referred_users) ? count($referred_users) : 0;
+
+$sum_purchased_creds = $wpdb->get_var(
+    $wpdb->prepare(
+        "SELECT SUM(creds) 
+        FROM {$wpdb->prefix}myCRED_log 
+        WHERE user_id = %d AND ref = %s", 
+        $current_user_id, 
+        'buy_creds_with_bank'
+    )
+);
+
+$sum_purchased_creds = $sum_purchased_creds ? $sum_purchased_creds : 0;
+
+$sum_sold_creds = $wpdb->get_var(
+    $wpdb->prepare(
+        "SELECT SUM(creds) 
+        FROM {$wpdb->prefix}myCRED_log 
+        WHERE user_id = %d AND ref = %s", 
+        $current_user_id, 
+        'withdrawal'
+    )
+);
+$sum_sold_creds = $sum_sold_creds ? abs($sum_sold_creds) : 0;
+
+$total_net_position = $sum_purchased_creds - $sum_sold_creds;
 ?>
 <div class="light-style input-small">
     <div class="account-text-block">
@@ -217,7 +239,7 @@ $referred_count = is_array($referred_users) ? count($referred_users) : 0;
                     <p>SF Purchased</p>
                 </div>
                 <div class="line-right">
-                    <p class="main-val2">SF 150</p>
+                    <p class="main-val2">SF <?php echo esc_html($sum_purchased_creds); ?></p>
                 </div>
             </div>
 
@@ -226,7 +248,7 @@ $referred_count = is_array($referred_users) ? count($referred_users) : 0;
                     <p>SF Sold</p>
                 </div>
                 <div class="line-right">
-                    <p class="main-val2">SF 150</p>
+                    <p class="main-val2">SF <?php echo esc_html($sum_sold_creds); ?></p>
                 </div>
             </div>
 
@@ -235,7 +257,7 @@ $referred_count = is_array($referred_users) ? count($referred_users) : 0;
                     <p>Total SF Net Position To-Date</p>
                 </div>
                 <div class="line-right">
-                    <p class="main-val2">SF 550</p>
+                    <p class="main-val2">SF <?php echo esc_html($total_net_position); ?></p>
                 </div>
             </div>
 
