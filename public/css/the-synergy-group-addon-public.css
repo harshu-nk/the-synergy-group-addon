@@ -145,3 +145,6 @@ p.form-row.active {
  #tsg-sf-exchange-section .myCRED-buy-form .button {
    justify-content: center;
  }
+ .woocommerce-checkout del.wc-block-components-order-summary-item__regular-individual-price, .woocommerce-cart del.wc-block-components-product-price__regular, .woocommerce-cart .wc-block-components-product-badge {
+   display: none;
+ }

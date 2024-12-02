@@ -365,7 +365,7 @@ function tsg_services_woocommerce_product_custom_fields_save($post_id)
  * @compatible    WooCommerce 8
  */
 
-add_filter('woocommerce_get_price_html', 'tsg_services_alter_price_display', 9999, 2);
+//add_filter('woocommerce_get_price_html', 'tsg_services_alter_price_display', 9999, 2);
 function tsg_services_alter_price_display($price, $product)
 {
 
@@ -414,7 +414,7 @@ function tsg_services_alter_price_display($price, $product)
  * @compatible    WooCommerce 8
  */
 
-add_action('woocommerce_before_calculate_totals', 'tsg_services_alter_price_cart', 9999);
+//add_action('woocommerce_before_calculate_totals', 'tsg_services_alter_price_cart', 9999);
 
 function tsg_services_alter_price_cart($cart)
 {

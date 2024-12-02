@@ -1800,48 +1800,44 @@ function tsg_get_current_user_buy_sell_history() {
 }
 
 //Change product price 
-add_filter('woocommerce_product_get_price', 'modify_product_price_with_chf', 10, 2);
-function modify_product_price_with_chf($price, $product) {
-    $chf_percentage = get_post_meta($product->get_id(), 'chf_percentage', true);
+add_action('woocommerce_add_cart_item_data', 'set_chf_price_in_cart', 10, 2);
+function set_chf_price_in_cart($cart_item_data, $product_id) {
+    $regular_price = wc_get_price_to_display(wc_get_product($product_id));
+    $chf_percentage = get_post_meta($product_id, 'chf_percentage', true);
 
     if (!empty($chf_percentage)) {
-        $price = $price * ($chf_percentage / 100);
+        $chf_price = $regular_price * ($chf_percentage / 100);
+        $cart_item_data['chf_price'] = $chf_price; // Store calculated CHF price
     }
 
-    return $price; 
+    return $cart_item_data;
 }
 
-add_filter('woocommerce_cart_item_price', 'show_custom_prices_in_cart', 10, 2);
-function show_custom_prices_in_cart($price, $cart_item) {
-    $product_id = $cart_item['product_id'];
-    $regular_price = $cart_item['data']->get_regular_price();
-
-    $sf_percentage = get_post_meta($product_id, 'sf_percentage', true);
-    $sf_price = !empty($sf_percentage) ? $regular_price * ($sf_percentage / 100) : 0;
-
-    $sf_price_html = '<small>SF Price: ' . wc_price($sf_price) . '</small>';
-
-    return $price . '<br>' . $sf_price_html;
-}
-
-add_action('woocommerce_before_calculate_totals', 'update_cart_prices_with_chf', 10, 1);
-function update_cart_prices_with_chf($cart) {
+add_action('woocommerce_before_calculate_totals', 'apply_chf_price_in_cart', 10, 1);
+function apply_chf_price_in_cart($cart) {
     if (is_admin() && !defined('DOING_AJAX')) {
         return;
     }
 
     foreach ($cart->get_cart() as $cart_item) {
-        $product_id = $cart_item['product_id'];
-        $regular_price = $cart_item['data']->get_regular_price();
-
-        $chf_percentage = get_post_meta($product_id, 'chf_percentage', true);
-
-        if (!empty($chf_percentage)) {
-            $chf_price = $regular_price * ($chf_percentage / 100);
-            $cart_item['data']->set_price($chf_price);
+        if (isset($cart_item['chf_price'])) {
+            $cart_item['data']->set_price($cart_item['chf_price']); // Set CHF price
         }
     }
 }
+
+// add_filter('woocommerce_product_badge_html', 'customize_sf_price_badge', 10, 5);
+// function customize_sf_price_badge($html, $product) {
+//     $sf_percentage = get_post_meta($product->get_id(), 'sf_percentage', true);
+//     $regular_price = $product->get_regular_price();
+//     $sf_price = !empty($sf_percentage) ? $regular_price * ($sf_percentage / 100) : 0;
+
+//     if ($sf_price > 0) {
+//         $html = '<div class="wc-block-components-product-badge wc-block-components-sale-badge">SF <span class="wc-block-formatted-money-amount wc-block-components-formatted-money-amount">' . wc_price($sf_price) . '</span></div>';
+//     }
+
+//     return $html;
+// }
 
 add_filter('woocommerce_get_price_html', 'show_sf_price_on_product_page', 10, 2);
 function show_sf_price_on_product_page($price_html, $product) {
@@ -1852,7 +1848,8 @@ function show_sf_price_on_product_page($price_html, $product) {
     $sf_price = !empty($sf_percentage) ? $regular_price * ($sf_percentage / 100) : 0;
 
     if ($sf_price > 0) {
-        $price_html .= '<br><small>SF Price: ' . wc_price($sf_price) . '</small>';
+        // Format the SF price without currency symbol
+        $price_html .= '<br><small>SF ' . number_format($sf_price, 2) . '</small>';
     }
 
     return $price_html;
