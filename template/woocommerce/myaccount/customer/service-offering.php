@@ -137,7 +137,7 @@
   <input type="hidden" name="form-type" value="service-offering">
   <input type="hidden" id="product-id" name="product-id" value=""> <!-- For editing existing product -->
 
-  <div class="account-text-block">
+  <div class="account-text-block" id="tsg-manage-service-section">
     <div class="account-title-block media-full spb">
       <div class="title-content va">
         <img width="53" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/manage_services.svg" alt="manage services icon" />
@@ -155,10 +155,11 @@
     </div>
 
     <div class="block-lines small-lines media-full">
-      <div class="block-line spb small-line">
+      <div class="block-line spb small-line" style="border-bottom: none !important;">
         <div class="line-left">
           <p><?php _e('Manage', 'the-synergy-group-addon'); ?></p>
         </div>
+        <div id="tsg-service-load-buffer" style="padding-right: 30px;"></div>
         <div class="line-right va btns-part">
           <div class="btn-block">
             <a href="#" class="btn style2 tsg-edit-service-btn">edit</a>
@@ -190,7 +191,7 @@
             <p><?php _e('Long Description', 'the-synergy-group-addon'); ?></p>
           </div>
           <div class="line-right textarea-field long-textarea">
-            <textarea id="long-desc" name="long-description" placeholder=""></textarea>
+            <textarea id="long-desc" name="long-description" placeholder="Enter Your long Description"></textarea>
           </div>
         </div>
 
@@ -199,7 +200,7 @@
             <p><?php _e('Short Description', 'the-synergy-group-addon'); ?></p>
           </div>
           <div class="line-right textarea-field">
-            <textarea id="short-desc" name="short-description" placeholder=""></textarea>
+            <textarea id="short-desc" name="short-description" placeholder="Enter Your Short Description"></textarea>
           </div>
         </div>
 
@@ -209,17 +210,17 @@
           </div>
           <div class="line-right qty-field">
             <div class="line-right input-field">
-              <input type="number" placeholder="" id="pricing-units" name="product-price" >
+              <input type="number" id="pricing-units" name="product-price" placeholder="CHF 100" min="1">
             </div>
             <div class="items pad10 tsg-sf-and-chf-wrapper">
               <div class="item w2">
                 <div class="itemr">
-                      <input type="number" id="pricing-sf" name="pricing-sf" placeholder="SF 20%" min="1" class="quantity-selector quantity-input">
+                      <input type="number" id="pricing-sf" name="pricing-sf" placeholder="SF 25%" min="1" class="quantity-selector quantity-input">
                 </div>
               </div>
               <div class="item w2">
                 <div class="itemr">
-                  <input type="number" id="pricing-chf" name="pricing-chf" min="1" max="75" placeholder="CHF 80%">
+                  <input type="number" id="pricing-chf" name="pricing-chf" min="1" max="75" placeholder="CHF 75%">
                 </div>
               </div>
             </div>
@@ -290,7 +291,7 @@
 
       <!-- product preview section -->
       <div class="tsg-service-preview">
-        <div class="tsg-service-performance-analytics">
+        <div class="tsg-service-performance-analytics" style="display: none;">
           <!-- <div class="block-line spb small-line" style="border-top: none !important;">
             <div class="line-left">
               <p><strong><?php //_e('Service Performance Analytics', 'the-synergy-group-addon'); ?></strong></p>
@@ -303,7 +304,7 @@
               <p><?php _e('Views', 'the-synergy-group-addon'); ?></p>
             </div>
             <div class="line-right">
-              <p class="main-val2"><strong>375</strong></p>
+              <p class="main-val2"><strong id="tsg-product-views">0</strong></p>
             </div>
           </div>
 
@@ -312,7 +313,7 @@
               <p><?php _e('Bookings', 'the-synergy-group-addon'); ?></p>
             </div>
             <div class="line-right">
-              <p class="main-val2"><strong>14</strong></p>
+              <p class="main-val2"><strong id="tsg-product-booking">0</strong></p>
             </div>
           </div>
 
@@ -321,12 +322,13 @@
               <p><?php _e('Earnings', 'the-synergy-group-addon'); ?></p>
             </div>
             <div class="line-right">
-              <p class="main-val2"><strong>CHF 400 + SF 1,200</strong></p>
+              <p class="main-val2"><strong>CHF <span id="tsg-product-chf-total">0</span> + SF <span id="tsg-product-sf-total">0</span></strong></p>
             </div>
           </div>
         </div>   
       </div>
     </div>
+    <div id="tsg-service-save-error" style="margin-top: 20px; "></div>
   </div>
 
   <div class="btn-block fl-end mt25">

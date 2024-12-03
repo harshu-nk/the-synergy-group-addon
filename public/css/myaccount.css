@@ -866,11 +866,11 @@
 
 .message-block .btn {
 	min-width: auto;
-	font-size: 22px;
+	font-size: 22px !important;
 	background-color: #fff;
 	border-color: #179ab3;
 	color: #179ab3;
-	padding: 15px 21px 14px 21px;
+	padding: 15px 21px 14px 21px !important;
 }
 
 @media(min-width: 768px) and (max-width: 991px) {

@@ -112,7 +112,7 @@ p.form-row.active {
 .tsg-service-gallery-image-wrapper {
    position: relative;
  }
- .tsg-service-gallery-image-wrapper .delete-image-btn {
+ .tsg-service-gallery-image-wrapper .delete-image-btn, .tsg-service-gallery-image-wrapper .txt-delete-image-btn {
    position: absolute;
    top: 5px;
    right: 5px;
@@ -135,4 +135,16 @@ p.form-row.active {
    width: auto !important;
    height: 150px !important;
  }
- 
+ #tsg-sf-exchange-section .myCRED-buy-form {
+   display: flex;
+   justify-content: space-between;
+ }
+ #tsg-sf-exchange-section .myCRED-buy-form-wrapper .row {
+   width: 100%;
+ }
+ #tsg-sf-exchange-section .myCRED-buy-form .button {
+   justify-content: center;
+ }
+ .woocommerce-checkout del.wc-block-components-order-summary-item__regular-individual-price, .woocommerce-cart del.wc-block-components-product-price__regular, .woocommerce-cart .wc-block-components-product-badge {
+   display: none;
+ }

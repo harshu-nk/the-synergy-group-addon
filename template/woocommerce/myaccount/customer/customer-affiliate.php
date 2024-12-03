@@ -1,5 +1,88 @@
 <?php
 $mycred_transactions = mycred_get_users_reference_sum(get_current_user_id(), 'synergy_francs');
+$current_user_id = get_current_user_id();
+
+global $wpdb;
+
+$table_name = 'wp_myCRED_log'; // Replace with your actual table name
+$total_creds = $wpdb->get_var(
+    $wpdb->prepare(
+        "SELECT SUM(creds) FROM $table_name WHERE user_id = %d",
+        $current_user_id
+    )
+);
+$total_creds = $total_creds ? $total_creds : 0;
+
+$table_name = 'wp_myCRED_log'; // Replace with your actual table name
+$total_sales_creds = $wpdb->get_var(
+    $wpdb->prepare(
+        "SELECT SUM(creds) FROM $table_name WHERE user_id = %d AND ref = %s",
+        $current_user_id,
+        'sale_of_service'
+    )
+);
+$total_sales_creds = $total_sales_creds ? $total_sales_creds : 0;
+
+
+$referral_code = (new Referrals)->generateRefCode($user_info->ID);
+$referral_url = site_url('/register') . '?ref=' . $referral_code;
+$referred_users = get_user_meta($user_info->ID, 'referred_users', true);
+
+
+$leaderboard_data = get_user_leaderboard_positions($current_user_id);
+$current_position = esc_html($leaderboard_data['current_position']);
+$previous_position = esc_html($leaderboard_data['previous_position']);
+
+$change_image = '';
+
+if ($current_position && $previous_position && $current_position !== '-') {
+    if ($previous_position > $current_position) {
+        $change_image = '<img width="24" src="' . THE_SYNERGY_GROUP_URL . 'public/img/account/green_arrow_top.svg" alt="green arrow" />';
+    } elseif ($previous_position < $current_position) {
+        $change_image = '<img width="24" src="' . THE_SYNERGY_GROUP_URL . 'public/img/account/red_arrow_bot.svg" alt="red arrow" />';
+    }
+} else {
+    $change_image = 'N/A';
+}
+
+
+$sum_creds = $wpdb->get_var( $wpdb->prepare(
+    "SELECT SUM(creds) FROM {$wpdb->prefix}myCRED_log WHERE user_id = %d AND ref LIKE %s", $current_user_id, '%ref_fee%'
+));
+
+if (empty($sum_creds)) {
+    $sum_creds = 0;
+}
+
+$meta_key = 'referred_users';
+$meta_value = get_user_meta($current_user_id, $meta_key, true);
+$referred_users = maybe_unserialize($meta_value);
+$referred_count = is_array($referred_users) ? count($referred_users) : 0;
+
+$sum_purchased_creds = $wpdb->get_var(
+    $wpdb->prepare(
+        "SELECT SUM(creds) 
+        FROM {$wpdb->prefix}myCRED_log 
+        WHERE user_id = %d AND ref = %s", 
+        $current_user_id, 
+        'buy_creds_with_bank'
+    )
+);
+
+$sum_purchased_creds = $sum_purchased_creds ? $sum_purchased_creds : 0;
+
+$sum_sold_creds = $wpdb->get_var(
+    $wpdb->prepare(
+        "SELECT SUM(creds) 
+        FROM {$wpdb->prefix}myCRED_log 
+        WHERE user_id = %d AND ref = %s", 
+        $current_user_id, 
+        'withdrawal'
+    )
+);
+$sum_sold_creds = $sum_sold_creds ? abs($sum_sold_creds) : 0;
+
+$total_net_position = $sum_purchased_creds - $sum_sold_creds;
 ?>
 <div class="light-style input-small">
     <div class="account-text-block">
@@ -138,7 +221,7 @@ $mycred_transactions = mycred_get_users_reference_sum(get_current_user_id(), 'sy
                     <p>Services Purchased</p>
                 </div>
                 <div class="line-right">
-                    <p class="main-val2">SF 350</p>
+                    <p class="main-val2">SF <?php echo abs($total_creds); ?></p>
                 </div>
             </div>
 
@@ -147,7 +230,7 @@ $mycred_transactions = mycred_get_users_reference_sum(get_current_user_id(), 'sy
                     <p>Sales Made</p>
                 </div>
                 <div class="line-right">
-                    <p class="main-val2">SF 150</p>
+                    <p class="main-val2">SF <?php echo abs($total_sales_creds); ?></p>
                 </div>
             </div>
 
@@ -156,7 +239,7 @@ $mycred_transactions = mycred_get_users_reference_sum(get_current_user_id(), 'sy
                     <p>SF Purchased</p>
                 </div>
                 <div class="line-right">
-                    <p class="main-val2">SF 150</p>
+                    <p class="main-val2">SF <?php echo esc_html($sum_purchased_creds); ?></p>
                 </div>
             </div>
 
@@ -165,7 +248,7 @@ $mycred_transactions = mycred_get_users_reference_sum(get_current_user_id(), 'sy
                     <p>SF Sold</p>
                 </div>
                 <div class="line-right">
-                    <p class="main-val2">SF 150</p>
+                    <p class="main-val2">SF <?php echo esc_html($sum_sold_creds); ?></p>
                 </div>
             </div>
 
@@ -174,7 +257,7 @@ $mycred_transactions = mycred_get_users_reference_sum(get_current_user_id(), 'sy
                     <p>Total SF Net Position To-Date</p>
                 </div>
                 <div class="line-right">
-                    <p class="main-val2">SF 550</p>
+                    <p class="main-val2">SF <?php echo esc_html($total_net_position); ?></p>
                 </div>
             </div>
 
@@ -226,7 +309,7 @@ $mycred_transactions = mycred_get_users_reference_sum(get_current_user_id(), 'sy
                     <p>My Affiliate Link:</p>
                 </div>
                 <div class="line-right">
-                    <p class="main-val2"><a target="_blank" href="http://thesynergygroup.ch/8247" class="blue-link">http://thesynergygroup.ch/8247</a></p>
+                    <p class="main-val2"><a target="_blank" href="<?php echo esc_attr($referral_url); ?>" class="blue-link"><?php echo esc_attr($referral_url); ?></a></p>
                 </div>
             </div>
 
@@ -235,7 +318,7 @@ $mycred_transactions = mycred_get_users_reference_sum(get_current_user_id(), 'sy
                     <p>Current Position</p>
                 </div>
                 <div class="line-right">
-                    <p class="main-val2">15</p>
+                    <p class="main-val2"><?php echo $current_position; ?></p>
                 </div>
             </div>
 
@@ -244,7 +327,7 @@ $mycred_transactions = mycred_get_users_reference_sum(get_current_user_id(), 'sy
                     <p>Position Last Month</p>
                 </div>
                 <div class="line-right">
-                    <p class="main-val2">12</p>
+                    <p class="main-val2"><?php echo $previous_position; ?></p>
                 </div>
             </div>
 
@@ -253,7 +336,7 @@ $mycred_transactions = mycred_get_users_reference_sum(get_current_user_id(), 'sy
                     <p>Change from Last Month</p>
                 </div>
                 <div class="line-right">
-                    <img width="24" src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/green_arrow_top.svg" alt="green arrow" />
+                    <?php echo $change_image; ?>
                 </div>
             </div>
 
@@ -262,7 +345,7 @@ $mycred_transactions = mycred_get_users_reference_sum(get_current_user_id(), 'sy
                     <p>Affiliate Name</p>
                 </div>
                 <div class="line-right">
-                    <p class="main-val2">Aff23434</p>
+                    <p class="main-val2"><?php echo esc_attr($referral_code); ?></p>
                 </div>
             </div>
 
@@ -271,7 +354,7 @@ $mycred_transactions = mycred_get_users_reference_sum(get_current_user_id(), 'sy
                     <p>Nr. Members Referred</p>
                 </div>
                 <div class="line-right">
-                    <p class="main-val2">8</p>
+                    <p class="main-val2"><?php echo esc_html($referred_count); ?></p>
                 </div>
             </div>
 
@@ -280,7 +363,7 @@ $mycred_transactions = mycred_get_users_reference_sum(get_current_user_id(), 'sy
                     <p>Affiliate Income Earned</p>
                 </div>
                 <div class="line-right">
-                    <p class="main-val2">SF 550</p>
+                    <p class="main-val2"><?php echo esc_attr($sum_creds); ?></p>
                 </div>
             </div>
         </div>

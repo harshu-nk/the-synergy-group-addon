@@ -491,7 +491,7 @@ function tsg_display_all_transactions_history() {
     if ( $member > 0 ) {
         $query .= " AND user_id = %d";
         $params[] = $member;
-    } elseif (empty($transactionType) && $filter === 1) {
+    } elseif (empty($transactionType) && $filter === 1) { //referral users filter /if filter === 1
         $referred_users_meta = get_user_meta($current_user_id, 'referred_users', true);
         $referred_user_ids = !empty($referred_users_meta) ? maybe_unserialize($referred_users_meta) : [];
 
@@ -1572,26 +1572,41 @@ function tsg_update_profile_image() {
     
     if (empty($_FILES['bp_avatar_upload']) || $_FILES['bp_avatar_upload']['error'] != 0) {
         wp_send_json_error(['message' => __('Invalid file upload.', 'the-synergy-group-addon')]);
+        return; 
     }
 
     require_once ABSPATH . 'wp-admin/includes/file.php';
+    require_once ABSPATH . 'wp-admin/includes/image.php';
+    require_once ABSPATH . 'wp-admin/includes/media.php';
+
     $file = $_FILES['bp_avatar_upload'];
-    $uploaded = wp_handle_upload($file, ['test_form' => false]);
+    $overrides = ['test_form' => false]; 
+    $uploaded = wp_handle_upload($file, $overrides);
 
-    if (isset($uploaded['file'])) {
+    if (!isset($uploaded['error']) && isset($uploaded['file'])) {
         $user_id = get_current_user_id();
-        bp_core_delete_existing_avatar(['item_id' => $user_id, 'type' => 'full']);
-        bp_core_avatar_handle_upload(
-            [
-                'item_id' => $user_id,
-                'type'    => 'full',
-                'file'    => $uploaded['file']
-            ]
-        );
 
-        wp_send_json_success(['new_image_url' => $uploaded['url']]);
+        $args = [
+            'item_id' => $user_id,
+            'object' => 'user',
+            'avatar_dir' => 'avatars',
+            'file' => $file, 
+            'crop_x' => 0,
+            'crop_y' => 0,
+            'crop_w' => bp_core_avatar_full_width(),
+            'crop_h' => bp_core_avatar_full_height()
+        ];
+
+        $avatar_handle = bp_core_avatar_handle_upload($args, 'bp_core_avatar_handle_upload'); 
+
+        if ($avatar_handle) {
+            $new_avatar_url = bp_core_fetch_avatar(['item_id' => $user_id, 'type' => 'full', 'html' => false]);
+            wp_send_json_success(['new_image_url' => $new_avatar_url]);
+        } else {
+            wp_send_json_error(['message' => __('Failed to set new avatar.', 'the-synergy-group-addon')]);
+        }
     } else {
-        wp_send_json_error(['message' => __('File upload failed.', 'the-synergy-group-addon')]);
+        wp_send_json_error(['message' => isset($uploaded['error']) ? $uploaded['error'] : __('File upload failed.', 'the-synergy-group-addon')]);
     }
 }
 
@@ -1643,3 +1658,196 @@ function save_user_settings() {
     }
 }
 add_action('wp_ajax_save_user_settings', 'save_user_settings');
+
+
+add_action('wp_ajax_change_user_password', 'handle_change_user_password');
+
+function handle_change_user_password() {
+    // Check if the user is logged in
+    if (!is_user_logged_in()) {
+        wp_send_json_error('You must be logged in to change your password.');
+    }
+
+    // Get the current user
+    $user_id = get_current_user_id();
+    $new_password = sanitize_text_field($_POST['password']);
+
+    // Validate the password
+    if (empty($new_password) || strlen($new_password) < 6) {
+        wp_send_json_error('The password must be at least 6 characters long.');
+    }
+
+    // Update the user's password
+    wp_set_password($new_password, $user_id);
+
+    // Optional: Log the user out after changing the password
+    wp_logout();
+
+    wp_send_json_success('Password updated successfully.');
+}
+
+
+
+function get_user_leaderboard_positions($user_id, $point_type = 'synergy_francs') {
+    global $wpdb, $mycred;
+
+    if (!class_exists('myCRED_Core')) {
+        return array('current_position' => '-', 'previous_position' => '-');
+    }
+
+    // Get the myCred log table name
+    $log_table = $mycred->log_table;
+
+    // Get the current timestamp
+    $until = current_time('timestamp');
+
+    // Query for the current position
+    $current_position = $wpdb->get_var($wpdb->prepare("
+        SELECT rank FROM (
+            SELECT s.*, @rank := @rank + 1 rank FROM (
+                SELECT l.user_id, SUM(l.creds) AS Balance 
+                FROM {$log_table} l
+                WHERE l.ctype = %s
+                GROUP BY l.user_id
+            ) s, (SELECT @rank := 0) init
+            ORDER BY Balance DESC, s.user_id ASC
+        ) r
+        WHERE user_id = %d", $point_type, $user_id
+    ));
+
+    // Handle the case where no position is found
+    if ($current_position === NULL) {
+        $current_position = '-';
+    }
+
+    // Get the time range for the previous month
+    $from_last_month = mktime(0, 0, 0, date('m', $until) - 1, 1, date('Y', $until));
+    $until_last_month = mktime(23, 59, 59, date('m', $until), 0, date('Y', $until));
+
+    // Query for the previous month's position
+    $previous_position = $wpdb->get_var($wpdb->prepare("
+        SELECT rank FROM (
+            SELECT s.*, @rank := @rank + 1 rank FROM (
+                SELECT l.user_id, SUM(l.creds) AS Balance 
+                FROM {$log_table} l
+                WHERE l.ctype = %s AND l.time BETWEEN %d AND %d
+                GROUP BY l.user_id
+            ) s, (SELECT @rank := 0) init
+            ORDER BY Balance DESC, s.user_id ASC
+        ) r
+        WHERE user_id = %d", $point_type, $from_last_month, $until_last_month, $user_id
+    ));
+
+    // Handle the case where no position is found
+    if ($previous_position === NULL) {
+        $previous_position = '-';
+    }
+
+    return array(
+        'current_position' => $current_position,
+        'previous_position' => $previous_position
+    );
+}
+
+add_action('wp_ajax_get_current_user_buy_sell_history', 'tsg_get_current_user_buy_sell_history');
+function tsg_get_current_user_buy_sell_history() {
+    $user_id = $_POST['user_id'];
+    global $wpdb;
+
+    if(!empty($user_id)) {
+        $results = $wpdb->get_results( $wpdb->prepare(
+            "SELECT * FROM {$wpdb->prefix}myCRED_log WHERE user_id = %d AND ( ref LIKE %s OR ref LIKE %s)", $user_id, '%buy_creds_with%', '%withdrawal%'
+        ));
+
+        if ($results) {
+            // echo '<pre>';
+            // print_r($results);
+            // echo '</pre>';
+            foreach ($results as $row) {
+                $user_info = get_userdata($row->user_id);
+                $user_name = $user_info ? $user_info->display_name : 'Unknown User';
+    
+                echo '<div class="message-block spb" style="width: 100%;">
+                    <div class="text-icon">
+                        <img src="'. THE_SYNERGY_GROUP_URL . 'public/img/account/transactions_blue.svg" alt="transaction icon"/>
+                    </div>';
+                echo '<div class="message-text">
+                        <p><strong>Affiliate member: ' . $user_name . '</strong><br>SF' . $row->creds . ' (' . $row->entry . ')' . date('Y-m-d H:i:s', $row->time) . '</p>
+                    </div>';
+                echo '<div class="btn-block">
+                        <a href="#" class="btn">read more</a>
+                    </div>
+                </div>';
+    
+            }
+        } else {
+            echo '<div class="message-block spb" >
+                <div class="text-icon">
+                    <img src="'. THE_SYNERGY_GROUP_URL . 'public/img/account/transactions_blue.svg" alt="transaction icon"/>
+                </div>';
+            echo '<div class="message-text">
+                    <p>No transactions found matching the criteria.</p>
+                </div>';
+            echo '<div class="btn-block"> </div>
+                </div>';
+     
+        }
+
+    } else {
+        wp_die();
+    }
+    wp_die();
+}
+
+//Change product price 
+add_action('woocommerce_add_cart_item_data', 'set_chf_price_in_cart', 10, 2);
+function set_chf_price_in_cart($cart_item_data, $product_id) {
+    $regular_price = wc_get_price_to_display(wc_get_product($product_id));
+    $chf_percentage = get_post_meta($product_id, 'chf_percentage', true);
+
+    if (!empty($chf_percentage)) {
+        $chf_price = $regular_price * ($chf_percentage / 100);
+        $cart_item_data['chf_price'] = $chf_price; 
+    }
+
+    return $cart_item_data;
+}
+
+add_action('woocommerce_before_calculate_totals', 'apply_chf_price_in_cart', 10, 1);
+function apply_chf_price_in_cart($cart) {
+    if (is_admin() && !defined('DOING_AJAX')) {
+        return;
+    }
+
+    foreach ($cart->get_cart() as $cart_item) {
+        if (isset($cart_item['chf_price'])) {
+            $cart_item['data']->set_price($cart_item['chf_price']); // Set CHF price
+        }
+    }
+}
+
+
+add_filter('woocommerce_get_price_html', 'replace_regular_price_with_chf_price', 10, 2);
+function replace_regular_price_with_chf_price($price_html, $product) {
+    $product_id = $product->get_id();
+    $regular_price = $product->get_regular_price();
+
+    $chf_percentage = get_post_meta($product_id, 'chf_percentage', true);
+    $chf_price = !empty($chf_percentage) ? $regular_price * ($chf_percentage / 100) : $regular_price;
+
+    $sf_percentage = get_post_meta($product_id, 'sf_percentage', true);
+    $sf_price = !empty($sf_percentage) ? $regular_price * ($sf_percentage / 100) : 0;
+
+    $price_html = wc_price($chf_price);
+
+    if ($sf_price > 0) {
+        $price_html .= '<br><small>SF ' . number_format($sf_price, 2) . '</small>';
+    }
+
+    return $price_html;
+}
+
+
+
+
+

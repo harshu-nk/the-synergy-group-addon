@@ -233,6 +233,7 @@ jQuery(document).ready(function ($) {
 
          $("#tsg-selected-service span").text("Create New");
       } else {
+         $("#tsg-service-load-buffer").html('<div id="tsg-saving-text">Loading<span class="tsg-saving-text-dots"></span></div>');
          $(".tsg-edit-service-btn").removeClass("locked");
          $(".tsg-delete-service-btn").show();
          $("#selected-service").val(productId);
@@ -251,6 +252,7 @@ jQuery(document).ready(function ($) {
             success: function (response) {
                if (response.success) {
                   var product = response.data;
+                  console.log(product);
                   $("#product-id").val(product.id);
                   $("#service-name").val(product.name);
                   $("#long-desc").val(product.long_description);
@@ -258,29 +260,76 @@ jQuery(document).ready(function ($) {
                   $("#pricing-units").val(product.regular_price);
                   $("#pricing-sf").val(product.sf_percentage);
                   $("#pricing-chf").val(product.chf_percentage);
-                  $("#taxonomy-select").val(product.categories[0]);
+                  //$("#taxonomy-select").val(product.categories[0]);
                   $("#performance-analytics").val(product.perf_analytics);
+                  $("#performance-analytics").closest(".select").find(".select-name span").text(product.perf_analytics);
+                  togglePerformanceAnalytics();
+
                   $("#main-image").attr("src", product.featured_image);
+                  $("#tsg-product-views").html(product.service_views);
+                  $("#tsg-product-booking").html(product.bookings);
+                  $("#tsg-product-chf-total").html(product.total_chf_value);
+                  $("#tsg-product-sf-total").html(product.total_sf_value);
 
                   var galleryUrls = product.gallery_images.join(",");
                   $("#service-gallery-collection").val(galleryUrls);
-                  loadGalleryFromCollection();
+                  $("#taxonomy-select").select2('trigger', 'select', {
+                     data: { id: product.categories[0].term_id, text: product.categories[0].name }
+                  });
+                  textInputrenderGallery();
+                  $("#tsg-service-load-buffer").html('<div id="tsg-saving-text" style="color: green;">Loaded.</div>');
                }
             },
          });
+
+         setTimeout(function () {
+            $('#tsg-service-load-buffer').fadeOut('slow', function () {
+               $(this).html('');
+            });
+         }, 5000);
       }
    });
 
    // Handle form submission (create/edit product)
    $("#manage-service-form").on("submit", function (e) {
       e.preventDefault();
+
+      $("#tsg-service-save-error").html("");
+      let isValid = true;
+      const serviceName = $("#service-name").val().trim();
+      const shortDescription = $("#short-desc").val().trim();
+      const productPrice = $("#pricing-units").val().trim();
+      const selectedCategory = $("#taxonomy-select").val(); 
+
+      if (!serviceName) {
+         isValid = false;
+         $("#tsg-service-save-error").append("<div style='color: red;'>Please enter the service name.</div>");
+      }
+      if (!shortDescription) {
+         isValid = false;
+         $("#tsg-service-save-error").append("<div style='color: red;'>Please enter a short description.</div>");
+      }
+      if (!productPrice || isNaN(productPrice) || parseFloat(productPrice) <= 0) {
+         isValid = false;
+         $("#tsg-service-save-error").append("<div style='color: red;'>Please enter a valid product price.</div>");
+      }
+      if (!selectedCategory || selectedCategory.length === 0) {
+         isValid = false;
+         $("#tsg-service-save-error").append("<div style='color: red;'>Please select at least one category.</div>");
+      }
+
+      if (!isValid) {
+         return;
+      }
+
       var formData = new FormData(this);
       formData.append("action", "save_product");
       // var formData = $(this).serialize();
+      $("#tsg-service-save-error").html('<div id="tsg-saving-text">Saving<span class="tsg-saving-text-dots"></span></div>');
 
-      for (let [key, value] of formData.entries()) {
-         console.log(key, value);
-     }
+   //    for (let [key, value] of formData.entries()) {
+   //       console.log(key, value);
+   //   }
       $.ajax({
          url: tsg_public_ajax.ajax_url,
          type: "POST",
@@ -290,11 +339,21 @@ jQuery(document).ready(function ($) {
          contentType: false,
          success: function (response) {
             if (response.success) {
-               alert("Product saved successfully!");
-               // Refresh the product list or other actions
+               setTimeout(function () {
+                  location.reload(); 
+               }, 1500);
+               $("#tsg-service-save-error").html("<div style='color: green;'>Product saved successfully!</div>");
+            } else {
+               $("#tsg-service-save-error").html("<div style='color: red;'>Error saving the product. Please try again.</div>");
             }
          },
       });
+
+      setTimeout(function () {
+         $('#tsg-service-save-error').fadeOut('slow', function () {
+            $(this).html('');
+         });
+      }, 5000);
    });
 
    // Handle product deletion
@@ -719,6 +778,8 @@ jQuery(document).ready(function ($) {
          return;
       }
 
+      $("#tsg-service-load-buffer").html('<div id="tsg-saving-text">Deleting<span class="tsg-saving-text-dots"></span></div>');
+
       $.ajax({
          url: tsg_public_ajax.ajax_url,
          type: "POST",
@@ -728,16 +789,23 @@ jQuery(document).ready(function ($) {
          },
          success: function (response) {
             if (response.success) {
-               alert(response.data.message);
+               // alert(response.data.message);
                location.reload();
+               $("#tsg-service-load-buffer").html('<div id="tsg-saving-text" style="color: green;">Deleted.</div>');
             } else {
                alert(response.data.message);
             }
          },
          error: function () {
-            alert("An error occurred while deleting the product.");
+            $("#tsg-service-load-buffer").html("<div style='color: red;'>An error occurred while deleting the product.</div>");
          },
       });
+
+      setTimeout(function () {
+         $('#tsg-service-load-buffer').fadeOut('slow', function () {
+            $(this).html('');
+         });
+      }, 5000);
    });
 
    //gallery file input click
@@ -1096,8 +1164,24 @@ jQuery(document).ready(function ($) {
       }
      
       return isValid;
-  }
-  
+   }
+
+   //Transaction history display - Customer
+   $('#tsg-customer-show-all-transactions').on('click', function(e) { 
+      e.preventDefault(); 
+      const currentUserId = $(this).data("id");
+      const data = {
+         member: currentUserId,
+         filter: 0
+      };
+
+      if( currentUserId ) {
+         sendAllTransactionsHistory(data);
+      } else {
+         console.log("User id is null");
+      }
+
+   });
    
    function sendAllTransactionsHistory(data) {
       $.ajax({
@@ -1108,7 +1192,7 @@ jQuery(document).ready(function ($) {
             data: data,
          },
          success: function (response) {
-            console.log(response);
+            //console.log(response);
             $('.tsg-display-transaction-history').html(response);
          },
          error: function () {
@@ -2057,7 +2141,18 @@ jQuery(document).ready(function ($) {
             console.log(xhr.responseText); 
             console.log(status); 
             console.log(error); 
-            $wrapper.find('.tsg-error-msg').html('An error occurred while uploading the image. Please try again.');
+            
+            var errorMsg = 'An error occurred while uploading the image. Please try again.';
+            try {
+               var responseJson = JSON.parse(xhr.responseText);
+               if (responseJson.message) {
+                     errorMsg = responseJson.message;
+               }
+            } catch (e) {
+               console.error('Error parsing response:', e);
+            }
+
+            $wrapper.find('.tsg-error-msg').html(errorMsg);
          }
         
       });
@@ -2098,168 +2193,194 @@ jQuery(document).ready(function ($) {
       }
    }
 
-   $("#performance-analytics").on("change", function () {
-         togglePerformanceAnalytics();
-   });
-   togglePerformanceAnalytics();
 
    //customer service edit -> Handle file selection and preview
-   // let galleryFiles = [];
+   let galleryFiles = [];
+   function initializeGalleryFiles(fromTxtDelete = true) {
 
-   // function initializeGalleryFiles() {
-   //    const inputFiles = $("#service-gallery")[0].files;
+      const inputFiles = $("#service-gallery")[0].files;
+      
+      for (let i = 0; i < inputFiles.length; i++) {
 
-   //    for (let i = 0; i < inputFiles.length; i++) {
-   //       galleryFiles.push(inputFiles[i]);
+         if(fromTxtDelete) {
+            galleryFiles.push(inputFiles[i]);
+         }
 
-   //       const reader = new FileReader();
-   //       reader.onload = function (e) {
-   //             const wrapper = $(`
-   //                <div class="tsg-service-gallery-image-wrapper item w3">
-   //                   <div class="itemr">
-   //                         <img class="uploaded-picture opt tsg-service-gallery-image" src="${e.target.result}" />
-   //                   </div>
-   //                   <button class="delete-image-btn" data-index="${i}">&times;</button>
-   //                </div>
-   //             `);
+         const reader = new FileReader();
+         reader.onload = function (e) {
+               const wrapper = $(`
+                  <div class="tsg-service-gallery-image-wrapper item w3">
+                     <div class="tsg-uploaded-picture-wrapper itemr">
+                           <img class="uploaded-picture opt tsg-service-gallery-image" src="${e.target.result}" />
+                     </div>
+                     <button class="delete-image-btn" data-index="${i}">&times;</button>
+                  </div>
+               `);
 
-   //             $(".tsg-service-gallery-image-preview").append(wrapper);
-   //       };
+               $(".tsg-service-gallery-image-preview").append(wrapper);
+         };
 
-   //       reader.readAsDataURL(inputFiles[i]);
-   //    }
+         reader.readAsDataURL(inputFiles[i]);
+      }
 
-   //    tsgUpdateFileInput(); 
-   // }
+      tsgUpdateFileInput(); 
+   }
 
    // Update the file input value with the current files in galleryFiles
-   // function tsgUpdateFileInput() {
-   //    const dataTransfer = new DataTransfer();
+   function tsgUpdateFileInput() {
+      const dataTransfer = new DataTransfer();
 
-   //    galleryFiles.forEach(file => {
-   //       dataTransfer.items.add(file);
-   //    });
+      galleryFiles.forEach(file => {
+         dataTransfer.items.add(file);
+      });
 
-   //    $("#service-gallery")[0].files = dataTransfer.files;
-   // }
+      $("#service-gallery")[0].files = dataTransfer.files;
+   }
 
-   // Handle new file selection
-   // $("#service-gallery").on("change", function (event) {
-   //    const files = event.target.files;
+   //File input -> Handle new file selection
+   $("#service-gallery").on("change", function (event) {
+      const files = event.target.files;
 
-   //    for (let i = 0; i < files.length; i++) {
-   //       const file = files[i];
-   //       const reader = new FileReader();
+      for (let i = 0; i < files.length; i++) {
+         const file = files[i];
+         const reader = new FileReader();
 
-   //       reader.onload = function (e) {
-   //             const wrapper = $(`
-   //                <div class="tsg-service-gallery-image-wrapper item w3">
-   //                   <div class="tsg-uploaded-picture-wrapper itemr">
-   //                         <img class="uploaded-picture opt tsg-service-gallery-image" src="${e.target.result}" />
-   //                   </div>
-   //                   <button class="delete-image-btn" data-index="${galleryFiles.length}">&times;</button>
-   //                </div>
-   //             `);
+         reader.onload = function (e) {
+               const wrapper = $(`
+                  <div class="tsg-service-gallery-image-wrapper item w3">
+                     <div class="tsg-uploaded-picture-wrapper itemr">
+                           <img class="uploaded-picture opt tsg-service-gallery-image" src="${e.target.result}" />
+                     </div>
+                     <button class="delete-image-btn" data-index="${galleryFiles.length}">&times;</button>
+                  </div>
+               `);
 
-   //             $(".tsg-service-gallery-image-preview").append(wrapper);
+               $(".tsg-service-gallery-image-preview").append(wrapper);
 
-   //             galleryFiles.push(file);
-   //             tsgUpdateFileInput();
-   //       };
+               galleryFiles.push(file);
+               tsgUpdateFileInput();
+         };
 
-   //       reader.readAsDataURL(file);
-   //    }
+         reader.readAsDataURL(file);
+      }
 
-   //    setTimeout(() => {
-   //          $("#service-gallery").val("");
-   //    }, 0); // Clear the input to allow re-selecting the same files
-   // });
+      setTimeout(() => {
+            $("#service-gallery").val("");
+      }, 0); // Clear the input to allow re-selecting the same files
+   });
 
-   // Handle delete image
-   // $(document).on("click", ".delete-image-btn", function () {
-   //    const index = $(this).data("index");
-   //    galleryFiles.splice(index, 1);
+   //File input -> Handle delete image
+   $(document).on("click", ".delete-image-btn", function () {
+      const index = $(this).data("index");
+      galleryFiles.splice(index, 1);
 
-   //    $(this).closest(".tsg-service-gallery-image-wrapper").remove();
-   //    tsgUpdateFileInput();
-   // });
+      $(this).closest(".tsg-service-gallery-image-wrapper").remove();
+      tsgUpdateFileInput();
+   });
 
-   // Initialize the gallery files on page load
+   //File input -> Initialize the gallery files on page load
    // $(document).ready(function () {
    //    initializeGalleryFiles();
    // });
 
-   function loadGalleryFromCollection() {
-      var galleryCollection = $("#service-gallery-collection").val().split(",").filter(Boolean);
-      $(".tsg-service-gallery-image-preview").empty(); // Clear existing items
-  
-      galleryCollection.forEach((item) => {
+
+   //Text input -> Function to render the gallery based on text input value
+   function textInputrenderGallery() {
+      const galleryInput = $("#service-gallery-collection");
+      const galleryFiles = galleryInput.val() ? galleryInput.val().split(",") : [];
+      const previewContainer = $(".tsg-service-gallery-image-preview");
+      previewContainer.empty(); 
+
+      galleryFiles.forEach((file, index) => {
           const wrapper = $(`
               <div class="tsg-service-gallery-image-wrapper item w3">
                   <div class="tsg-uploaded-picture-wrapper itemr">
-                      <img class="uploaded-picture opt tsg-service-gallery-image" src="${item}" />
+                      <img class="uploaded-picture opt tsg-service-gallery-image" src="${file}" />
                   </div>
-                  <button class="delete-image-btn" data-value="${item}">&times;</button>
+                  <button class="txt-delete-image-btn" data-index="${index}">&times;</button>
               </div>
           `);
-          $(".tsg-service-gallery-image-preview").append(wrapper);
+          previewContainer.append(wrapper);
       });
-  }
-  
-  // Handle file uploads
-  $("#service-gallery").on("change", function () {
-      var galleryCollection = $("#service-gallery-collection").val().split(",").filter(Boolean);
-  
-      Array.from(this.files).forEach(file => {
-          const reader = new FileReader();
-          reader.onload = function (e) {
-              galleryCollection.push(e.target.result);
-              $("#service-gallery-collection").val(galleryCollection.join(",")); // Update text input
-  
-              // Append only the new file to the DOM
-              const wrapper = $(`
-                  <div class="tsg-service-gallery-image-wrapper item w3">
-                      <div class="tsg-uploaded-picture-wrapper itemr">
-                          <img class="uploaded-picture opt tsg-service-gallery-image" src="${e.target.result}" />
-                      </div>
-                      <button class="delete-image-btn" data-value="${e.target.result}">&times;</button>
-                  </div>
-              `);
-              $(".tsg-service-gallery-image-preview").append(wrapper);
-          };
-          reader.readAsDataURL(file);
+   }
+
+   $(document).on("click", ".txt-delete-image-btn", function () {
+      const index = $(this).data("index"); 
+      const galleryInput = $("#service-gallery-collection");
+      let galleryFiles = galleryInput.val() ? galleryInput.val().split(",") : [];
+
+      galleryFiles.splice(index, 1);
+
+      galleryInput.val(galleryFiles.join(","));
+      textInputrenderGallery();
+      initializeGalleryFiles(false);
+   });
+
+
+
+   // change the user password
+   let isEdited = false;
+
+   $('#client-password').on('focus', function () {
+      if (!isEdited && $(this).val() === '********') {
+          $(this).val(''); // Clear the dummy value
+          isEdited = true; // Ensure this runs only once
+      }
+   });
+
+   $('.user-settings-password-save').on('click', function (e) {
+      e.preventDefault();
+
+      let password = $('#client-password').val();
+
+      if (!password || password === '********') {
+         alert('Please enter a new password.');
+         return;
+      }
+
+      $.ajax({
+         url: tsg_public_ajax.ajax_url,
+         type: 'POST',
+         data: {
+            action: 'change_user_password',
+            password: password,
+         },
+         success: function (response) {
+            if (response.success) {
+                  alert('Password changed successfully!');
+                  $('#client-password').val('********'); // Reset to dummy value
+                  isEdited = false; // Allow re-editing
+            } else {
+                  alert(response.data || 'Error updating password.');
+            }
+         },
+         error: function () {
+            alert('An unexpected error occurred.');
+         }
       });
-  
-      setTimeout(() => {
-          $("#service-gallery").val(""); // Clear the input to allow re-selecting the same files
-      }, 0);
-  });
-  
-  // Handle delete button functionality
-  $(document).on("click", ".delete-image-btn", function () {
-      var galleryCollection = $("#service-gallery-collection").val().split(",").filter(Boolean);
-      var valueToRemove = $(this).data("value"); // Get the exact value to remove
-  
-      // Remove the item from the array
-      galleryCollection = galleryCollection.filter(item => item !== valueToRemove);
-  
-      // Update the hidden text input with the modified collection
-      $("#service-gallery-collection").val(galleryCollection.join(","));
-  
-      // Remove only the clicked wrapper from the DOM
-      $(this).closest(".tsg-service-gallery-image-wrapper").remove();
-  });
-  
-  // Automatically synchronize gallery preview with text input changes
-  $("#service-gallery-collection").on("input", function () {
-      loadGalleryFromCollection();
-  });
-  
-  // Initialize gallery on page load or after AJAX updates
-  $(document).ready(function () {
-      loadGalleryFromCollection();
-  });
-  
-  
-   
+   });
+
+   $("#tsg-show-trading-history").on("click", function(e){
+      e.preventDefault();
+      const userId = $(this).data("id");
+
+      $('#tsg-show-trading-history-container').show();
+      $('#tsg-show-trading-history-container').html('<div id="tsg-saving-text">Loading<span class="tsg-saving-text-dots"></span></div>');
+
+      $.ajax({
+         url: tsg_public_ajax.ajax_url,
+         type: 'POST',
+         data: {
+            action: 'get_current_user_buy_sell_history',
+            user_id: userId,
+         },
+         success: function (response) {
+            $('#tsg-show-trading-history-container').html(response);
+         },
+         error: function (error) {
+            $('#tsg-show-trading-history-container').html(error);
+         }
+      });
+
+   });
 });
