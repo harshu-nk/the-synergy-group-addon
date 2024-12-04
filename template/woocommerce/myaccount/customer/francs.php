@@ -1,7 +1,14 @@
 <?php 
   $user_id = get_current_user_id();
-  $sf_balance = mycred_get_users_total_balance($user_id, 'synergy_francs');
+  //$sf_balance = mycred_get_users_total_balance($user_id, 'synergy_francs');
+  function get_current_user_current_sf_balance($user_id) {
+    global $wpdb;
 
+    $sum_creds = $wpdb->get_var( $wpdb->prepare(
+        "SELECT SUM(creds) FROM {$wpdb->prefix}myCRED_log WHERE user_id = %d", $user_id
+    ));
+    return $sum_creds;
+  }
 
   function get_current_user_sf_received($user_id) {
     global $wpdb;
@@ -206,7 +213,7 @@
             <h6><strong>Current Balance</strong></h6>
           </div>
           <div class="line-right">
-            <p class="main-val"><?php echo "SF " . $sf_balance; ?></p>
+            <p class="main-val"><?php echo "SF " . ( get_current_user_current_sf_balance($user_id) ); ?></p>
           </div>
         </div>
 
