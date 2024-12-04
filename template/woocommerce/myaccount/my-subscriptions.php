@@ -481,11 +481,11 @@ $subscriptions = wcs_get_users_subscriptions($current_user_id);
 				</div>
 			</div>
 
-			<div class="block-line spb small-line">
+			<div class="block-line spb small-line user-withdraw-request">
 				<div class="line-left">
 					<p>Withdrawal Request</p>
 				</div>
-				<div class="line-right input-field width2">
+				<div class="line-right input-field width2 custom-full-width">
 					<div class="btn-block">
 						<a href="#" class="btn style2 w100 user-withdraw-btn">Withdrawal</a>
 					</div>
