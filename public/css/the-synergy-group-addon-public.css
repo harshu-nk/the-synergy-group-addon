@@ -148,3 +148,82 @@ p.form-row.active {
  .woocommerce-checkout del.wc-block-components-order-summary-item__regular-individual-price, .woocommerce-cart del.wc-block-components-product-price__regular, .woocommerce-cart .wc-block-components-product-badge {
    display: none;
  }
+
+
+ /* cart styles */
+input#coupon_code {
+   width: 100%;
+   height: 55px;
+}
+
+.custom-cart-values p{
+   font-weight: 400;
+   font-size: 16px;
+}
+
+.quantity.buttons_added {
+   display: flex;
+}
+
+input.input-text.qty.text {
+   width: 100% !important;
+   padding: 0px !important;
+   height: 40px !important;
+   padding-left: 15px !important;
+   font-size: 16px;
+}
+
+button.minus.is-form, button.plus.is-form {
+   width: 100%;
+   background-color: transparent;
+}
+
+.coupon {
+   float: unset !important;
+   margin-bottom: 10px;
+   width: auto !important;
+   display: flex;
+   flex-direction: column;
+   gap: 5px;
+}
+
+.cart-footer {
+   display: flex;
+   flex-direction: row-reverse;
+   align-items: flex-start;
+   justify-content: space-between;
+}
+
+button.minus.is-form {
+   border-right: 0px;
+   border-radius: 20px 0px 0px 20px;
+   border-color: #1f7bb8;
+}
+
+button.plus.is-form {
+   border-radius: 0px 20px 20px 0px;
+   border-color: #1f7bb8;
+   border-left: 0px !important;
+}
+
+.update-cart-button input[type="submit"] {
+   font-size: 16px;
+   padding: 0px 20px;
+   height: 45px !important;
+}
+
+.coupon button.dt-wc-btn.wc-cart-button {
+   font-size: 16px;
+   padding: 0px 20px;
+   height: 45px !important;
+   color: #FFF;
+}
+
+input#coupon_code::placeholder {
+   font-size: 16px;
+   padding-left: 20px;
+}
+
+.cart_totals.calculated_shipping h2{
+   margin-bottom: 10px;
+}
