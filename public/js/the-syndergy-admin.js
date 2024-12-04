@@ -130,7 +130,7 @@ jQuery(document).ready(function ($) {
 
       $.ajax({
          type: "POST",
-         url: tsg_ajax.ajax_url,
+         url: tsg_public_ajax.ajax_url,
          data: formData,
          success: function (data) {
             console.log(data);

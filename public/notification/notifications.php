@@ -343,7 +343,8 @@ class Notifier
 
     function admin_send_notification(): void
     {
-        if (current_user_can('manage_options')) {
+        // if (current_user_can('manage_options')) {
+        if (members_current_user_has_role( 'administrator' ) || members_current_user_has_role( 'synergy_manager' ) ) {
             // If Event needs to send
             // if( class_exists('Better_Messages_WebSocket') ){
             //     Better_Messages_WebSocket()->send_realtime_event( [1,2,3], [
