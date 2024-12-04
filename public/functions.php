@@ -124,6 +124,17 @@ function deduct_sf_percentage_after_checkout($order_id){
             $sf_buyer_referee_fee = ($sf_points * 10) / 100; //Change for the admin settings 10% for now
             wc_get_logger()->debug( 'Checkout SF calculator Buyer Ref ID:' . $buyer_referee_id, array( 'source' => 'tsg' )  );
             wc_get_logger()->debug( 'Checkout SF calculator Buyer Ref Fee:' . $sf_buyer_referee_fee, array( 'source' => 'tsg' )  );
+
+            $buyer_deduction_for_his_ref = mycred_add(
+                'buyer_ref_cost', // Reference
+                $user_id, // User ID
+                -$sf_buyer_referee_fee, // Points to deduct (negative)
+                'Deducted %plural% for SF percentage on order #' . $order_id . ' to pay to the ref: ' . $buyer_referee_id, // Log entry
+                $order_id, // Data (optional)
+                'synergy_francs'
+            );
+            wc_get_logger()->debug( 'Checkout SF calculator Buyer Deduction:' . $buyer_deduction, array( 'source' => 'tsg' )  );
+
             $buyer_refferal_cost = $mycred->add_creds(
                 'buyer_ref_fee', // Reference
                 $buyer_referee_id, // User ID
@@ -156,7 +167,7 @@ function deduct_sf_percentage_after_checkout($order_id){
             wc_get_logger()->debug( 'Checkout SF calculator Seller Ref Costed:' . $seller_refferal_cost, array( 'source' => 'tsg' )  );
 
             // Transfer Remaining Balance to the Seller
-            $sale_amount = $sf_points - $sf_buyer_referee_fee - $sf_seller_referee_fee;
+            $sale_amount = $sf_points - $sf_seller_referee_fee;
             wc_get_logger()->debug( 'Checkout SF calculator Seller Receive Amount:' . $sale_amount, array( 'source' => 'tsg' )  );
 
             $seller_received = mycred_add(
