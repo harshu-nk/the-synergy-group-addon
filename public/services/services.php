@@ -123,6 +123,8 @@ function save_product()
     $product->update_meta_data('sf_percentage', sanitize_text_field($_POST['pricing-sf']));
     $product->update_meta_data('chf_percentage', sanitize_text_field($_POST['pricing-chf']));
     $product->update_meta_data('perf_analytics', sanitize_text_field($_POST['performance-analytics']));
+    $product->update_meta_data('_stock_status', 'instock');
+    $product->update_meta_data('variable_order', '');
 
     if (isset($_POST['selected-category'])) {
         $product->set_category_ids(isset($_POST['selected-category']) ? (array) $_POST['selected-category'] : array());

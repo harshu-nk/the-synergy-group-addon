@@ -1988,3 +1988,27 @@ function add_sf_under_product_name_in_cart($product_name, $cart_item, $cart_item
     return $product_name;
 }
 
+//chart generation of the user side 
+function synergy_get_chart_data() {
+    global $wpdb;
+
+    $results = $wpdb->get_results("
+        SELECT 
+            ref,
+            FROM_UNIXTIME(time, '%Y-%m-%d') AS date,
+            SUM(creds) AS total_creds
+        FROM wp_myCRED_log
+        GROUP BY ref, date
+        ORDER BY date ASC
+    ");
+
+    $data = [];
+
+    // Format data for Chart.js
+    foreach ($results as $row) {
+        $data[$row->ref]['labels'][] = $row->date;
+        $data[$row->ref]['data'][] = $row->total_creds;
+    }
+
+    return $data;
+}
