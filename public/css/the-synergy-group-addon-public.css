@@ -227,3 +227,42 @@ input#coupon_code::placeholder {
 .cart_totals.calculated_shipping h2{
    margin-bottom: 10px;
 }
+
+
+/* login styles */
+input#rememberme {
+   width: auto;
+   height: 40px;
+}
+
+label.woocommerce-form__label.woocommerce-form__label-for-checkbox.woocommerce-form-login__rememberme {
+   display: flex;
+   gap: 10px;
+   margin: 10px 0px;
+   justify-content: flex-end;
+}
+
+p.woocommerce-LostPassword.lost_password a {
+   color: #511BCA;
+}
+
+button[type="submit"]{
+   color: #FFF !important;
+}
+
+a.woocommerce-privacy-policy-link {
+   color: #511BCA;
+}
+
+a.btn.style2.w100.user-withdraw-btn {
+   width: 37%;
+}
+
+.btn-block{
+   width: 100%;
+   justify-content: flex-end;
+}
+
+.custom-full-width{
+   width: 100% !important;
+}
