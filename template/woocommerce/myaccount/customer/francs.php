@@ -137,6 +137,10 @@
       <h6 class="mt25"><strong>Trend:</strong></h6>
       <div class="chart-image">
         <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/chart_lines.jpg" alt="chart with lines" />
+        <div class="chart-container" style="width: 100%; height: 400px;">
+            <canvas id="myChart"></canvas>
+        </div>
+
       </div>
 
       <h6 class="mt25"><strong>Paid For:</strong></h6>
