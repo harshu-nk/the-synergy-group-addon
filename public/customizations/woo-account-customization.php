@@ -250,13 +250,13 @@ class WooAccountCustomizations
             unset($items['synergy-network-reports']);
             unset($items['synergy-network-help-support']);
             unset($items['synergy-network-audit-compliance']);
-
+            unset($items['subscriptions']);
 
             $customOrder = [
                 'dashboard',
                 'notifications',
                 'customer-settings',
-                'subscriptions',
+                'transactions',
                 'service-offering',
                 'synergy-network-exchange-settings',
                 'francs',
