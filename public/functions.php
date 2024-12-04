@@ -1810,106 +1810,81 @@ function tsg_get_current_user_buy_sell_history() {
     wp_die();
 }
 
-//Change product price
-add_filter('woocommerce_cart_item_price', 'add_chf_sf_under_price_without_currency', 10, 3);
-function add_chf_sf_under_price_without_currency($price, $cart_item, $cart_item_key) {
-    $product_id = $cart_item['product_id'];
-
-    $product = wc_get_product($product_id);
-    $regular_price = (float) $product->get_regular_price();
-
-    $chf_percentage = (float) get_post_meta($product_id, 'chf_percentage', true);
-    $sf_percentage = (float) get_post_meta($product_id, 'sf_percentage', true);
-
-    $chf_value = $chf_percentage ? number_format($regular_price * ($chf_percentage / 100), 2) : 'N/A';
-    $sf_value = $sf_percentage ? number_format($regular_price * ($sf_percentage / 100), 2) : 'N/A';
-
-    $price .= '<div class="custom-cart-values">';
-    // $price .= '<p><strong>CHF Value:</strong> ' . $chf_value . '</p>';
-    $price .= '<p>SF ' . $sf_value . '</p>';
-    $price .= '</div>';
-
-    return $price;
-}
-
-
-// add_filter('woocommerce_cart_item_price', 'add_sf_under_price', 10, 3);
-
-// function add_sf_under_price($price, $cart_item, $cart_item_key) {
+// //Change product price
+// add_filter('woocommerce_cart_item_price', 'add_chf_sf_under_price_without_currency', 10, 3);
+// function add_chf_sf_under_price_without_currency($price, $cart_item, $cart_item_key) {
 //     $product_id = $cart_item['product_id'];
 
-//     // Get regular price
 //     $product = wc_get_product($product_id);
 //     $regular_price = (float) $product->get_regular_price();
 
-//     // Get SF percentage
+//     $chf_percentage = (float) get_post_meta($product_id, 'chf_percentage', true);
 //     $sf_percentage = (float) get_post_meta($product_id, 'sf_percentage', true);
 
-//     // Calculate SF Value
+//     $chf_value = $chf_percentage ? number_format($regular_price * ($chf_percentage / 100), 2) : 'N/A';
 //     $sf_value = $sf_percentage ? number_format($regular_price * ($sf_percentage / 100), 2) : 'N/A';
 
-//     // Append SF Value below the price
-//     $price .= '<div class="custom-sf-value">';
-//     $price .= '<p><strong>SF Value:</strong> ' . $sf_value . '</p>';
+//     $price .= '<div class="custom-cart-values">';
+//     $price .= '<p><strong>CHF Value:</strong> ' . $chf_value . '</p>';
+//     $price .= '<p>SF ' . $sf_value . '</p>';
 //     $price .= '</div>';
 
 //     return $price;
-// } 
+// }
+
+// // Add SF Value under the product name in the checkout
+// add_filter('woocommerce_checkout_cart_item_quantity', 'add_sf_in_checkout', 10, 3);
+// function add_sf_in_checkout($product_name, $cart_item, $cart_item_key) {
+//     $product_id = $cart_item['product_id'];
+
+//     $product = wc_get_product($product_id);
+//     $regular_price = (float) $product->get_regular_price();
+
+//     $sf_percentage = (float) get_post_meta($product_id, 'sf_percentage', true);
+
+//     $sf_value = $sf_percentage ? number_format($regular_price * ($sf_percentage / 100), 2) : 'N/A';
+//     $product_name .= '<div class="custom-cart-values">';
+//     $product_name .= '<p>' . $sf_value . '</p>';
+//     $product_name .= '</div>';
+
+//     return $product_name;
+// }
 
 
-// Add SF Value under the product name in the checkout
-add_filter('woocommerce_checkout_cart_item_quantity', 'add_sf_in_checkout', 10, 3);
-function add_sf_in_checkout($product_name, $cart_item, $cart_item_key) {
-    $product_id = $cart_item['product_id'];
 
-    $product = wc_get_product($product_id);
-    $regular_price = (float) $product->get_regular_price();
+// add_action('woocommerce_before_calculate_totals', 'apply_chf_price_in_cart', 10, 1);
+// function apply_chf_price_in_cart($cart) {
+//     if (is_admin() && !defined('DOING_AJAX')) {
+//         return;
+//     }
 
-    $sf_percentage = (float) get_post_meta($product_id, 'sf_percentage', true);
-
-    $sf_value = $sf_percentage ? number_format($regular_price * ($sf_percentage / 100), 2) : 'N/A';
-    $product_name .= '<div class="custom-cart-values">';
-    $product_name .= '<p>' . $sf_value . '</p>';
-    $product_name .= '</div>';
-
-    return $product_name;
-}
+//     foreach ($cart->get_cart() as $cart_item) {
+//         if (isset($cart_item['chf_price'])) {
+//             $cart_item['data']->set_price($cart_item['chf_price']); // Set CHF price
+//         }
+//     }
+// }
 
 
+// add_filter('woocommerce_get_price_html', 'replace_regular_price_with_chf_price', 10, 2);
+// function replace_regular_price_with_chf_price($price_html, $product) {
+//     $product_id = $product->get_id();
+//     $regular_price = $product->get_regular_price();
 
-add_action('woocommerce_before_calculate_totals', 'apply_chf_price_in_cart', 10, 1);
-function apply_chf_price_in_cart($cart) {
-    if (is_admin() && !defined('DOING_AJAX')) {
-        return;
-    }
+//     $chf_percentage = get_post_meta($product_id, 'chf_percentage', true);
+//     $chf_price = !empty($chf_percentage) ? $regular_price * ($chf_percentage / 100) : $regular_price;
 
-    foreach ($cart->get_cart() as $cart_item) {
-        if (isset($cart_item['chf_price'])) {
-            $cart_item['data']->set_price($cart_item['chf_price']); // Set CHF price
-        }
-    }
-}
+//     $sf_percentage = get_post_meta($product_id, 'sf_percentage', true);
+//     $sf_price = !empty($sf_percentage) ? $regular_price * ($sf_percentage / 100) : 0;
 
+//     $price_html = wc_price($chf_price);
 
-add_filter('woocommerce_get_price_html', 'replace_regular_price_with_chf_price', 10, 2);
-function replace_regular_price_with_chf_price($price_html, $product) {
-    $product_id = $product->get_id();
-    $regular_price = $product->get_regular_price();
+//     if ($sf_price > 0) {
+//         $price_html .= '<br><small>SF ' . number_format($sf_price, 2) . '</small>';
+//     }
 
-    $chf_percentage = get_post_meta($product_id, 'chf_percentage', true);
-    $chf_price = !empty($chf_percentage) ? $regular_price * ($chf_percentage / 100) : $regular_price;
-
-    $sf_percentage = get_post_meta($product_id, 'sf_percentage', true);
-    $sf_price = !empty($sf_percentage) ? $regular_price * ($sf_percentage / 100) : 0;
-
-    $price_html = wc_price($chf_price);
-
-    if ($sf_price > 0) {
-        $price_html .= '<br><small>SF ' . number_format($sf_price, 2) . '</small>';
-    }
-
-    return $price_html;
-}
+//     return $price_html;
+// }
 
 // Add CHF and SF Values below the category on the single product page
 add_action('woocommerce_single_product_summary', 'display_chf_sf_single_product', 6);
@@ -1918,26 +1893,24 @@ function display_chf_sf_single_product() {
     global $product;
 
     if (!$product || !is_a($product, 'WC_Product')) {
-        return; // Exit if the product object is invalid
+        return; 
     }
 
     $product_id = $product->get_id();
     $regular_price = (float) $product->get_regular_price();
 
-    // Get CHF and SF percentages
+
     $chf_percentage = get_post_meta($product_id, 'chf_percentage', true);
     $sf_percentage = get_post_meta($product_id, 'sf_percentage', true);
 
-    // Exit if no valid percentages are found
+
     if (!$chf_percentage && !$sf_percentage) {
         return;
     }
 
-    // Calculate CHF and SF Values
     $chf_value = $chf_percentage ? number_format($regular_price * ($chf_percentage / 100), 2) : 'N/A';
     $sf_value = $sf_percentage ? number_format($regular_price * ($sf_percentage / 100), 2) : 'N/A';
 
-    // Display the values below the category
     echo '<div class="product-meta-values" style="margin-top: 10px;">';
 
     if ($chf_percentage) {
@@ -1950,4 +1923,68 @@ function display_chf_sf_single_product() {
     echo '</div>';
 }
 
+//new price change
+// Change the displayed price in the shop and single product pages to the CHF price
+add_filter('woocommerce_get_price_html', 'replace_regular_price_with_chf_price', 10, 2);
+function replace_regular_price_with_chf_price($price_html, $product) {
+    $product_id = $product->get_id();
+    $regular_price = (float) $product->get_regular_price();
+
+    $chf_percentage = (float) get_post_meta($product_id, 'chf_percentage', true);
+    $chf_price = $chf_percentage ? $regular_price * ($chf_percentage / 100) : $regular_price;
+
+    $sf_percentage = (float) get_post_meta($product_id, 'sf_percentage', true);
+    $sf_value = $sf_percentage ? $regular_price * ($sf_percentage / 100) : 0;
+
+    // Display CHF price as the main price
+    $price_html = wc_price($chf_price);
+
+    // Add SF value as additional information
+    if ($sf_value > 0) {
+        $price_html .= '<br><small>SF ' . number_format($sf_value, 2) . '</small>';
+    }
+
+    return $price_html;
+}
+
+// Apply the CHF price to the cart items dynamically
+add_action('woocommerce_before_calculate_totals', 'apply_chf_price_in_cart', 10, 1);
+function apply_chf_price_in_cart($cart) {
+    if (is_admin() && !defined('DOING_AJAX')) {
+        return;
+    }
+
+    foreach ($cart->get_cart() as $cart_item) {
+        $product_id = $cart_item['product_id'];
+
+        $product = wc_get_product($product_id);
+        $regular_price = (float) $product->get_regular_price();
+
+        $chf_percentage = (float) get_post_meta($product_id, 'chf_percentage', true);
+        $chf_price = $chf_percentage ? $regular_price * ($chf_percentage / 100) : $regular_price;
+
+        // Apply CHF price to the cart
+        $cart_item['data']->set_price($chf_price);
+    }
+}
+
+// Display SF value under the product name in the cart and checkout pages
+add_filter('woocommerce_cart_item_name', 'add_sf_under_product_name_in_cart', 10, 3);
+add_filter('woocommerce_checkout_cart_item_quantity', 'add_sf_under_product_name_in_cart', 10, 3);
+function add_sf_under_product_name_in_cart($product_name, $cart_item, $cart_item_key) {
+    $product_id = $cart_item['product_id'];
+
+    $product = wc_get_product($product_id);
+    $regular_price = (float) $product->get_regular_price();
+
+    $sf_percentage = (float) get_post_meta($product_id, 'sf_percentage', true);
+    $sf_value = $sf_percentage ? number_format($regular_price * ($sf_percentage / 100), 2) : 'N/A';
+
+    // Add SF value below product name
+    $product_name .= '<div class="custom-cart-values">';
+    $product_name .= '<p><small>SF Value: ' . $sf_value . '</small></p>';
+    $product_name .= '</div>';
+
+    return $product_name;
+}
 
