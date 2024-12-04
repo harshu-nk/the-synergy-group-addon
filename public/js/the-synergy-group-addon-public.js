@@ -185,6 +185,36 @@ jQuery(document).ready(function ($) {
       minimumInputLength: 0, // Start searching after 2 characters
    });
 
+   $("#activity-taxonomy-select").select2({
+      placeholder: "Select an option",
+      ajax: {
+         url: tsg_public_ajax.ajax_url,
+         dataType: "json",
+         delay: 250,
+         data: function (params) {
+            return {
+               action: "get_activity_taxonomy_terms",
+               search: params.term,
+               taxonomy: "activity_category",
+            };
+         },
+         processResults: function (data) {
+            return {
+               results: $.map(data, function (item) {
+                  return {
+                     id: item.id,
+                     //id: item.slug,
+                     text: item.text,
+                  };
+               }),
+            };
+         },
+         cache: true,
+      },
+      placeholder: "Select Activity",
+      minimumInputLength: 0, // Start searching after 2 characters
+   });
+
    //   Services Endpoint
    // Load user-owned products on page load
    $.ajax({
@@ -224,6 +254,7 @@ jQuery(document).ready(function ($) {
          $("#pricing-sf").val("");
          $("#pricing-chf").val("");
          $("#taxonomy-select").val("");
+         $("#activity-taxonomy-select").val("");
          $("#main-image").attr("src", "");
 
          $(".tsg-service-gallery-image-preview").html("");
@@ -275,6 +306,9 @@ jQuery(document).ready(function ($) {
                   $("#service-gallery-collection").val(galleryUrls);
                   $("#taxonomy-select").select2('trigger', 'select', {
                      data: { id: product.categories[0].term_id, text: product.categories[0].name }
+                  });
+                  $("#activity-taxonomy-select").select2('trigger', 'select', {
+                     data: { id: product.activity[0].term_id, text: product.activity[0].name }
                   });
                   textInputrenderGallery();
                   $("#tsg-service-load-buffer").html('<div id="tsg-saving-text" style="color: green;">Loaded.</div>');

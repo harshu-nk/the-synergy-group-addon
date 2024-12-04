@@ -236,6 +236,15 @@
           </div>
         </div>
 
+        <div class="block-line spb small-line">
+          <div class="line-left">
+            <p><?php _e('Activity', 'the-synergy-group-addon'); ?></p>
+          </div>
+          <div class="line-right input-field">
+            <select id="activity-taxonomy-select" style="width:100%" name="selected-activity"></select>
+          </div>
+        </div>
+
         <div class="block-line spb">
           <div class="line-left">
             <p><?php _e('Main Picture', 'the-synergy-group-addon'); ?></p>

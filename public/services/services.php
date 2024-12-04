@@ -85,6 +85,7 @@ function get_product_details()
             'featured_image' => wp_get_attachment_url($product->get_image_id()),
             'gallery_images' => array_map('wp_get_attachment_url', $product->get_gallery_image_ids()),
             'categories' => wp_get_post_terms($product->get_id(), 'product_cat', array('fields' => 'all')),
+            'activity' => wp_get_post_terms($product->get_id(), 'activity_category', array('fields' => 'all')),
             'bookings' => $total_sales,
             'total_chf_value' => $chf_total,
             'total_sf_value' => $sf_total,
@@ -126,7 +127,17 @@ function save_product()
     if (isset($_POST['selected-category'])) {
         $product->set_category_ids(isset($_POST['selected-category']) ? (array) $_POST['selected-category'] : array());
     }
+    
+    if (isset($_POST['selected-activity'])) {
 
+        $activity_id = (int) $_POST['selected-activity'];  
+
+        if (taxonomy_exists('activity_category')) {
+            wp_set_object_terms($product->get_id(), $activity_id, 'activity_category');
+        } 
+    }
+    
+   
     // Handle Featured Image Upload
     if (!empty($_FILES['service-image']['name'])) {
         require_once(ABSPATH . 'wp-admin/includes/file.php');
@@ -308,6 +319,31 @@ function upload_gallery_images()
 add_action('wp_ajax_get_taxonomy_terms', 'get_taxonomy_terms');
 
 function get_taxonomy_terms()
+{
+    $taxonomy = isset($_GET['taxonomy']) ? sanitize_text_field($_GET['taxonomy']) : '';
+    $search = isset($_GET['search']) ? sanitize_text_field($_GET['search']) : '';
+
+    $terms = get_terms(array(
+        'taxonomy' => $taxonomy,
+        'hide_empty' => false,
+        'search' => $search
+    ));
+
+    $results = array();
+    foreach ($terms as $term) {
+        $results[] = array(
+            'id' => $term->term_id,
+            'slug' => $term->slug,
+            'text' => $term->name
+        );
+    }
+
+    wp_send_json($results);
+}
+
+add_action('wp_ajax_get_activity_taxonomy_terms', 'get_activity_taxonomy_terms');
+
+function get_activity_taxonomy_terms()
 {
     $taxonomy = isset($_GET['taxonomy']) ? sanitize_text_field($_GET['taxonomy']) : '';
     $search = isset($_GET['search']) ? sanitize_text_field($_GET['search']) : '';

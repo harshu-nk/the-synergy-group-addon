@@ -48,7 +48,7 @@ class WooAccountCustomizations
         add_rewrite_endpoint('my-affiliate', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('customer-settings', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('sf-management', EP_ROOT | EP_PAGES);
-
+        add_rewrite_endpoint('transactions', EP_ROOT | EP_PAGES);
 
         add_rewrite_endpoint('synergy-network-transactions', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('synergy-network-members', EP_ROOT | EP_PAGES);
@@ -80,6 +80,7 @@ class WooAccountCustomizations
         $vars[] = 'customer-support';
         $vars[] = 'my-affiliate';
         $vars[] = 'sf-management';
+        $vars[] = 'transactions';
 
         $vars[] = 'synergy-network-transactions';
         $vars[] = 'synergy-network-members';
@@ -148,12 +149,13 @@ class WooAccountCustomizations
             unset($items['my-affiliate']);
             unset($items['service-offering']);
             unset($items['synergy-network-exchange-settings']);
-            unset($items['subscriptions']);
+            //unset($items['subscriptions']);
             unset($items['francs']);
 
             unset($items['synergy-network-reports']);
             unset($items['synergy-network-help-support']);
             unset($items['synergy-network-audit-compliance']);
+            unset($items['transactions']);
 
             $customOrder = [
                 'dashboard',
@@ -190,7 +192,7 @@ class WooAccountCustomizations
             unset($items['customer-support']);
             unset($items['my-affiliate']);
             unset($items['service-offering']);
-            unset($items['subscriptions']);
+            //unset($items['subscriptions']);
 
             unset($items['admin-affiliate']);
             unset($items['admin-audit-compliance']);
@@ -200,6 +202,7 @@ class WooAccountCustomizations
             unset($items['admin-reports']);
             unset($items['admin-transaction-details']);
             unset($items['francs']);
+            unset($items['transactions']);
 
 
             $customOrder = [
@@ -225,8 +228,9 @@ class WooAccountCustomizations
             $items['my-affiliate'] = __('Affiliate', 'the-synergy-group-addon');
             $items['service-offering'] = __('Service Offering', 'the-synergy-group-addon');
             $items['synergy-network-exchange-settings'] = $sf_overview_tab_title;
-            $items['subscriptions'] = __('Transactions', 'the-synergy-group-addon');
+            //$items['subscriptions'] = __('Transactions', 'the-synergy-group-addon');
             $items['francs'] = __('Synergy Francs', 'the-synergy-group-addon');
+            $items['transactions'] = __('Transactions', 'the-synergy-group-addon');
 
             unset($items['synergy-network-admin-withdrawals']);
             unset($items['admin-help-support']);
@@ -371,6 +375,11 @@ class WooAccountCustomizations
     function tsg_synergy_network_dashboard_admin_transaction_details_tab_content(): void
     {
         wc_get_template('myaccount/admin/admin-transaction-details.php', array());
+    }
+
+    function tsg_synergy_network_dashboard_customer_transactions_tab_content(): void 
+    {
+        wc_get_template('myaccount/my-subscriptions.php', array());
     }
 
     function tsg_service_offering_tab_content(): void

@@ -76,7 +76,7 @@ function validate_mycred_balance_before_checkout($fields, $errors)
             }
         }
 
-        $user_balance = get_users_balance($user_id, 'synergy_francs');
+        $user_balance = mycred_get_users_balance($user_id, 'synergy_francs');
 
         if ($user_balance < $total_sf_points_needed) {
             $errors->add( 'validation', __('Insufficient points in your account to cover the required SF amount.', 'woocommerce') );
