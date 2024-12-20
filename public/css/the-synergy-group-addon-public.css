@@ -259,9 +259,9 @@ a.btn.style2.w100.user-withdraw-btn {
 }
 
 .btn-block{
-   width: 100%;
    justify-content: flex-end;
 }
+
 
 .custom-full-width{
    width: 100% !important;

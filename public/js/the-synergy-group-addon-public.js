@@ -2417,6 +2417,288 @@ jQuery(document).ready(function ($) {
       });
 
    });
+
+   $.ajax({
+      url: tsg_public_ajax.ajax_url, 
+      type: 'GET',
+      data: {
+          action: 'get_monthly_creds' 
+      },
+      success: function (response) {
+          console.log(response);
+
+          const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+         // Get the current month and year
+         const currentDate = new Date();
+         const currentMonth = currentDate.getMonth() + 1; // JavaScript months are 0-based
+         const currentYear = currentDate.getFullYear();
+
+         // Calculate the last 5 months
+         const lastSixMonths = [];
+         for (let i = 5; i >= 0; i--) {
+               const date = new Date(currentYear, currentMonth - 1 - i, 1);
+               lastSixMonths.push({
+                  month: date.getMonth() + 1,
+                  year: date.getFullYear(),
+                  monthName: monthNames[date.getMonth()],
+               });
+         }
+
+          const labels = [];
+          const subscriptions = [];
+          const serviceSales = [];
+          const affiliates = [];
+          const purchases = [];
+
+         if (response.data && response.data.length > 0) {
+            lastSixMonths.forEach(month => {
+                const monthData = response.data.find(
+                    item => item.month == month.month && item.year == month.year
+                );
+
+                // Push the month label (e.g., Jan 2024)
+                labels.push(`${month.monthName} ${month.year}`);
+
+                // Push data or default to 0 if no data exists
+                subscriptions.push(monthData ? monthData.subscriptions : 0);
+                serviceSales.push(monthData ? monthData.service_sales : 0);
+                affiliates.push(monthData ? monthData.affiliates : 0);
+                purchases.push(monthData ? monthData.purchases : 0);
+            });
+
+            // Create the chart
+            const ctx = document.getElementById('sfReceivedChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Subscriptions',
+                            data: subscriptions,
+                            borderColor: 'purple',
+                            backgroundColor: 'purple',
+                            borderWidth: 4,
+                            fill: false,
+                            tension: 0.4,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Service Sales',
+                            data: serviceSales,
+                            borderColor: 'blue',
+                            backgroundColor: 'blue',
+                            borderWidth: 4,
+                            fill: false,
+                            tension: 0.4,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Affiliates',
+                            data: affiliates,
+                            borderColor: 'green',
+                            backgroundColor: 'green',
+                            borderWidth: 4,
+                            fill: false,
+                            tension: 0.4,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Exchange Purchases',
+                            data: purchases,
+                            borderColor: 'cyan',
+                            backgroundColor: 'cyan',
+                            borderWidth: 4,
+                            fill: false,
+                            tension: 0.4,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+               options: {
+                  responsive: true,
+                  plugins: {
+                      legend: {
+                          position: 'bottom', // Legend position
+                      },
+                      tooltip: {
+                          enabled: true, // Enables tooltips on hover
+                          mode: 'nearest', // Show nearest point
+                          intersect: false, // Don't require exact intersection with dots
+                      }
+                  },
+                  scales: {
+                      x: {
+                          display: true,
+                          title: {
+                              display: false,
+                              text: 'Months'
+                          }
+                      },
+                      y: {
+                          display: true,
+                          title: {
+                              display: true,
+                              text: 'SF Received'
+                          }
+                      }
+                  }
+              },
+              
+            });
+        }
+      }
+  });
+
+
+  $.ajax({
+      url: tsg_public_ajax.ajax_url, 
+      type: 'GET',
+      data: {
+         action: 'get_monthly_paid_creds' 
+      },
+      success: function (response) {
+         console.log(response);
+
+         const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+         // Get the current month and year
+         const currentDate = new Date();
+         const currentMonth = currentDate.getMonth() + 1; // JavaScript months are 0-based
+         const currentYear = currentDate.getFullYear();
+
+         // Calculate the last 5 months
+         const lastSixMonths = [];
+         for (let i = 5; i >= 0; i--) {
+               const date = new Date(currentYear, currentMonth - 1 - i, 1);
+               lastSixMonths.push({
+                  month: date.getMonth() + 1,
+                  year: date.getFullYear(),
+                  monthName: monthNames[date.getMonth()],
+               });
+         }
+
+         const labels = [];
+         const serviceBuyCreds = [];
+         const sellCreds = [];
+         const withdrawalCreds = [];
+         const adminDeductionCreds = [];
+         const refCostCreds = [];
+
+         if (response.data && response.data.length > 0) {
+            lastSixMonths.forEach(month => {
+               const monthData = response.data.find(
+                  item => item.month == month.month && item.year == month.year
+               );
+
+               // Push the month label (e.g., Jan 2024)
+               labels.push(`${month.monthName} ${month.year}`);
+
+               // Push data or default to 0 if no data exists
+               serviceBuyCreds.push(monthData ? monthData.service_buy_creds : 0);
+               sellCreds.push(monthData ? monthData.sell_creds : 0);
+               withdrawalCreds.push(monthData ? monthData.withdrawal_creds : 0);
+               adminDeductionCreds.push(monthData ? monthData.admin_deduction_creds : 0);
+               refCostCreds.push(monthData ? monthData.ref_cost_creds : 0);
+            });
+
+            // Create the chart
+            const ctx = document.getElementById('sfPaidChart').getContext('2d');
+            new Chart(ctx, {
+               type: 'line',
+               data: {
+                  labels: labels,
+                  datasets: [
+                        {
+                           label: 'Services Purchased',
+                           data: serviceBuyCreds,
+                           borderColor: 'purple',
+                           backgroundColor: 'purple',
+                           borderWidth: 4,
+                           fill: false,
+                           tension: 0.4,
+                           pointRadius: 0
+                        },
+                        {
+                           label: 'Sold SF',
+                           data: sellCreds,
+                           borderColor: 'blue',
+                           backgroundColor: 'blue',
+                           borderWidth: 4,
+                           fill: false,
+                           tension: 0.4,
+                           pointRadius: 0
+                        },
+                        {
+                           label: 'Withdrawal',
+                           data: withdrawalCreds,
+                           borderColor: 'green',
+                           backgroundColor: 'green',
+                           borderWidth: 4,
+                           fill: false,
+                           tension: 0.4,
+                           pointRadius: 0
+                        },
+                        {
+                           label: 'Admin Deduction',
+                           data: adminDeductionCreds,
+                           borderColor: 'cyan',
+                           backgroundColor: 'cyan',
+                           borderWidth: 4,
+                           fill: false,
+                           tension: 0.4,
+                           pointRadius: 0
+                        },
+                        {
+                           label: 'Affiliates Fees',
+                           data: refCostCreds,
+                           borderColor: 'red',
+                           backgroundColor: 'red',
+                           borderWidth: 4,
+                           fill: false,
+                           tension: 0.4,
+                           pointRadius: 0
+                        }
+                  ]
+               },
+               options: {
+                  responsive: true,
+                  plugins: {
+                     legend: {
+                        position: 'bottom', // Legend position
+                     },
+                     tooltip: {
+                        enabled: true, // Enables tooltips on hover
+                        mode: 'nearest', // Show nearest point
+                        intersect: false, // Don't require exact intersection with dots
+                     }
+                  },
+                  scales: {
+                     x: {
+                        display: true,
+                        title: {
+                              display: false,
+                              text: 'Months'
+                        }
+                     },
+                     y: {
+                        display: true,
+                        max: 0,
+                        title: {
+                              display: true,
+                              text: 'SF Paid'
+                        }
+                     }
+                  }
+            },
+            
+            });
+      }
+      }
+   });
+
+
 });
 
 

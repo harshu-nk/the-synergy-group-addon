@@ -53,6 +53,9 @@
     $sum_admin_deduction_creds = $wpdb->get_var( $wpdb->prepare(
       "SELECT SUM(creds) FROM {$wpdb->prefix}myCRED_log WHERE user_id = %d AND ref LIKE %s", $user_id, '%admin_deduction%'
     ));
+    $sum_ref_cost_creds = $wpdb->get_var( $wpdb->prepare(
+      "SELECT SUM(creds) FROM {$wpdb->prefix}myCRED_log WHERE user_id = %d AND ref LIKE %s", $user_id, '%buyer_ref_cost%'
+    ));
     $sum_all_paid_creds = $wpdb->get_var( $wpdb->prepare(
       "SELECT SUM(creds) FROM {$wpdb->prefix}myCRED_log WHERE user_id = %d AND creds < 0", $user_id
     ));
@@ -62,6 +65,7 @@
       'sum_sell_creds' => $sum_sell_creds,
       'sum_withdrawal_creds' => $sum_withdrawal_creds,
       'sum_admin_deduction_creds' => $sum_admin_deduction_creds,
+      'sum_ref_cost_creds' => $sum_ref_cost_creds,
       'sum_all_paid_creds' => $sum_all_paid_creds
     ];
   }  
@@ -136,11 +140,9 @@
 
       <h6 class="mt25"><strong>Trend:</strong></h6>
       <div class="chart-image">
-        <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/chart_lines.jpg" alt="chart with lines" />
         <div class="chart-container" style="width: 100%; height: 400px;">
-            <canvas id="myChart"></canvas>
+            <canvas id="sfReceivedChart"></canvas>
         </div>
-
       </div>
 
       <h6 class="mt25"><strong>Paid For:</strong></h6>
@@ -186,15 +188,15 @@
           </div>
         </div>
 
-        <!-- <div class="block-line spb">
+        <div class="block-line spb">
           <div class="line-left va">
             <div class="line-square square-rose"></div>
-            <p>Fees on SF I've Sold</p>
+            <p>Fees on SF I've Paid for Affiliates</p>
           </div>
           <div class="line-right">
-            <p class="main-val2">SF 580</p>
+            <p class="main-val2"><?php echo "SF " . ( !empty($sf_paid['sum_ref_cost_creds']) ? $sf_paid['sum_ref_cost_creds'] : "0" ); ?></p>
           </div>
-        </div> -->
+        </div>
 
         <div class="block-line spb">
           <div class="line-left">
@@ -207,10 +209,13 @@
       </div>
 
       <h6 class="mt25"><strong>Trend:</strong></h6>
-      <div class="chart-image last">
-        <img src="<?php echo THE_SYNERGY_GROUP_URL; ?>public/img/account/chart2.jpg" alt="chart 2" />
+      
+      <div class="chart-image" style="border-bottom: none; padding-bottom: 0;">
+        <div class="chart-container" style="width: 100%; height: 400px;">
+            <canvas id="sfPaidChart"></canvas>
+        </div>
       </div>
-
+      
       <div class="block-lines mt2">
         <div class="block-line spb">
           <div class="line-left">
