@@ -1259,3 +1259,8 @@ a.add-block:hover svg {
     background-color: #f5fafa;
     border: 2px solid #c8dde9;
 }
+.progress-value {
+    height: 100%;
+    background-color: #2075ba;
+    border-radius: 25px;
+}

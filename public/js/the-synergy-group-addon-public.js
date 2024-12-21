@@ -2559,7 +2559,7 @@ jQuery(document).ready(function ($) {
          action: 'get_monthly_paid_creds' 
       },
       success: function (response) {
-         console.log(response);
+         //console.log(response);
 
          const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -2698,6 +2698,292 @@ jQuery(document).ready(function ($) {
       }
    });
 
+   $.ajax({
+      url: tsg_public_ajax.ajax_url, 
+      type: 'GET',
+      data: {
+          action: 'get_monthly_creds' 
+      },
+      success: function (response) {
+         console.log(response);
+
+          const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+         // Get the current month and year
+         const currentDate = new Date();
+         const currentMonth = currentDate.getMonth() + 1; // JavaScript months are 0-based
+         const currentYear = currentDate.getFullYear();
+
+         // Calculate the last 5 months
+         const lastSixMonths = [];
+         for (let i = 5; i >= 0; i--) {
+               const date = new Date(currentYear, currentMonth - 1 - i, 1);
+               lastSixMonths.push({
+                  month: date.getMonth() + 1,
+                  year: date.getFullYear(),
+                  monthName: monthNames[date.getMonth()],
+               });
+         }
+
+          const labels = [];
+          const logRegBuyCredTotal = [];
+
+         if (response.data && response.data.length > 0) {
+            lastSixMonths.forEach(month => {
+                const monthData = response.data.find(
+                    item => item.month == month.month && item.year == month.year
+                );
+
+                // Push the month label (e.g., Jan 2024)
+                labels.push(`${month.monthName} ${month.year}`);
+
+                // Push data or default to 0 if no data exists
+                logRegBuyCredTotal.push(monthData ? monthData.log_reg_buy_cred_total : 0);
+            });
+
+            // Create the chart
+            const ctx = document.getElementById('logRegBuyCredTotal').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Loggin, Registration & Buy Creds',
+                            data: logRegBuyCredTotal,
+                            borderColor: '#00b4ae',
+                            backgroundColor: '#00b4ae',
+                            borderWidth: 1,
+                        },
+                        
+                    ]
+                },
+               options: {
+                  responsive: true,
+                  plugins: {
+                      legend: {
+                          position: 'bottom', // Legend position
+                      },
+                      tooltip: {
+                          enabled: true, // Enables tooltips on hover
+                          mode: 'nearest', // Show nearest point
+                          intersect: false, // Don't require exact intersection with dots
+                      }
+                  },
+                  scales: {
+                      x: {
+                          display: true,
+                          title: {
+                              display: false,
+                              text: 'Months'
+                          }
+                      },
+                      y: {
+                          display: true,
+                          title: {
+                              display: true,
+                              text: 'Loggin, Registration & Buy Creds'
+                          }
+                      }
+                  }
+              },
+              
+            });
+        }
+      }
+   });
+
+
+   $.ajax({
+      url: tsg_public_ajax.ajax_url, 
+      type: 'GET',
+      data: {
+          action: 'get_monthly_affiliate_creds' 
+      },
+      success: function (response) {
+         //console.log(response);
+
+          const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+         // Get the current month and year
+         const currentDate = new Date();
+         const currentMonth = currentDate.getMonth() + 1; // JavaScript months are 0-based
+         const currentYear = currentDate.getFullYear();
+
+         // Calculate the last 5 months
+         const lastSixMonths = [];
+         for (let i = 5; i >= 0; i--) {
+               const date = new Date(currentYear, currentMonth - 1 - i, 1);
+               lastSixMonths.push({
+                  month: date.getMonth() + 1,
+                  year: date.getFullYear(),
+                  monthName: monthNames[date.getMonth()],
+               });
+         }
+
+          const labels = [];
+          const sumAffiliatesCreds = [];
+
+         if (response.data && response.data.length > 0) {
+            lastSixMonths.forEach(month => {
+                const monthData = response.data.find(
+                    item => item.month == month.month && item.year == month.year
+                );
+
+                // Push the month label (e.g., Jan 2024)
+                labels.push(`${month.monthName} ${month.year}`);
+
+                // Push data or default to 0 if no data exists
+                sumAffiliatesCreds.push(monthData ? monthData.sum_affiliates_creds : 0);
+            });
+
+            // Create the chart
+            const ctx = document.getElementById('affiliateTransactionsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Paid Affiliate Creds',
+                            data: sumAffiliatesCreds,
+                            borderColor: '#00b461',
+                            backgroundColor: '#00b461',
+                            borderWidth: 1,
+                        },
+                        
+                    ]
+                },
+               options: {
+                  responsive: true,
+                  plugins: {
+                      legend: {
+                          position: 'bottom', // Legend position
+                      },
+                      tooltip: {
+                          enabled: true, // Enables tooltips on hover
+                          mode: 'nearest', // Show nearest point
+                          intersect: false, // Don't require exact intersection with dots
+                      }
+                  },
+                  scales: {
+                      x: {
+                          display: true,
+                          title: {
+                              display: false,
+                              text: 'Months'
+                          }
+                      },
+                      y: {
+                          display: true,
+                          title: {
+                              display: true,
+                              text: 'Paid Affiliate Creds'
+                          }
+                      }
+                  }
+              },
+              
+            });
+        }
+      }
+   });
+
+
+   $.ajax({
+      url: tsg_public_ajax.ajax_url, 
+      type: 'GET',
+      data: {
+          action: 'get_monthly_total_creds' 
+      },
+      success: function (response) {
+         //console.log(response);
+
+          const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+         // Get the current month and year
+         const currentDate = new Date();
+         const currentMonth = currentDate.getMonth() + 1; // JavaScript months are 0-based
+         const currentYear = currentDate.getFullYear();
+
+         // Calculate the last 5 months
+         const lastSixMonths = [];
+         for (let i = 5; i >= 0; i--) {
+               const date = new Date(currentYear, currentMonth - 1 - i, 1);
+               lastSixMonths.push({
+                  month: date.getMonth() + 1,
+                  year: date.getFullYear(),
+                  monthName: monthNames[date.getMonth()],
+               });
+         }
+
+          const labels = [];
+          const sumSfCreds = [];
+
+         if (response.data && response.data.length > 0) {
+            lastSixMonths.forEach(month => {
+                const monthData = response.data.find(
+                    item => item.month == month.month && item.year == month.year
+                );
+
+                // Push the month label (e.g., Jan 2024)
+                labels.push(`${month.monthName} ${month.year}`);
+
+                // Push data or default to 0 if no data exists
+                sumSfCreds.push(monthData ? monthData.sum_sf_creds : 0);
+            });
+
+            // Create the chart
+            const ctx = document.getElementById('totalSfBalanceChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Total Creds',
+                            data: sumSfCreds,
+                            borderColor: '#0033b4',
+                            backgroundColor: '#0033b4',
+                            borderWidth: 1,
+                        },
+                        
+                    ]
+                },
+               options: {
+                  responsive: true,
+                  plugins: {
+                      legend: {
+                          position: 'bottom', // Legend position
+                      },
+                      tooltip: {
+                          enabled: true, // Enables tooltips on hover
+                          mode: 'nearest', // Show nearest point
+                          intersect: false, // Don't require exact intersection with dots
+                      }
+                  },
+                  scales: {
+                      x: {
+                          display: true,
+                          title: {
+                              display: false,
+                              text: 'Months'
+                          }
+                      },
+                      y: {
+                          display: true,
+                          title: {
+                              display: true,
+                              text: 'Total Creds'
+                          }
+                      }
+                  }
+              },
+              
+            });
+        }
+      }
+   });
 
 });
 

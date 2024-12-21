@@ -1,14 +1,6 @@
 <?php 
   $user_id = get_current_user_id();
   //$sf_balance = mycred_get_users_total_balance($user_id, 'synergy_francs');
-  function get_current_user_current_sf_balance($user_id) {
-    global $wpdb;
-
-    $sum_creds = $wpdb->get_var( $wpdb->prepare(
-        "SELECT SUM(creds) FROM {$wpdb->prefix}myCRED_log WHERE user_id = %d", $user_id
-    ));
-    return $sum_creds;
-  }
 
   function get_current_user_sf_received($user_id) {
     global $wpdb;
@@ -161,7 +153,7 @@
         <div class="block-line spb">
           <div class="line-left va">
             <div class="line-square"></div>
-            <p>SF I've sale</p>
+            <p>SF I've Sold</p>
           </div>
           <div class="line-right">
             <p class="main-val2"><?php echo "SF " . ( !empty($sf_paid['sum_sell_creds']) ? $sf_paid['sum_sell_creds'] : "0" ); ?></p>

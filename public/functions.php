@@ -2026,6 +2026,7 @@ function tsg_get_monthly_creds() {
                 YEAR(FROM_UNIXTIME(time)) AS year, 
                 MONTH(FROM_UNIXTIME(time)) AS month,
                 SUM(CASE WHEN ref LIKE %s OR ref LIKE %s THEN creds ELSE 0 END) AS subscriptions,
+                SUM(CASE WHEN ref LIKE %s OR ref LIKE %s OR ref LIKE %s THEN creds ELSE 0 END) AS log_reg_buy_cred_total,
                 SUM(CASE WHEN ref LIKE %s THEN creds ELSE 0 END) AS service_sales,
                 SUM(CASE WHEN ref LIKE %s THEN creds ELSE 0 END) AS affiliates,
                 SUM(CASE WHEN ref LIKE %s THEN creds ELSE 0 END) AS purchases
@@ -2033,7 +2034,10 @@ function tsg_get_monthly_creds() {
              WHERE user_id = %d 
              GROUP BY year, month",
             '%logging_in%', 
-            '%registration%', 
+            '%registration%',
+            '%logging_in%', 
+            '%registration%',
+            '%buy_creds_with%', 
             '%sale_of_service%', 
             '%ref_fee%', 
             '%buy_creds_with%', 
@@ -2078,4 +2082,64 @@ function tsg_get_monthly_paid_creds() {
     wp_send_json_success($monthly_data);
 
     wp_die();
-}  
+} 
+
+add_action('wp_ajax_get_monthly_affiliate_creds', 'tsg_get_monthly_affiliate_creds');
+function tsg_get_monthly_affiliate_creds() {
+    global $wpdb;
+    $user_id = get_current_user_id();
+
+    $monthly_data = [];
+
+    $monthly_data = $wpdb->get_results(
+        $wpdb->prepare(
+            "SELECT 
+                YEAR(FROM_UNIXTIME(time)) AS year, 
+                MONTH(FROM_UNIXTIME(time)) AS month,
+                SUM(CASE WHEN ref LIKE %s THEN creds ELSE 0 END) AS sum_affiliates_creds
+             FROM {$wpdb->prefix}myCRED_log 
+             WHERE user_id = %d 
+             GROUP BY year, month", 
+            '%buyer_ref_cost%', 
+            $user_id
+        )
+    );
+
+    wp_send_json_success($monthly_data);
+
+    wp_die();
+}
+
+add_action('wp_ajax_get_monthly_total_creds', 'tsg_get_monthly_total_creds');
+function tsg_get_monthly_total_creds() {
+    global $wpdb;
+    $user_id = get_current_user_id();
+
+    $monthly_data = [];
+
+    $monthly_data = $wpdb->get_results(
+        $wpdb->prepare(
+            "SELECT 
+                YEAR(FROM_UNIXTIME(time)) AS year, 
+                MONTH(FROM_UNIXTIME(time)) AS month,
+                SUM(creds) AS sum_sf_creds
+             FROM {$wpdb->prefix}myCRED_log 
+             WHERE user_id = %d 
+             GROUP BY year, month",
+             $user_id
+        )
+    );
+
+    wp_send_json_success($monthly_data);
+
+    wp_die();
+}
+
+function get_current_user_current_sf_balance($user_id) {
+    global $wpdb;
+
+    $sum_creds = $wpdb->get_var( $wpdb->prepare(
+        "SELECT SUM(creds) FROM {$wpdb->prefix}myCRED_log WHERE user_id = %d", $user_id
+    ));
+    return $sum_creds;
+}
