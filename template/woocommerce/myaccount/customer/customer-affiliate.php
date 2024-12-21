@@ -326,7 +326,7 @@ function tsg_get_referred_user_name($referred_by) {
         </div>
 
         <h6 class="mt25"><strong>Trend:</strong></h6>
-        <div class="chart-image">
+        <div class="chart-image" style="border-bottom: none; padding-bottom: 0;">
             <div class="chart-container" style="width: 100%; height: 400px;">
                 <canvas id="totalSfBalanceChart"></canvas>
             </div>

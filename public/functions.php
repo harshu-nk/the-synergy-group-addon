@@ -2026,7 +2026,6 @@ function tsg_get_monthly_creds() {
                 YEAR(FROM_UNIXTIME(time)) AS year, 
                 MONTH(FROM_UNIXTIME(time)) AS month,
                 SUM(CASE WHEN ref LIKE %s OR ref LIKE %s THEN creds ELSE 0 END) AS subscriptions,
-                SUM(CASE WHEN ref LIKE %s OR ref LIKE %s OR ref LIKE %s THEN creds ELSE 0 END) AS log_reg_buy_cred_total,
                 SUM(CASE WHEN ref LIKE %s THEN creds ELSE 0 END) AS service_sales,
                 SUM(CASE WHEN ref LIKE %s THEN creds ELSE 0 END) AS affiliates,
                 SUM(CASE WHEN ref LIKE %s THEN creds ELSE 0 END) AS purchases
@@ -2034,10 +2033,7 @@ function tsg_get_monthly_creds() {
              WHERE user_id = %d 
              GROUP BY year, month",
             '%logging_in%', 
-            '%registration%',
-            '%logging_in%', 
-            '%registration%',
-            '%buy_creds_with%', 
+            '%registration%', 
             '%sale_of_service%', 
             '%ref_fee%', 
             '%buy_creds_with%', 
@@ -2048,7 +2044,35 @@ function tsg_get_monthly_creds() {
     wp_send_json_success($monthly_data);
 
     wp_die();
-}  
+}
+
+add_action('wp_ajax_get_monthly_log_reg_buy_creds', 'tsg_get_monthly_log_reg_buy_creds');
+function tsg_get_monthly_log_reg_buy_creds() {
+    global $wpdb;
+    $user_id = get_current_user_id();
+
+    $monthly_data = [];
+
+    $monthly_data = $wpdb->get_results(
+        $wpdb->prepare(
+            "SELECT 
+                YEAR(FROM_UNIXTIME(time)) AS year, 
+                MONTH(FROM_UNIXTIME(time)) AS month,
+                SUM(CASE WHEN ref LIKE %s OR ref LIKE %s OR ref LIKE %s THEN creds ELSE 0 END) AS log_reg_buy_cred_total
+             FROM {$wpdb->prefix}myCRED_log 
+             WHERE user_id = %d 
+             GROUP BY year, month",
+            '%logging_in%', 
+            '%registration%',
+            '%buy_creds_with%', 
+            $user_id
+        )
+    );
+
+    wp_send_json_success($monthly_data);
+
+    wp_die();
+}
 
 add_action('wp_ajax_get_monthly_paid_creds', 'tsg_get_monthly_paid_creds');
 function tsg_get_monthly_paid_creds() {

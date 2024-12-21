@@ -2425,7 +2425,7 @@ jQuery(document).ready(function ($) {
           action: 'get_monthly_creds' 
       },
       success: function (response) {
-          console.log(response);
+          //console.log(response);
 
           const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -2596,11 +2596,11 @@ jQuery(document).ready(function ($) {
                labels.push(`${month.monthName} ${month.year}`);
 
                // Push data or default to 0 if no data exists
-               serviceBuyCreds.push(monthData ? monthData.service_buy_creds : 0);
-               sellCreds.push(monthData ? monthData.sell_creds : 0);
-               withdrawalCreds.push(monthData ? monthData.withdrawal_creds : 0);
-               adminDeductionCreds.push(monthData ? monthData.admin_deduction_creds : 0);
-               refCostCreds.push(monthData ? monthData.ref_cost_creds : 0);
+               serviceBuyCreds.push(monthData ? Math.abs(monthData.service_buy_creds) : 0);
+               sellCreds.push(monthData ? Math.abs(monthData.sell_creds) : 0);
+               withdrawalCreds.push(monthData ? Math.abs(monthData.withdrawal_creds) : 0);
+               adminDeductionCreds.push(monthData ? Math.abs(monthData.admin_deduction_creds) : 0);
+               refCostCreds.push(monthData ? Math.abs(monthData.ref_cost_creds) : 0);
             });
 
             // Create the chart
@@ -2684,10 +2684,15 @@ jQuery(document).ready(function ($) {
                      },
                      y: {
                         display: true,
-                        max: 0,
+                        min: 0,
                         title: {
                               display: true,
                               text: 'SF Paid'
+                        },
+                        ticks: {
+                           callback: function(value) {
+                              return value === 0 ? value : `-${value}`; 
+                           }
                         }
                      }
                   }
@@ -2702,10 +2707,10 @@ jQuery(document).ready(function ($) {
       url: tsg_public_ajax.ajax_url, 
       type: 'GET',
       data: {
-          action: 'get_monthly_creds' 
+          action: 'get_monthly_log_reg_buy_creds' 
       },
       success: function (response) {
-         console.log(response);
+         //console.log(response);
 
           const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -2762,6 +2767,7 @@ jQuery(document).ready(function ($) {
                   responsive: true,
                   plugins: {
                       legend: {
+                          display: false,
                           position: 'bottom', // Legend position
                       },
                       tooltip: {
@@ -2858,6 +2864,7 @@ jQuery(document).ready(function ($) {
                   responsive: true,
                   plugins: {
                       legend: {
+                        display: false,
                           position: 'bottom', // Legend position
                       },
                       tooltip: {
@@ -2954,6 +2961,7 @@ jQuery(document).ready(function ($) {
                   responsive: true,
                   plugins: {
                       legend: {
+                        display: false,
                           position: 'bottom', // Legend position
                       },
                       tooltip: {
