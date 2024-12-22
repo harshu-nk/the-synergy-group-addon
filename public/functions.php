@@ -1982,7 +1982,7 @@ function add_sf_under_product_name_in_cart($product_name, $cart_item, $cart_item
 
     // Add SF value below product name
     $product_name .= '<div class="custom-cart-values">';
-    $product_name .= '<p><small>SF Value: ' . $sf_value . '</small></p>';
+    $product_name .= '<p><small>SF ' . $sf_value . '</small></p>';
     $product_name .= '</div>';
 
     return $product_name;

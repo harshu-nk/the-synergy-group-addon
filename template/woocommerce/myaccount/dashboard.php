@@ -60,14 +60,14 @@ if ( ! defined( 'ABSPATH' ) ) {
     //$sf_balance = mycred_get_users_total_balance($user_id, 'synergy_francs');
     //$sf_balance = mycred_get_users_balance( $user_id, 'synergy_francs' );
     //echo $user_id .':' . $sf_balance;
-    function get_current_user_current_sf_balance($user_id) {
-        global $wpdb;
+    // function get_current_user_current_sf_balance($user_id) {
+    //     global $wpdb;
 
-        $sum_creds = $wpdb->get_var( $wpdb->prepare(
-            "SELECT SUM(creds) FROM {$wpdb->prefix}myCRED_log WHERE user_id = %d", $user_id
-        ));
-        return $sum_creds;
-    }
+    //     $sum_creds = $wpdb->get_var( $wpdb->prepare(
+    //         "SELECT SUM(creds) FROM {$wpdb->prefix}myCRED_log WHERE user_id = %d", $user_id
+    //     ));
+    //     return $sum_creds;
+    // }
 
     function get_current_user_subscription_status($user_id) {
         $subscriptions = wcs_get_users_subscriptions($user_id);
