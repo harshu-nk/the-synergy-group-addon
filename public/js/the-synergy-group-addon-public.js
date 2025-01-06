@@ -2993,6 +2993,10 @@ jQuery(document).ready(function ($) {
       }
    });
 
+   $('.checkout-buy-sf-link').on('click', function(){
+      $('.checkout-buy-sf-toggle-wrapper').toggleClass('tsg-entry-hidden');
+   });
+
 });
 
 

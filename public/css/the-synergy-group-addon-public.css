@@ -262,7 +262,52 @@ a.btn.style2.w100.user-withdraw-btn {
    justify-content: flex-end;
 }
 
-
 .custom-full-width{
    width: 100% !important;
+}
+
+form.woocommerce-checkout .wcpay-express-checkout-wrapper, form.woocommerce-checkout .woocommerce-NoticeGroup.woocommerce-NoticeGroup-checkout {
+   grid-column: span 2;
+}
+
+.woocommerce-checkout #order_review .wc_payment_method.payment_method_ppcp-gateway {
+   display: flex;
+   flex-wrap: wrap;
+}
+
+.woocommerce-checkout #order_review .wc_payment_method.payment_method_ppcp-gateway label[for="payment_method_ppcp-gateway"] {
+   display: flex;
+   align-items: stretch;
+   margin-top: 6px;
+}
+
+.woocommerce-checkout section ul li:before { 
+   display: none;
+}
+
+.woocommerce-checkout .woocommerce-error::before {
+   top: 1.5em !important;
+}
+
+.woocommerce-checkout section ul li {
+   margin-top: 0 !important;
+}
+
+.woocommerce-checkout .checkout-buy-sf-toggle-wrapper .myCRED-buy-form {
+   display: flex;
+   justify-content: space-between;
+}
+
+.woocommerce-checkout .checkout-buy-sf-toggle-wrapper .myCRED-buy-form .form-group button {
+   padding: 18px 63px 18px 63px !important;
+   line-height: 0.8;
+   text-align: center;
+}
+
+.checkout-buy-sf-toggle-wrapper {
+   border: 1px solid #cfc8d8;
+   padding: 20px;
+   margin: 2em 0;
+   text-align: left;
+   border-radius: 5px;
 }

@@ -76,13 +76,51 @@ function validate_mycred_balance_before_checkout($fields, $errors)
             }
         }
 
-        $user_balance = mycred_get_users_balance($user_id, 'synergy_francs');
+        // $user_balance = mycred_get_users_balance($user_id, 'synergy_francs');
+
+        $user_balance = get_current_user_current_sf_balance($user_id);
 
         if ($user_balance < $total_sf_points_needed) {
-            $errors->add( 'validation', __('Insufficient points in your account to cover the required SF amount.', 'woocommerce') );
+            $errors->add( 'validation', __('Insufficient points in your account to cover the required SF amount.', 'woocommerce') ); 
         }
     }
 }
+
+add_action( 'woocommerce_before_checkout_form', 'tsg_buy_sf_from_checkout' );
+function tsg_buy_sf_from_checkout() { 
+    
+    $user_id = get_current_user_id();
+    $total_sf_points_needed = 0;
+
+    foreach (WC()->cart->get_cart() as $cart_item) {
+        $product_id = $cart_item['product_id'];
+        $product_price = wc_get_price_to_display($cart_item['data']);
+        $sf_percentage = get_post_meta($product_id, 'sf_percentage', true);
+
+        if (!empty($sf_percentage)) {
+            $sf_points = ($product_price * floatval($sf_percentage)) / 100;
+            $total_sf_points_needed += $sf_points;
+        }
+    }
+
+    $user_balance = get_current_user_current_sf_balance($user_id);
+
+    if ($user_balance < $total_sf_points_needed) {
+        echo '<div class="tsg-buy-sf-from-checkout-wrapper ">
+            <div class="woocommerce-info">
+                <div class="woocommerce-info-text">
+                    <span>Your balance is SF ' . $user_balance . '.</span> 
+                    <a href="#" class="checkout-buy-sf-link"> Click here to buy SF</a>
+                </div>
+            </div>
+            <div class="checkout-buy-sf-toggle-wrapper tsg-entry-hidden">
+            <p>Enter the SF amount</p>';
+        echo do_shortcode('[mycred_buy_form]');
+        echo '</div>
+        </div>';
+    }
+}
+
 
 // Deduct SF percentage points after successful order
 add_action('woocommerce_payment_complete', 'deduct_sf_percentage_after_checkout');
