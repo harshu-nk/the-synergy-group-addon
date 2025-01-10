@@ -155,6 +155,23 @@ jQuery(document).ready(function ($) {
       $(this).parents(".tsg-entry-block").find(".hidable-value").toggle();
    });
 
+   let activityParentId = 0;
+   activityParentId = $("#taxonomy-select").val();
+   $("#taxonomy-select").on('change', function(){
+      activityParentId = $(this).val();
+      if (activityParentId) {
+         $('#activity-taxonomy-select').prop('disabled', false).trigger('change');
+      } else {
+         $('#activity-taxonomy-select').prop('disabled', true).trigger('change');
+      }
+   });
+   //console.log(activityParentId);
+   if (activityParentId) {
+      $('#activity-taxonomy-select').prop('disabled', false).trigger('change');
+   } else {
+      $('#activity-taxonomy-select').prop('disabled', true).trigger('change');
+   }
+
    $("#taxonomy-select").select2({
       placeholder: "Select an option",
       ajax: {
@@ -165,7 +182,7 @@ jQuery(document).ready(function ($) {
             return {
                action: "get_taxonomy_terms",
                search: params.term,
-               taxonomy: "product_cat",
+               taxonomy: "activity_category",
             };
          },
          processResults: function (data) {
@@ -196,6 +213,7 @@ jQuery(document).ready(function ($) {
                action: "get_activity_taxonomy_terms",
                search: params.term,
                taxonomy: "activity_category",
+               parent: activityParentId,
             };
          },
          processResults: function (data) {
@@ -214,6 +232,7 @@ jQuery(document).ready(function ($) {
       placeholder: "Select Activity",
       minimumInputLength: 0, // Start searching after 2 characters
    });
+   
 
    //   Services Endpoint
    // Load user-owned products on page load

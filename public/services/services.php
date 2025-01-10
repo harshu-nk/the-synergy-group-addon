@@ -324,12 +324,14 @@ function get_taxonomy_terms()
 {
     $taxonomy = isset($_GET['taxonomy']) ? sanitize_text_field($_GET['taxonomy']) : '';
     $search = isset($_GET['search']) ? sanitize_text_field($_GET['search']) : '';
-
+    
     $terms = get_terms(array(
         'taxonomy' => $taxonomy,
         'hide_empty' => false,
-        'search' => $search
+        'search' => $search,
+        'parent' => 0
     ));
+
 
     $results = array();
     foreach ($terms as $term) {
@@ -349,10 +351,12 @@ function get_activity_taxonomy_terms()
 {
     $taxonomy = isset($_GET['taxonomy']) ? sanitize_text_field($_GET['taxonomy']) : '';
     $search = isset($_GET['search']) ? sanitize_text_field($_GET['search']) : '';
+    $parent = isset($_GET['parent']) ? absint($_GET['parent']) : 0;
 
     $terms = get_terms(array(
         'taxonomy' => $taxonomy,
         'hide_empty' => false,
+        'parent' => $parent,
         'search' => $search
     ));
 

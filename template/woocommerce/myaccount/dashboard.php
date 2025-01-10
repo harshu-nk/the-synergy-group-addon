@@ -54,6 +54,49 @@ if ( ! defined( 'ABSPATH' ) ) {
 	// 	esc_url( wc_get_endpoint_url( 'edit-account' ) )
 	// );
 	?>
+
+<?php 
+
+// $taxonomy = 'activity_category';
+
+// // Get all parent terms of the taxonomy
+// $parent_terms = get_terms([
+//     'taxonomy'   => $taxonomy,
+//     'hide_empty' => false, // Set to true if you only want terms with products
+//     'parent'     => 90, // Fetch only parent terms
+// ]);
+
+// if (!is_wp_error($parent_terms) && !empty($parent_terms)) {
+//     foreach ($parent_terms as $parent_term) {
+//         echo '<h3>' . esc_html($parent_term->name) . '</h3>'; // Display parent term name
+
+//         echo '<pre>';
+//         print_r($parent_term);
+//         echo '</pre>';
+//         // Get child terms for each parent term
+//         $child_terms = get_terms([
+//             'taxonomy'   => $taxonomy,
+//             'hide_empty' => false,
+//             'parent'     => $parent_term->term_id, // Specify the parent term ID
+//         ]);
+
+//         // echo '<pre>';
+//         // print_r($child_terms);
+//         // echo '</pre>';
+//         // if (!is_wp_error($child_terms) && !empty($child_terms)) {
+//         //     foreach ($child_terms as $child_term) {
+//         //         echo '<p>' . esc_html($child_term->name) . '</p>'; // Display child term name
+//         //     }
+//         // } else {
+//         //     echo '<p>No child categories found for ' . esc_html($parent_term->name) . '.</p>';
+//         // }
+//     }
+// } else {
+//     echo 'No parent categories found.';
+// }
+
+
+?>
 <!-- </p> -->
 <?php
     $user_id = get_current_user_id();
