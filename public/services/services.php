@@ -126,18 +126,69 @@ function save_product()
     $product->update_meta_data('_stock_status', 'instock');
     $product->update_meta_data('variable_order', '');
 
+    // if (isset($_POST['selected-category'])) {
+    //     $product->set_category_ids(isset($_POST['selected-category']) ? (array) $_POST['selected-category'] : array());
+    // }
+
+    //Compare product category names and activity taxonomy parent names and assign accordingly
     if (isset($_POST['selected-category'])) {
-        $product->set_category_ids(isset($_POST['selected-category']) ? (array) $_POST['selected-category'] : array());
+        $activity_parent_id = (int) $_POST['selected-category'];
+    
+        if (taxonomy_exists('activity_category') && taxonomy_exists('product_cat')) {
+            $parent_term = get_term($activity_parent_id, 'activity_category');
+    
+            if ($parent_term && !is_wp_error($parent_term)) {
+   
+                $product_categories = get_terms(array(
+                    'taxonomy' => 'product_cat',
+                    'hide_empty' => false
+                ));
+    
+                foreach ($product_categories as $category) {
+                    // Check for a similar name (case-insensitive comparison)
+                    if (strcasecmp($parent_term->name, $category->name) === 0) {
+                        wp_set_object_terms($product->get_id(), $category->term_id, 'product_cat', true);
+                        break; 
+                    }
+                }
+            }
+        }
     }
     
+
+
+    
+    // if (isset($_POST['selected-activity'])) {
+
+    //     $activity_id = (int) $_POST['selected-activity'];  
+
+    //     if (taxonomy_exists('activity_category')) {
+    //         wp_set_object_terms($product->get_id(), $activity_id, 'activity_category');
+    //     } 
+    // }
+
     if (isset($_POST['selected-activity'])) {
-
-        $activity_id = (int) $_POST['selected-activity'];  
-
+        $activity_id = (int) $_POST['selected-activity'];
+    
         if (taxonomy_exists('activity_category')) {
-            wp_set_object_terms($product->get_id(), $activity_id, 'activity_category');
-        } 
+
+            $term = get_term($activity_id, 'activity_category');
+
+            if ($term && !is_wp_error($term)) {
+                $terms_to_set = [];
+    
+                if ($term->parent > 0) {
+                    $terms_to_set[] = $term->parent;
+                }
+    
+                $terms_to_set[] = $activity_id;
+
+                wp_set_object_terms($product->get_id(), $terms_to_set, 'activity_category');
+            }
+        }
     }
+    
+    
     
    
     // Handle Featured Image Upload

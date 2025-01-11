@@ -272,8 +272,8 @@ jQuery(document).ready(function ($) {
          $("#pricing-units").val("");
          $("#pricing-sf").val("");
          $("#pricing-chf").val("");
-         $("#taxonomy-select").val("");
-         $("#activity-taxonomy-select").val("");
+         $("#taxonomy-select").val("").trigger('change');
+         $("#activity-taxonomy-select").val("").trigger('change');
          $("#main-image").attr("src", "");
 
          $(".tsg-service-gallery-image-preview").html("");
@@ -324,10 +324,12 @@ jQuery(document).ready(function ($) {
                   var galleryUrls = product.gallery_images.join(",");
                   $("#service-gallery-collection").val(galleryUrls);
                   $("#taxonomy-select").select2('trigger', 'select', {
-                     data: { id: product.categories[0].term_id, text: product.categories[0].name }
+                     //data: { id: product.categories[0].term_id, text: product.categories[0].name }
+                     data: { id: product.activity[0].term_id, text: product.activity[0].name }
                   });
                   $("#activity-taxonomy-select").select2('trigger', 'select', {
-                     data: { id: product.activity[0].term_id, text: product.activity[0].name }
+                     //data: { id: product.activity[0].term_id, text: product.activity[0].name }
+                     data: { id: product.activity[1].term_id, text: product.activity[1].name }
                   });
                   textInputrenderGallery();
                   $("#tsg-service-load-buffer").html('<div id="tsg-saving-text" style="color: green;">Loaded.</div>');
@@ -353,6 +355,7 @@ jQuery(document).ready(function ($) {
       const shortDescription = $("#short-desc").val().trim();
       const productPrice = $("#pricing-units").val().trim();
       const selectedCategory = $("#taxonomy-select").val(); 
+      const selectedActivity = $("#activity-taxonomy-select").val(); 
 
       if (!serviceName) {
          isValid = false;
@@ -368,7 +371,11 @@ jQuery(document).ready(function ($) {
       }
       if (!selectedCategory || selectedCategory.length === 0) {
          isValid = false;
-         $("#tsg-service-save-error").append("<div style='color: red;'>Please select at least one category.</div>");
+         $("#tsg-service-save-error").append("<div style='color: red;'>Please select a category.</div>");
+      }
+      if (!selectedActivity || selectedActivity.length === 0) {
+         isValid = false;
+         $("#tsg-service-save-error").append("<div style='color: red;'>Please select an activity.</div>");
       }
 
       if (!isValid) {
