@@ -101,6 +101,9 @@ function get_product_details()
 add_action('wp_ajax_save_product', 'save_product');
 function save_product()
 {
+    $logger = wc_get_logger();
+    
+
     $product_id = intval($_POST['product-id']);
     $product_name = sanitize_text_field($_POST['service-name']);
     $product_desc = sanitize_textarea_field($_POST['long-description']);
@@ -126,34 +129,36 @@ function save_product()
     $product->update_meta_data('_stock_status', 'instock');
     $product->update_meta_data('variable_order', '');
 
-    // if (isset($_POST['selected-category'])) {
-    //     $product->set_category_ids(isset($_POST['selected-category']) ? (array) $_POST['selected-category'] : array());
-    // }
-
-    //Compare product category names and activity taxonomy parent names and assign accordingly
     if (isset($_POST['selected-category'])) {
-        $activity_parent_id = (int) $_POST['selected-category'];
-    
-        if (taxonomy_exists('activity_category') && taxonomy_exists('product_cat')) {
-            $parent_term = get_term($activity_parent_id, 'activity_category');
-    
-            if ($parent_term && !is_wp_error($parent_term)) {
-   
-                $product_categories = get_terms(array(
-                    'taxonomy' => 'product_cat',
-                    'hide_empty' => false
-                ));
-    
-                foreach ($product_categories as $category) {
-                    // Check for a similar name (case-insensitive comparison)
-                    if (strcasecmp($parent_term->name, $category->name) === 0) {
-                        wp_set_object_terms($product->get_id(), $category->term_id, 'product_cat', true);
-                        break; 
-                    }
-                }
-            }
-        }
+        $product->set_category_ids(isset($_POST['selected-category']) ? (array) $_POST['selected-category'] : array());
     }
+
+    $product->save();
+    
+    //Compare product category names and activity taxonomy parent names and assign accordingly
+    // if (isset($_POST['selected-category'])) {
+    //     $activity_parent_id = (int) $_POST['selected-category'];
+    
+    //     if (taxonomy_exists('activity_category') && taxonomy_exists('product_cat')) {
+    //         $parent_term = get_term($activity_parent_id, 'activity_category');
+    
+    //         if ($parent_term && !is_wp_error($parent_term)) {
+   
+    //             $product_categories = get_terms(array(
+    //                 'taxonomy' => 'product_cat',
+    //                 'hide_empty' => false
+    //             ));
+    
+    //             foreach ($product_categories as $category) {
+    //                 // Check for a similar name (case-insensitive comparison)
+    //                 if (strcasecmp($parent_term->name, $category->name) === 0) {
+    //                     wp_set_object_terms($product->get_id(), $category->term_id, 'product_cat', true);
+    //                     break; 
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
     
 
 
@@ -168,13 +173,14 @@ function save_product()
     // }
 
     if (isset($_POST['selected-activity'])) {
-        $activity_id = (int) $_POST['selected-activity'];
-    
+        $activity_id = intval($_POST['selected-activity']);
+        
         if (taxonomy_exists('activity_category')) {
-
+            
             $term = get_term($activity_id, 'activity_category');
-
+            
             if ($term && !is_wp_error($term)) {
+               
                 $terms_to_set = [];
     
                 if ($term->parent > 0) {
@@ -182,7 +188,7 @@ function save_product()
                 }
     
                 $terms_to_set[] = $activity_id;
-
+        
                 wp_set_object_terms($product->get_id(), $terms_to_set, 'activity_category');
             }
         }
@@ -380,7 +386,8 @@ function get_taxonomy_terms()
         'taxonomy' => $taxonomy,
         'hide_empty' => false,
         'search' => $search,
-        'parent' => 0
+        'parent' => 0,
+        'exclude'    => 15,
     ));
 
 
@@ -403,24 +410,52 @@ function get_activity_taxonomy_terms()
     $taxonomy = isset($_GET['taxonomy']) ? sanitize_text_field($_GET['taxonomy']) : '';
     $search = isset($_GET['search']) ? sanitize_text_field($_GET['search']) : '';
     $parent = isset($_GET['parent']) ? absint($_GET['parent']) : 0;
+    $category_term = get_term($parent, 'product_cat');
 
-    $terms = get_terms(array(
-        'taxonomy' => $taxonomy,
+    $product_activities = get_terms(array(
+        'taxonomy'   => $taxonomy,
         'hide_empty' => false,
-        'parent' => $parent,
-        'search' => $search
+        'parent'     => 0,
     ));
 
     $results = array();
-    foreach ($terms as $term) {
-        $results[] = array(
-            'id' => $term->term_id,
-            'slug' => $term->slug,
-            'text' => $term->name
-        );
+
+    foreach ($product_activities as $activity) {
+        // Check for a similar name (case-insensitive comparison)
+        if (strcasecmp($category_term->name, $activity->name) === 0) {
+            $activity_children = get_terms(array(
+                'taxonomy'   => 'activity_category',
+                'hide_empty' => false,
+                'parent'     => $activity->term_id,
+                'search' => $search,
+            ));
+            foreach ($activity_children as $activity_child) {
+                $results[] = array(
+                            'id' => $activity_child->term_id,
+                            'slug' => $activity_child->slug,
+                            'text' => $activity_child->name,
+                        );
+            }
+        }
     }
 
     wp_send_json($results);
+
+    // $terms = get_terms(array(
+    //     'taxonomy' => $taxonomy,
+    //     'hide_empty' => false,
+    //     'parent' => $parent,
+    //     'search' => $search
+    // ));
+
+    // $results = array();
+    // foreach ($terms as $term) {
+    //     $results[] = array(
+    //         'id' => $term->term_id,
+    //         'slug' => $term->slug,
+    //         'text' => $term->name
+    //     );
+    // }
 }
 
 function tsg_services_woocommerce_product_custom_fields()

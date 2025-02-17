@@ -158,6 +158,7 @@ jQuery(document).ready(function ($) {
    let activityParentId = 0;
    activityParentId = $("#taxonomy-select").val();
    $("#taxonomy-select").on('change', function(){
+      $('#activity-taxonomy-select').val('').trigger('change');
       activityParentId = $(this).val();
       if (activityParentId) {
          $('#activity-taxonomy-select').prop('disabled', false).trigger('change');
@@ -182,7 +183,7 @@ jQuery(document).ready(function ($) {
             return {
                action: "get_taxonomy_terms",
                search: params.term,
-               taxonomy: "activity_category",
+               taxonomy: "product_cat",
             };
          },
          processResults: function (data) {
@@ -324,8 +325,8 @@ jQuery(document).ready(function ($) {
                   var galleryUrls = product.gallery_images.join(",");
                   $("#service-gallery-collection").val(galleryUrls);
                   $("#taxonomy-select").select2('trigger', 'select', {
-                     //data: { id: product.categories[0].term_id, text: product.categories[0].name }
-                     data: { id: product.activity[0].term_id, text: product.activity[0].name }
+                     data: { id: product.categories[0].term_id, text: product.categories[0].name }
+                     //data: { id: product.activity[0].term_id, text: product.activity[0].name }
                   });
                   $("#activity-taxonomy-select").select2('trigger', 'select', {
                      //data: { id: product.activity[0].term_id, text: product.activity[0].name }
